@@ -1,0 +1,30 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background-color: var(--color-bg);
+}
+
+.content {
+  flex: 1;
+  padding: var(--spacing-xl);
+  padding-bottom: calc(var(--nav-height) + var(--spacing-xl));
+}
+
+.section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.sectionTitle {
+  font-family: var(--font);
+  font-size: var(--text-lg);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+.cardGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}

@@ -1,0 +1,37 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background-color: var(--color-bg);
+}
+
+.content {
+  flex: 1;
+  padding: var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  width: 100%;
+  max-width: 334px;
+  margin: 0 auto;
+}
+
+.separator {
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-separator);
+  border: none;
+  margin: var(--spacing-sm) 0;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
