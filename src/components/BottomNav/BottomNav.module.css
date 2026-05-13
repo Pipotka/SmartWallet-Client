@@ -21,15 +21,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: var(--spacing-xs);
-  padding: var(--spacing-sm) var(--spacing-md);
+  width: 80px;
+  height: 80px;
   border-radius: var(--radius-md);
   background-color: var(--color-blue-500);
   color: var(--color-text-light);
   cursor: pointer;
   transition: background-color 0.2s ease;
   border: none;
-  min-width: 70px;
 }
 
 .tabActive {
@@ -42,6 +43,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.tabIcon img {
+  width: 32px;
+  height: 32px;
+  filter: brightness(0) invert(1);
 }
 
 .tabLabel {

@@ -1,17 +1,24 @@
+.cardItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
 .card {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100px;
-  height: 136px;
+  height: 100px;
   border-radius: var(--radius-md);
   padding: var(--spacing-sm);
   box-sizing: border-box;
-  cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
   text-align: center;
-  gap: var(--spacing-xs);
+  border: none;
+  cursor: pointer;
 }
 
 .card:hover {
@@ -29,32 +36,55 @@
 }
 
 .category {
-  background-color: var(--color-wallet-bg);
-  color: var(--color-wallet-text);
-  box-shadow: var(--shadow-card);
-}
-
-.overLimit {
   background-color: var(--color-overlimit-bg);
   color: var(--color-overlimit-text);
+  box-shadow: var(--shadow-card);
 }
 
 .name {
   font-family: var(--font);
-  font-size: var(--text-lg);
+  font-size: var(--text-sm);
   font-weight: 400;
   text-align: center;
   line-height: 1.2;
   word-break: break-word;
   overflow-wrap: break-word;
   max-width: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.amount {
+.limitBadge {
+  margin-top: 8px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: var(--font);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  color: var(--color-text-light);
+  background-color: var(--color-limit-bg);
+  text-align: center;
+}
+
+.limitBadgeOver {
+  background-color: var(--color-red-500);
+}
+
+.value {
+  margin-top: 20px;
   font-family: var(--font);
   font-size: var(--text-sm);
   font-weight: 400;
-  margin: 0;
+  color: var(--color-text-primary);
+  text-align: center;
+}
+
+.addButtonOuter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .addButton {
@@ -62,7 +92,7 @@
   align-items: center;
   justify-content: center;
   width: 100px;
-  height: 136px;
+  height: 100px;
   border-radius: var(--radius-md);
   border: 2px dashed var(--color-neutral-400);
   background-color: transparent;

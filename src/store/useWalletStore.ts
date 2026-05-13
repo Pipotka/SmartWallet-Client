@@ -21,12 +21,20 @@ export const useWalletStore = create<WalletState>((set) => ({
   wallets: [
     { id: '1', name: 'Кошелёк', limit: 1000, value: 100, isOverLimit: false },
     { id: '2', name: 'Карта', limit: 500, value: 600, isOverLimit: true },
+    { id: '3', name: 'Сбербанк', limit: 2000, value: 350, isOverLimit: false },
+    { id: '4', name: 'Тинькофф', limit: 3000, value: 4200, isOverLimit: true },
+    { id: '5', name: 'Наличные', limit: 5000, value: 1200, isOverLimit: false },
   ],
   categories: [
     { id: '1', name: 'Продукты', limit: 5000, isOverLimit: false },
     { id: '2', name: 'Транспорт', limit: 3000, isOverLimit: false },
     { id: '3', name: 'Очень очень очень длинное название категории', limit: 2000, isOverLimit: true },
     { id: '4', name: 'Комунальные услуги', limit: 4000, isOverLimit: false },
+    { id: '5', name: 'Развлечения', limit: 1500, isOverLimit: true },
+    { id: '6', name: 'Одежда', limit: 3000, isOverLimit: false },
+    { id: '7', name: 'Здоровье', limit: 2500, isOverLimit: false },
+    { id: '8', name: 'Образование', limit: 1000, isOverLimit: false },
+    { id: '9', name: 'Подарки', limit: 2000, isOverLimit: true },
   ],
   userInfo: {
     lastName: 'Абдулгаджиев',

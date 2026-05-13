@@ -10,8 +10,8 @@ function App() {
       <div className={styles.app}>
         <Routes>
           <Route path="/" element={<CategoryPage />} />
-          <Route path="/wallet/:id/edit" element={<EditWalletPage />} />
-          <Route path="/category/:id/edit" element={<EditCategoryPage />} />
+          <Route path="/wallet/:id" element={<EditWalletPage />} />
+          <Route path="/category/:id" element={<EditCategoryPage />} />
         </Routes>
       </div>
     </BrowserRouter>

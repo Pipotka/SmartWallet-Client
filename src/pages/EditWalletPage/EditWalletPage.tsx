@@ -10,19 +10,21 @@ export function EditWalletPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const wallets = useWalletStore((s) => s.wallets);
+  const addWallet = useWalletStore((s) => s.addWallet);
   const updateWallet = useWalletStore((s) => s.updateWallet);
   const deleteWallet = useWalletStore((s) => s.deleteWallet);
 
+  const isNew = id === 'new';
   const wallet = wallets.find((w) => w.id === id);
 
   const [name, setName] = useState(wallet?.name ?? '');
   const [limit, setLimit] = useState(String(wallet?.limit ?? ''));
   const [value, setValue] = useState(String(wallet?.value ?? ''));
 
-  if (!wallet) {
+  if (!wallet && !isNew) {
     return (
       <div className={styles.page}>
-        <Header showBackButton title="Кошелёк не найден" />
+        <Header pageTitle="Кошелёк не найден" />
         <main className={styles.content}>
           <p>Кошелёк не найден</p>
         </main>
@@ -34,7 +36,11 @@ export function EditWalletPage() {
     const limitNum = Number(limit);
     const valueNum = Number(value);
     if (!isNaN(limitNum) && !isNaN(valueNum)) {
-      updateWallet(id!, { name, limit: limitNum, value: valueNum });
+      if (isNew) {
+        addWallet({ name, limit: limitNum, value: valueNum });
+      } else {
+        updateWallet(id!, { name, limit: limitNum, value: valueNum });
+      }
       navigate('/');
     }
   };
@@ -44,13 +50,15 @@ export function EditWalletPage() {
   };
 
   const handleDelete = () => {
-    deleteWallet(id!);
+    if (!isNew) {
+      deleteWallet(id!);
+    }
     navigate('/');
   };
 
   return (
     <div className={styles.page}>
-      <Header showBackButton title="Редактирование Кошелька" />
+      <Header pageTitle={isNew ? 'Новый кошелёк' : 'Редактирование Кошелька'} />
 
       <main className={styles.content}>
         <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
@@ -84,9 +92,11 @@ export function EditWalletPage() {
             <Button variant="neutral" onClick={handleCancel} icon={<CloseIcon />}>
               Отмена
             </Button>
-            <Button variant="danger" onClick={handleDelete}>
-              Удал
-            </Button>
+            {!isNew && (
+              <Button variant="danger" onClick={handleDelete}>
+                Удал
+              </Button>
+            )}
           </div>
         </form>
       </main>

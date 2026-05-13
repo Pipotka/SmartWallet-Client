@@ -10,18 +10,20 @@ export function EditCategoryPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const categories = useWalletStore((s) => s.categories);
+  const addCategory = useWalletStore((s) => s.addCategory);
   const updateCategory = useWalletStore((s) => s.updateCategory);
   const deleteCategory = useWalletStore((s) => s.deleteCategory);
 
+  const isNew = id === 'new';
   const category = categories.find((c) => c.id === id);
 
   const [name, setName] = useState(category?.name ?? '');
   const [limit, setLimit] = useState(String(category?.limit ?? ''));
 
-  if (!category) {
+  if (!category && !isNew) {
     return (
       <div className={styles.page}>
-        <Header showBackButton title="Категория не найдена" />
+        <Header pageTitle="Категория не найдена" />
         <main className={styles.content}>
           <p>Категория не найдена</p>
         </main>
@@ -32,7 +34,11 @@ export function EditCategoryPage() {
   const handleSave = () => {
     const limitNum = Number(limit);
     if (!isNaN(limitNum)) {
-      updateCategory(id!, { name, limit: limitNum });
+      if (isNew) {
+        addCategory({ name, limit: limitNum });
+      } else {
+        updateCategory(id!, { name, limit: limitNum });
+      }
       navigate('/');
     }
   };
@@ -42,13 +48,15 @@ export function EditCategoryPage() {
   };
 
   const handleDelete = () => {
-    deleteCategory(id!);
+    if (!isNew) {
+      deleteCategory(id!);
+    }
     navigate('/');
   };
 
   return (
     <div className={styles.page}>
-      <Header showBackButton title="Редактирование категории" />
+      <Header pageTitle={isNew ? 'Новая категория' : 'Редактирование категории'} />
 
       <main className={styles.content}>
         <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
@@ -75,9 +83,11 @@ export function EditCategoryPage() {
             <Button variant="neutral" onClick={handleCancel} icon={<CloseIcon />}>
               Отмена
             </Button>
-            <Button variant="danger" onClick={handleDelete}>
-              Удал
-            </Button>
+            {!isNew && (
+              <Button variant="danger" onClick={handleDelete}>
+                Удал
+              </Button>
+            )}
           </div>
         </form>
       </main>

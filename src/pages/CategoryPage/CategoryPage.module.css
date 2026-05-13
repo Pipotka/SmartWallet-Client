@@ -7,7 +7,7 @@
 
 .content {
   flex: 1;
-  padding: var(--spacing-xl);
+  padding: var(--spacing-lg) var(--spacing-xl);
   padding-bottom: calc(var(--nav-height) + var(--spacing-xl));
 }
 
@@ -23,8 +23,35 @@
   margin: 0 0 var(--spacing-md) 0;
 }
 
-.cardGrid {
+.walletRow {
   display: flex;
-  flex-wrap: wrap;
   gap: var(--spacing-md);
+  overflow-x: auto;
+  padding-bottom: var(--spacing-sm);
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.walletRow::-webkit-scrollbar {
+  height: 4px;
+}
+
+.walletRow::-webkit-scrollbar-thumb {
+  background-color: var(--color-neutral-400);
+  border-radius: 2px;
+}
+
+.separator {
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-neutral-500);
+  border: none;
+  margin: var(--spacing-xl) 0;
+}
+
+.categoryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  justify-items: center;
 }
