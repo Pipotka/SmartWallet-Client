@@ -6,9 +6,11 @@ import { useWalletStore } from '@/store/useWalletStore';
 import styles from './CategoryPage.module.css';
 
 export function CategoryPage() {
-  const wallets = useWalletStore((s) => s.wallets);
-  const categories = useWalletStore((s) => s.categories);
+  const endpoints = useWalletStore((s) => s.endpoints);
   const navigate = useNavigate();
+
+  const wallets = endpoints.filter((e) => e.isStorage);
+  const categories = endpoints.filter((e) => !e.isStorage);
 
   return (
     <div className={styles.page}>
@@ -23,8 +25,7 @@ export function CategoryPage() {
                 id={wallet.id}
                 name={wallet.name}
                 value={wallet.value}
-                limit={wallet.limit}
-                isOverLimit={wallet.isOverLimit}
+                limitation={wallet.limitation}
                 type="wallet"
               />
             ))}
@@ -41,8 +42,8 @@ export function CategoryPage() {
                 key={category.id}
                 id={category.id}
                 name={category.name}
-                limit={category.limit}
-                isOverLimit={category.isOverLimit}
+                value={category.value}
+                limitation={category.limitation}
                 type="category"
               />
             ))}

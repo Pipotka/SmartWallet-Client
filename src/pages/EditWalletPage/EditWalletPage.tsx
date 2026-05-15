@@ -9,19 +9,19 @@ import styles from './EditWalletPage.module.css';
 export function EditWalletPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const wallets = useWalletStore((s) => s.wallets);
-  const addWallet = useWalletStore((s) => s.addWallet);
-  const updateWallet = useWalletStore((s) => s.updateWallet);
-  const deleteWallet = useWalletStore((s) => s.deleteWallet);
+  const endpoints = useWalletStore((s) => s.endpoints);
+  const addEndpoint = useWalletStore((s) => s.addEndpoint);
+  const updateEndpoint = useWalletStore((s) => s.updateEndpoint);
+  const deleteEndpoint = useWalletStore((s) => s.deleteEndpoint);
 
   const isNew = id === 'new';
-  const wallet = wallets.find((w) => w.id === id);
+  const endpoint = endpoints.find((e) => e.id === id && e.isStorage);
 
-  const [name, setName] = useState(wallet?.name ?? '');
-  const [limit, setLimit] = useState(String(wallet?.limit ?? ''));
-  const [value, setValue] = useState(String(wallet?.value ?? ''));
+  const [name, setName] = useState(endpoint?.name ?? '');
+  const [limitation, setLimitation] = useState(String(endpoint?.limitation ?? ''));
+  const [value, setValue] = useState(String(endpoint?.value ?? ''));
 
-  if (!wallet && !isNew) {
+  if (!endpoint && !isNew) {
     return (
       <div className={styles.page}>
         <Header pageTitle="Кошелёк не найден" />
@@ -33,13 +33,13 @@ export function EditWalletPage() {
   }
 
   const handleSave = () => {
-    const limitNum = Number(limit);
+    const limitationNum = Number(limitation);
     const valueNum = Number(value);
-    if (!isNaN(limitNum) && !isNaN(valueNum)) {
+    if (!isNaN(limitationNum) && !isNaN(valueNum)) {
       if (isNew) {
-        addWallet({ name, limit: limitNum, value: valueNum });
+        addEndpoint({ name, limitation: limitationNum, isStorage: true });
       } else {
-        updateWallet(id!, { name, limit: limitNum, value: valueNum });
+        updateEndpoint(id!, { name, limitation: limitationNum, value: valueNum });
       }
       navigate('/');
     }
@@ -51,7 +51,7 @@ export function EditWalletPage() {
 
   const handleDelete = () => {
     if (!isNew) {
-      deleteWallet(id!);
+      deleteEndpoint(id!);
     }
     navigate('/');
   };
@@ -70,8 +70,8 @@ export function EditWalletPage() {
           />
           <InputField
             label="Лимиты"
-            value={limit}
-            onChange={setLimit}
+            value={limitation}
+            onChange={setLimitation}
             type="number"
             placeholder="0"
           />

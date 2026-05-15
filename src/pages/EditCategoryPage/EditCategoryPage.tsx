@@ -9,18 +9,18 @@ import styles from './EditCategoryPage.module.css';
 export function EditCategoryPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const categories = useWalletStore((s) => s.categories);
-  const addCategory = useWalletStore((s) => s.addCategory);
-  const updateCategory = useWalletStore((s) => s.updateCategory);
-  const deleteCategory = useWalletStore((s) => s.deleteCategory);
+  const endpoints = useWalletStore((s) => s.endpoints);
+  const addEndpoint = useWalletStore((s) => s.addEndpoint);
+  const updateEndpoint = useWalletStore((s) => s.updateEndpoint);
+  const deleteEndpoint = useWalletStore((s) => s.deleteEndpoint);
 
   const isNew = id === 'new';
-  const category = categories.find((c) => c.id === id);
+  const endpoint = endpoints.find((e) => e.id === id && !e.isStorage);
 
-  const [name, setName] = useState(category?.name ?? '');
-  const [limit, setLimit] = useState(String(category?.limit ?? ''));
+  const [name, setName] = useState(endpoint?.name ?? '');
+  const [limitation, setLimitation] = useState(String(endpoint?.limitation ?? ''));
 
-  if (!category && !isNew) {
+  if (!endpoint && !isNew) {
     return (
       <div className={styles.page}>
         <Header pageTitle="Категория не найдена" />
@@ -32,12 +32,12 @@ export function EditCategoryPage() {
   }
 
   const handleSave = () => {
-    const limitNum = Number(limit);
-    if (!isNaN(limitNum)) {
+    const limitationNum = Number(limitation);
+    if (!isNaN(limitationNum)) {
       if (isNew) {
-        addCategory({ name, limit: limitNum });
+        addEndpoint({ name, limitation: limitationNum, isStorage: false });
       } else {
-        updateCategory(id!, { name, limit: limitNum });
+        updateEndpoint(id!, { name, limitation: limitationNum });
       }
       navigate('/');
     }
@@ -49,7 +49,7 @@ export function EditCategoryPage() {
 
   const handleDelete = () => {
     if (!isNew) {
-      deleteCategory(id!);
+      deleteEndpoint(id!);
     }
     navigate('/');
   };
@@ -68,8 +68,8 @@ export function EditCategoryPage() {
           />
           <InputField
             label="Лимиты"
-            value={limit}
-            onChange={setLimit}
+            value={limitation}
+            onChange={setLimitation}
             type="number"
             placeholder="0"
           />

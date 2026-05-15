@@ -1,16 +1,21 @@
-export interface Wallet {
+export interface TransactionEndpoint {
   id: string;
   name: string;
-  limit: number;
   value: number;
-  isOverLimit: boolean;
+  limitation: number;
+  isStorage: boolean;
 }
 
-export interface Category {
+export interface CreateTransactionEndpoint {
+  name: string;
+  limitation: number;
+  isStorage: boolean;
+}
+
+export interface UpdateTransactionEndpoint {
   id: string;
   name: string;
-  limit: number;
-  isOverLimit: boolean;
+  limitation: number;
 }
 
 export type NavTab = 'home' | 'analytics' | 'transactions' | 'profile';

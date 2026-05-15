@@ -36,8 +36,8 @@
 }
 
 .category {
-  background-color: var(--color-overlimit-bg);
-  color: var(--color-overlimit-text);
+  background-color: var(--color-category-bg);
+  color: var(--color-category-text);
   box-shadow: var(--shadow-card);
 }
 
@@ -73,12 +73,19 @@
 }
 
 .value {
-  margin-top: 20px;
+  margin-top: 10px;
   font-family: var(--font);
   font-size: var(--text-sm);
   font-weight: 400;
-  color: var(--color-text-primary);
   text-align: center;
+}
+
+.valueWallet {
+  color: var(--color-wallet-text);
+}
+
+.valueCategory {
+  color: var(--color-category-text);
 }
 
 .addButtonOuter {

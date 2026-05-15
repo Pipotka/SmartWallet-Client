@@ -4,13 +4,12 @@ import styles from './CategoryCard.module.css';
 interface CategoryCardProps {
   id: string;
   name: string;
-  value?: number;
-  limit: number;
-  isOverLimit: boolean;
+  value: number;
+  limitation: number;
   type: 'wallet' | 'category';
 }
 
-export function CategoryCard({ id, name, value, limit, isOverLimit, type }: CategoryCardProps) {
+export function CategoryCard({ id, name, value, limitation, type }: CategoryCardProps) {
   const navigate = useNavigate();
 
   const cardClass = [
@@ -20,18 +19,17 @@ export function CategoryCard({ id, name, value, limit, isOverLimit, type }: Cate
 
   const editPath = type === 'wallet' ? `/wallet/${id}` : `/category/${id}`;
 
-  const limitBadgeClass = [
-    styles.limitBadge,
-    isOverLimit ? styles.limitBadgeOver : '',
-  ].filter(Boolean).join(' ');
-
   return (
     <div className={styles.cardItem} onClick={() => navigate(editPath)}>
       <button className={cardClass}>
         <span className={styles.name}>{name}</span>
       </button>
-      <span className={limitBadgeClass}>{limit} ₽</span>
-      {value !== undefined && <span className={styles.value}>{value} ₽</span>}
+      <span className={styles.limitBadge}>{limitation} ₽</span>
+      {value !== undefined && (
+        <span className={`${styles.value} ${type === 'wallet' ? styles.valueWallet : styles.valueCategory}`}>
+          {value} ₽
+        </span>
+      )}
     </div>
   );
 }

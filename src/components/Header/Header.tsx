@@ -13,10 +13,10 @@ export function Header({ pageTitle }: HeaderProps) {
     <>
       <header className={styles.header}>
         <div className={styles.logoSection}>
-          <img src={logoSvg} alt="" className={styles.logoIcon} />
+          <img src={logoSvg} alt="Логотип Smart Wallet" className={styles.logoIcon} />
           <div className={styles.logoText}>
-            <span className={styles.logoWord}>Smart</span>
-            <span className={styles.logoWord}>Wallet</span>
+            <span className={`${styles.logoWord}`}>Smart</span>
+            <span className={`${styles.logoWord}`}>Wallet</span>
           </div>
         </div>
 

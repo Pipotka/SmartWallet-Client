@@ -1,40 +1,33 @@
 import { create } from 'zustand';
-import type { Wallet, Category, UserInfo } from '@/types';
+import type { TransactionEndpoint, UserInfo } from '@/types';
 
 interface WalletState {
-  wallets: Wallet[];
-  categories: Category[];
+  endpoints: TransactionEndpoint[];
   userInfo: UserInfo;
 
-  addWallet: (wallet: Omit<Wallet, 'id' | 'isOverLimit'>) => void;
-  updateWallet: (id: string, updates: Partial<Omit<Wallet, 'id'>>) => void;
-  deleteWallet: (id: string) => void;
-
-  addCategory: (category: Omit<Category, 'id' | 'isOverLimit'>) => void;
-  updateCategory: (id: string, updates: Partial<Omit<Category, 'id'>>) => void;
-  deleteCategory: (id: string) => void;
+  addEndpoint: (endpoint: Omit<TransactionEndpoint, 'id' | 'value'>) => void;
+  updateEndpoint: (id: string, updates: Partial<Omit<TransactionEndpoint, 'id'>>) => void;
+  deleteEndpoint: (id: string) => void;
 }
 
 const generateId = (): string => crypto.randomUUID();
 
-export const useWalletStore = create<WalletState>((set) => ({
-  wallets: [
-    { id: '1', name: 'Кошелёк', limit: 1000, value: 100, isOverLimit: false },
-    { id: '2', name: 'Карта', limit: 500, value: 600, isOverLimit: true },
-    { id: '3', name: 'Сбербанк', limit: 2000, value: 350, isOverLimit: false },
-    { id: '4', name: 'Тинькофф', limit: 3000, value: 4200, isOverLimit: true },
-    { id: '5', name: 'Наличные', limit: 5000, value: 1200, isOverLimit: false },
-  ],
-  categories: [
-    { id: '1', name: 'Продукты', limit: 5000, isOverLimit: false },
-    { id: '2', name: 'Транспорт', limit: 3000, isOverLimit: false },
-    { id: '3', name: 'Очень очень очень длинное название категории', limit: 2000, isOverLimit: true },
-    { id: '4', name: 'Комунальные услуги', limit: 4000, isOverLimit: false },
-    { id: '5', name: 'Развлечения', limit: 1500, isOverLimit: true },
-    { id: '6', name: 'Одежда', limit: 3000, isOverLimit: false },
-    { id: '7', name: 'Здоровье', limit: 2500, isOverLimit: false },
-    { id: '8', name: 'Образование', limit: 1000, isOverLimit: false },
-    { id: '9', name: 'Подарки', limit: 2000, isOverLimit: true },
+export const useWalletStore = create<WalletState>()((set) => ({
+  endpoints: [
+    { id: '1', name: 'Кошелёк', limitation: 1000, value: 100, isStorage: true },
+    { id: '2', name: 'Карта', limitation: 500, value: 600, isStorage: true },
+    { id: '3', name: 'Сбербанк', limitation: 2000, value: 350, isStorage: true },
+    { id: '4', name: 'Тинькофф', limitation: 3000, value: 4200, isStorage: true },
+    { id: '5', name: 'Наличные', limitation: 5000, value: 1200, isStorage: true },
+    { id: '6', name: 'Продукты', limitation: 5000, value: 100, isStorage: false },
+    { id: '7', name: 'Транспорт', limitation: 3000, value: 400, isStorage: false },
+    { id: '8', name: 'Очень очень очень длинное название категории', limitation: 2000, value: 320, isStorage: false },
+    { id: '9', name: 'Комунальные услуги', limitation: 4000, value: 101, isStorage: false },
+    { id: '10', name: 'Развлечения', limitation: 1500, value: 0, isStorage: false },
+    { id: '11', name: 'Одежда', limitation: 3000, value: 0, isStorage: false },
+    { id: '12', name: 'Здоровье', limitation: 2500, value: 0, isStorage: false },
+    { id: '13', name: 'Образование', limitation: 1000, value: 0, isStorage: false },
+    { id: '14', name: 'Подарки', limitation: 2000, value: 0, isStorage: false },
   ],
   userInfo: {
     lastName: 'Абдулгаджиев',
@@ -42,50 +35,36 @@ export const useWalletStore = create<WalletState>((set) => ({
     middleName: 'Магомедович',
   },
 
-  addWallet: (wallet) =>
+  addEndpoint: (endpoint) =>
     set((state) => ({
-      wallets: [
-        ...state.wallets,
+      endpoints: [
+        ...state.endpoints,
         {
-          ...wallet,
+          ...endpoint,
           id: generateId(),
-          isOverLimit: wallet.value > wallet.limit,
+          value: 0,
         },
       ],
     })),
 
-  updateWallet: (id, updates) =>
+  updateEndpoint: (id, updates) =>
     set((state) => ({
-      wallets: state.wallets.map((w) => {
-        if (w.id !== id) return w;
-        const updated = { ...w, ...updates };
-        return { ...updated, isOverLimit: updated.value > updated.limit };
+      endpoints: state.endpoints.map((e) => {
+        if (e.id !== id) return e;
+        return { ...e, ...updates };
       }),
     })),
 
-  deleteWallet: (id) =>
+  deleteEndpoint: (id) =>
     set((state) => ({
-      wallets: state.wallets.filter((w) => w.id !== id),
-    })),
-
-  addCategory: (category) =>
-    set((state) => ({
-      categories: [
-        ...state.categories,
-        { ...category, id: generateId(), isOverLimit: false },
-      ],
-    })),
-
-  updateCategory: (id, updates) =>
-    set((state) => ({
-      categories: state.categories.map((c) => {
-        if (c.id !== id) return c;
-        return { ...c, ...updates };
-      }),
-    })),
-
-  deleteCategory: (id) =>
-    set((state) => ({
-      categories: state.categories.filter((c) => c.id !== id),
+      endpoints: state.endpoints.filter((e) => e.id !== id),
     })),
 }));
+
+export function getWallets(): TransactionEndpoint[] {
+  return useWalletStore.getState().endpoints.filter((e) => e.isStorage);
+}
+
+export function getCategories(): TransactionEndpoint[] {
+  return useWalletStore.getState().endpoints.filter((e) => !e.isStorage);
+}
