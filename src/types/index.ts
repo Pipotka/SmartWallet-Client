@@ -25,3 +25,17 @@ export interface UserInfo {
   firstName: string;
   middleName: string;
 }
+
+export interface RegistrationFormData {
+  firstName: string;
+  lastName: string;
+  middleName: string;
+  email: string;
+  password: string;
+  passwordConfirm: string;
+}
+
+export interface LoginFormData {
+  email: string;
+  password: string;
+}

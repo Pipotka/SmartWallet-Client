@@ -25,9 +25,10 @@
 
 .walletRow {
   display: flex;
-  gap: var(--spacing-md);
+  gap: 30px;
   overflow-x: auto;
-  padding-bottom: var(--spacing-sm);
+  padding: 0 0 var(--spacing-sm) 0;
+  margin-right: -6px;
   scrollbar-width: thin;
   -webkit-overflow-scrolling: touch;
 }
@@ -42,11 +43,11 @@
 }
 
 .separator {
-  width: 100%;
+  width: calc(100% + var(--spacing-xl) * 2);
   height: 2px;
   background-color: var(--color-neutral-500);
   border: none;
-  margin: var(--spacing-xl) 0;
+  margin: var(--spacing-xl) calc(-1 * var(--spacing-xl));
 }
 
 .categoryGrid {

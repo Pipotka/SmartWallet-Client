@@ -36,3 +36,19 @@
 .input::placeholder {
   color: var(--color-neutral-400);
 }
+
+.inputError {
+  border-color: var(--color-red-500);
+}
+
+.inputError:focus {
+  border-color: var(--color-red-500);
+}
+
+.errorText {
+  font-family: var(--font);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--color-red-500);
+  margin-top: var(--spacing-xs);
+}

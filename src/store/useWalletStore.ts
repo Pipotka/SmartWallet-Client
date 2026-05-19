@@ -8,6 +8,7 @@ interface WalletState {
   addEndpoint: (endpoint: Omit<TransactionEndpoint, 'id' | 'value'>) => void;
   updateEndpoint: (id: string, updates: Partial<Omit<TransactionEndpoint, 'id'>>) => void;
   deleteEndpoint: (id: string) => void;
+  setUserInfo: (info: UserInfo) => void;
 }
 
 const generateId = (): string => crypto.randomUUID();
@@ -59,6 +60,8 @@ export const useWalletStore = create<WalletState>()((set) => ({
     set((state) => ({
       endpoints: state.endpoints.filter((e) => e.id !== id),
     })),
+
+  setUserInfo: (info) => set({ userInfo: info }),
 }));
 
 export function getWallets(): TransactionEndpoint[] {
