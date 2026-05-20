@@ -4,6 +4,8 @@ import { EditWalletPage } from '@/pages/EditWalletPage/EditWalletPage';
 import { EditCategoryPage } from '@/pages/EditCategoryPage/EditCategoryPage';
 import { RegisterPage } from '@/pages/RegisterPage/RegisterPage';
 import { LoginPage } from '@/pages/LoginPage/LoginPage';
+import { TransactionPage } from '@/pages/TransactionPage/TransactionPage';
+import { TransactionAddPage } from '@/pages/TransactionAddPage/TransactionAddPage';
 import styles from './App.module.css';
 
 function App() {
@@ -16,6 +18,8 @@ function App() {
           <Route path="/" element={<CategoryPage />} />
           <Route path="/wallet/:id" element={<EditWalletPage />} />
           <Route path="/category/:id" element={<EditCategoryPage />} />
+          <Route path="/transactions" element={<TransactionPage />} />
+          <Route path="/transactions/add" element={<TransactionAddPage />} />
         </Routes>
       </div>
     </BrowserRouter>
