@@ -1,0 +1,63 @@
+.toast {
+  position: fixed;
+  bottom: calc(var(--nav-height) + var(--spacing-sm));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--color-header);
+  color: var(--color-text-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  font-family: var(--font);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  z-index: 1000;
+  animation: slide-up 0.3s ease-out;
+}
+
+.message {
+  flex: 1;
+}
+
+.actionButton {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: none;
+  border: none;
+  color: var(--color-red-500);
+  font-family: var(--font);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.actionButton:hover {
+  opacity: 0.8;
+}
+
+.toast.closing {
+  animation: fade-out 0.3s ease-out forwards;
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
