@@ -12,9 +12,8 @@ interface TransactionCardProps {
 }
 
 export function TransactionCard({ transaction, onDelete }: TransactionCardProps) {
-  const endpoints = useWalletStore((state) => state.endpoints);
-  const wallets = endpoints.filter((e) => e.isStorage);
-  const categories = endpoints.filter((e) => !e.isStorage);
+  const wallets = useWalletStore((s) => s.endpoints.filter((e) => e.isStorage));
+  const categories = useWalletStore((s) => s.endpoints.filter((e) => !e.isStorage));
 
   const description = formatTransactionDescription(transaction, wallets, categories);
   const date = new Date(transaction.date).toLocaleDateString('ru-RU', {
@@ -27,6 +26,7 @@ export function TransactionCard({ transaction, onDelete }: TransactionCardProps)
   const typeColor = TRANSACTION_TYPE_COLORS[transaction.type];
 
   const startXRef = useRef(0);
+  const deltaXRef = useRef(0);
   const [deltaX, setDeltaX] = useState(0);
   const [showOverlay, setShowOverlay] = useState(false);
 
@@ -38,16 +38,19 @@ export function TransactionCard({ transaction, onDelete }: TransactionCardProps)
     const currentX = e.touches[0].clientX;
     const diff = currentX - startXRef.current;
     if (diff < 0) {
-      setDeltaX(Math.max(diff, -80));
+      const newDelta = Math.max(diff, -80);
+      deltaXRef.current = newDelta;
+      setDeltaX(newDelta);
     }
   }, []);
 
   const handleTouchEnd = useCallback(() => {
-    if (deltaX < -40) {
+    if (deltaXRef.current < -40) {
       setShowOverlay(true);
     }
     setDeltaX(0);
-  }, [deltaX]);
+    deltaXRef.current = 0;
+  }, []);
 
   const handleDeleteClick = useCallback(() => {
     onDelete(transaction.id);
@@ -57,6 +60,13 @@ export function TransactionCard({ transaction, onDelete }: TransactionCardProps)
   const handleCardClick = useCallback(() => {
     setShowOverlay(false);
   }, []);
+
+  const handleOverlayKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleDeleteClick();
+    }
+  }, [handleDeleteClick]);
 
   return (
     <div className={styles.cardWrapper}>
@@ -87,9 +97,14 @@ export function TransactionCard({ transaction, onDelete }: TransactionCardProps)
           </div>
         </div>
         {showOverlay && (
-          <div className={styles.overlay} onClick={handleDeleteClick}>
+          <button
+            className={styles.overlay}
+            onClick={handleDeleteClick}
+            onKeyDown={handleOverlayKeyDown}
+            aria-label="Удалить транзакцию"
+          >
             Удалить
-          </div>
+          </button>
         )}
         <button
           className={styles.deleteButton}

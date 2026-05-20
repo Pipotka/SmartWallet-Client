@@ -15,8 +15,7 @@ interface TransactionFormProps {
 
 export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
   const form = useTransactionForm();
-  const endpoints = useWalletStore((state) => state.endpoints);
-  const categories = endpoints.filter((e) => !e.isStorage);
+  const categories = useWalletStore((s) => s.endpoints.filter((e) => !e.isStorage));
 
   const selectedCategory = form.destinationId
     ? categories.find((c) => c.id === form.destinationId)

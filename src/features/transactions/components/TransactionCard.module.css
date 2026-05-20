@@ -6,7 +6,7 @@
 
 .card {
   position: relative;
-  height: 90px;
+  min-height: 90px;
   display: flex;
   align-items: center;
   background-color: var(--color-bg);
@@ -38,8 +38,8 @@
 }
 
 .dot {
-  width: 8px;
-  height: 8px;
+  width: var(--spacing-sm);
+  height: var(--spacing-sm);
   border-radius: 50%;
   flex-shrink: 0;
 }
