@@ -17,11 +17,14 @@ export function Select({
   placeholder = 'Select an option',
   disabled = false,
 }: SelectProps) {
+  const selectId = `select-${label.replace(/\s+/g, '-').toLowerCase()}`;
+
   return (
     <div className={styles.field}>
-      <label className={styles.label}>{label}</label>
+      <label className={styles.label} htmlFor={selectId}>{label}</label>
       <div className={styles.selectWrapper}>
         <select
+          id={selectId}
           className={styles.select}
           value={value ?? ''}
           onChange={(e) => onChange(e.target.value || null)}
