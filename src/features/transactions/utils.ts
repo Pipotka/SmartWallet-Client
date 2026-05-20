@@ -1,32 +1,28 @@
 import type { Transaction, TransactionType } from './types';
 import type { TransactionEndpoint } from '@/types';
 
-type Wallet = TransactionEndpoint;
-type Category = TransactionEndpoint;
-
 export function getTransactionType(
   sourceId: string | null,
   destinationId: string | null,
-  wallets: Wallet[],
-  categories: Category[]
+  wallets: TransactionEndpoint[],
+  categories: TransactionEndpoint[]
 ): TransactionType | null {
   const isSourceWallet = sourceId !== null;
-  const isDestCategory = destinationId !== null
-    && categories.some(c => c.id === destinationId);
-  const isDestWallet = destinationId !== null
-    && wallets.some(w => w.id === destinationId);
+  const isDestCategory = categories.some(c => c.id === destinationId);
+  const isDestWallet = wallets.some(w => w.id === destinationId);
 
   if (!isSourceWallet && isDestWallet) return 'income';
   if (isSourceWallet && isDestCategory) return 'expense';
   if (isSourceWallet && isDestWallet) return 'transfer';
   if (isSourceWallet && !destinationId) return 'balance_decrease';
+  // !isSourceWallet && isDestCategory is invalid: a category can never be a source
   return null;
 }
 
 export function formatTransactionDescription(
   transaction: Transaction,
-  wallets: Wallet[],
-  categories: Category[]
+  wallets: TransactionEndpoint[],
+  categories: TransactionEndpoint[]
 ): string {
   const sourceName = transaction.sourceId
     ? wallets.find(w => w.id === transaction.sourceId)?.name ?? 'Неизвестно'
