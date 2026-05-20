@@ -53,7 +53,7 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
           }))}
           value={form.sourceId ?? ''}
           onChange={(value) => form.setSourceId(value || null)}
-          placeholder="Нет источника"
+          placeholder="Выберите источник"
         />
 
         <div className={styles.destinationRow}>
@@ -90,7 +90,6 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
           <Button
             variant="primary"
             icon={<SaveIcon />}
-            onClick={handleSubmit}
             disabled={!form.isValid}
             type="submit"
           >

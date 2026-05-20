@@ -54,9 +54,9 @@ export function TransactionCard({ transaction, onDelete }: TransactionCardProps)
     setShowOverlay(false);
   }, [onDelete, transaction.id]);
 
-  const handleDeleteHover = useCallback(() => {
-    onDelete(transaction.id);
-  }, [onDelete, transaction.id]);
+  const handleCardClick = useCallback(() => {
+    setShowOverlay(false);
+  }, []);
 
   return (
     <div className={styles.cardWrapper}>
@@ -67,7 +67,7 @@ export function TransactionCard({ transaction, onDelete }: TransactionCardProps)
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className={styles.cardContent}>
+        <div className={styles.cardContent} onClick={handleCardClick}>
           <div className={styles.header}>
             <div className={styles.typeRow}>
               <span
@@ -93,7 +93,7 @@ export function TransactionCard({ transaction, onDelete }: TransactionCardProps)
         )}
         <button
           className={styles.deleteButton}
-          onClick={handleDeleteHover}
+          onClick={handleDeleteClick}
           aria-label="Удалить транзакцию"
         >
           <img src={trashIcon} alt="" />
