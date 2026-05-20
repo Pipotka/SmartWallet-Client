@@ -10,7 +10,7 @@ interface UseTransactionFormReturn {
   setDestinationId: (id: string | null) => void;
   amount: string;
   setAmount: (value: string) => void;
-  availableSources: { value: string; label: string; isSpecial?: boolean }[];
+  availableSources: { value: string | null; label: string; isSpecial?: boolean }[];
   availableDestinations: { value: string; label: string }[];
   predictedType: TransactionType | null;
   isValid: boolean;
@@ -63,7 +63,7 @@ export function useTransactionForm(): UseTransactionFormReturn {
       label: w.name,
     }));
     return [
-      { value: '', label: 'Без источника', isSpecial: true },
+      { value: null, label: 'Без источника', isSpecial: true },
       ...walletOptions,
     ];
   }, [wallets]);

@@ -9,8 +9,8 @@ interface UseTransactionFiltersReturn {
   selectedEndpointId: string | null;
   setSelectedEndpointId: (id: string | null) => void;
   filteredTransactions: Transaction[];
-  availableTypes: { value: string; label: string }[];
-  availableEndpoints: { value: string; label: string }[];
+  availableTypes: { value: string | null; label: string }[];
+  availableEndpoints: { value: string | null; label: string }[];
 }
 
 export function useTransactionFilters(
@@ -26,7 +26,7 @@ export function useTransactionFilters(
       value,
       label,
     }));
-    return [{ value: '', label: 'Все' }, ...types];
+    return [{ value: null, label: 'Все' }, ...types];
   }, []);
 
   const availableEndpoints = useMemo(() => {
@@ -34,7 +34,7 @@ export function useTransactionFilters(
       value: ep.id,
       label: ep.name,
     }));
-    return [{ value: '', label: 'Все' }, ...endpointOptions];
+    return [{ value: null, label: 'Все' }, ...endpointOptions];
   }, [endpoints]);
 
   const filteredTransactions = useMemo(() => {
