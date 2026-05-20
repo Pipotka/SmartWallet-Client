@@ -5,10 +5,11 @@ interface ToastProps {
   message: string;
   actionLabel?: string;
   onAction?: () => void;
+  onClose?: () => void;
   visible: boolean;
 }
 
-export function Toast({ message, actionLabel, onAction, visible }: ToastProps) {
+export function Toast({ message, actionLabel, onAction, onClose, visible }: ToastProps) {
   const [closing, setClosing] = useState(false);
 
   useEffect(() => {
@@ -19,6 +20,7 @@ export function Toast({ message, actionLabel, onAction, visible }: ToastProps) {
 
     const timer = setTimeout(() => {
       setClosing(true);
+      onClose?.();
     }, 3000);
 
     return () => clearTimeout(timer);
@@ -37,7 +39,7 @@ export function Toast({ message, actionLabel, onAction, visible }: ToastProps) {
     >
       <span className={styles.message}>{message}</span>
       {actionLabel && onAction && (
-        <button className={styles.actionButton} onClick={onAction}>
+        <button className={styles.actionButton} onClick={() => { onAction?.(); onClose?.(); }}>
           {actionLabel}
         </button>
       )}
