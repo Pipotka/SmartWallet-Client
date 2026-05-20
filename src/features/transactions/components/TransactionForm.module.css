@@ -1,0 +1,43 @@
+.formContainer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: var(--spacing-xl) 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  width: 100%;
+  max-width: 400px;
+}
+
+.destinationRow {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--spacing-sm);
+}
+
+.destinationSelect {
+  flex: 1;
+  min-width: 0;
+}
+
+.errorText {
+  display: block;
+  font-family: var(--font);
+  font-size: var(--text-sm);
+  color: var(--color-red-500);
+  margin-top: var(--spacing-xs);
+}
+
+.buttonRow {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.buttonRow > * {
+  flex: 1;
+  max-width: calc(50% - var(--spacing-md) / 2);
+}

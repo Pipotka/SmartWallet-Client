@@ -1,0 +1,13 @@
+.filters {
+  width: 100%;
+}
+
+.filterRow {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.filterItem {
+  flex: 1;
+  min-width: 0;
+}
