@@ -33,9 +33,9 @@ export function TransactionPage() {
   const handleUndo = useCallback(() => {
     if (deletedId) {
       undoDelete(deletedId);
+      setDeletedId(null);
+      setToastVisible(false);
     }
-    setDeletedId(null);
-    setToastVisible(false);
   }, [deletedId, undoDelete]);
 
   const handleToastClose = useCallback(() => {

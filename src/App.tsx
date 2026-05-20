@@ -18,8 +18,8 @@ function App() {
           <Route path="/" element={<CategoryPage />} />
           <Route path="/wallet/:id" element={<EditWalletPage />} />
           <Route path="/category/:id" element={<EditCategoryPage />} />
-          <Route path="/transactions" element={<TransactionPage />} />
           <Route path="/transactions/add" element={<TransactionAddPage />} />
+          <Route path="/transactions" element={<TransactionPage />} />
         </Routes>
       </div>
     </BrowserRouter>
