@@ -39,3 +39,7 @@ export interface LoginFormData {
   email: string;
   password: string;
 }
+
+export type { TransactionType } from '../features/transactions/types';
+export type { Transaction } from '../features/transactions/types';
+export type { CreateTransactionDTO } from '../features/transactions/types';
