@@ -19,76 +19,76 @@ const generateId = (): string => crypto.randomUUID();
 
 const pendingDeletionTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
-function generateMockTransactions(): Transaction[] {
-  const now = new Date();
+const UNDO_WINDOW_MS = 3000;
+const MOCK_FETCH_DELAY_MS = 500;
+const MOCK_CREATE_DELAY_MS = 300;
 
-  return [
-    {
-      id: generateId(),
-      sourceId: '1',
-      destinationId: '6',
-      amount: 1500,
-      type: 'expense',
-      date: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-      id: generateId(),
-      sourceId: '2',
-      destinationId: '7',
-      amount: 350,
-      type: 'expense',
-      date: new Date(now.getTime() - 5 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-      id: generateId(),
-      sourceId: '1',
-      destinationId: '3',
-      amount: 2000,
-      type: 'transfer',
-      date: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-      id: generateId(),
-      sourceId: '4',
-      destinationId: '5',
-      amount: 5000,
-      type: 'transfer',
-      date: new Date(now.getTime() - 48 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-      id: generateId(),
-      sourceId: null,
-      destinationId: '1',
-      amount: 10000,
-      type: 'income',
-      date: new Date(now.getTime() - 72 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-      id: generateId(),
-      sourceId: null,
-      destinationId: '2',
-      amount: 25000,
-      type: 'income',
-      date: new Date(now.getTime() - 96 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-      id: generateId(),
-      sourceId: '3',
-      destinationId: null,
-      amount: 800,
-      type: 'balance_decrease',
-      date: new Date(now.getTime() - 120 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-      id: generateId(),
-      sourceId: '5',
-      destinationId: null,
-      amount: 1200,
-      type: 'balance_decrease',
-      date: new Date(now.getTime() - 144 * 60 * 60 * 1000).toISOString(),
-    },
-  ];
-}
+const mockTransactions: Transaction[] = [
+  {
+    id: 'mock-tx-001',
+    sourceId: '1',
+    destinationId: '6',
+    amount: 1500,
+    type: 'expense',
+    date: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'mock-tx-002',
+    sourceId: '2',
+    destinationId: '7',
+    amount: 350,
+    type: 'expense',
+    date: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'mock-tx-003',
+    sourceId: '1',
+    destinationId: '3',
+    amount: 2000,
+    type: 'transfer',
+    date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'mock-tx-004',
+    sourceId: '4',
+    destinationId: '5',
+    amount: 5000,
+    type: 'transfer',
+    date: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'mock-tx-005',
+    sourceId: null,
+    destinationId: '1',
+    amount: 10000,
+    type: 'income',
+    date: new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'mock-tx-006',
+    sourceId: null,
+    destinationId: '2',
+    amount: 25000,
+    type: 'income',
+    date: new Date(Date.now() - 96 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'mock-tx-007',
+    sourceId: '3',
+    destinationId: null,
+    amount: 800,
+    type: 'balance_decrease',
+    date: new Date(Date.now() - 120 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'mock-tx-008',
+    sourceId: '5',
+    destinationId: null,
+    amount: 1200,
+    type: 'balance_decrease',
+    date: new Date(Date.now() - 144 * 60 * 60 * 1000).toISOString(),
+  },
+];
 
 export const useTransactionStore = create<TransactionState>()((set, get) => ({
   transactions: [],
@@ -99,8 +99,7 @@ export const useTransactionStore = create<TransactionState>()((set, get) => ({
   fetchTransactions: async () => {
     set({ isLoading: true, error: null });
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      const mockTransactions = generateMockTransactions();
+      await new Promise((resolve) => setTimeout(resolve, MOCK_FETCH_DELAY_MS));
       set({ transactions: mockTransactions, isLoading: false });
     } catch {
       set({ error: 'Failed to fetch transactions', isLoading: false });
@@ -110,7 +109,7 @@ export const useTransactionStore = create<TransactionState>()((set, get) => ({
   createTransaction: async (dto: CreateTransactionDTO) => {
     set({ isLoading: true, error: null });
     try {
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      await new Promise((resolve) => setTimeout(resolve, MOCK_CREATE_DELAY_MS));
       const wallets = getWallets();
       const categories = getCategories();
       const type = getTransactionType(dto.sourceId, dto.destinationId, wallets, categories);
@@ -139,6 +138,8 @@ export const useTransactionStore = create<TransactionState>()((set, get) => ({
   },
 
   deleteTransaction: async (id: string) => {
+    if (pendingDeletionTimers.has(id)) return id;
+
     set((state) => {
       const newOptimisticDeleted = new Set(state.optimisticDeleted);
       newOptimisticDeleted.add(id);
@@ -155,7 +156,7 @@ export const useTransactionStore = create<TransactionState>()((set, get) => ({
           optimisticDeleted: newOptimisticDeleted,
         };
       });
-    }, 3000);
+    }, UNDO_WINDOW_MS);
 
     pendingDeletionTimers.set(id, timer);
 
@@ -172,7 +173,7 @@ export const useTransactionStore = create<TransactionState>()((set, get) => ({
     set((state) => {
       const newOptimisticDeleted = new Set(state.optimisticDeleted);
       newOptimisticDeleted.delete(id);
-      return { optimisticDeleted: newOptimisticDeleted };
+      return { optimisticDeleted: newOptimisticDeleted, error: null };
     });
   },
 }));
