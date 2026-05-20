@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import styles from './TransactionForm.module.css';
 import type { CreateTransactionDTO } from '@/features/transactions/types';
 import { useTransactionForm } from '@/features/transactions/hooks/useTransactionForm';
@@ -15,7 +15,8 @@ interface TransactionFormProps {
 
 export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
   const form = useTransactionForm();
-  const categories = useWalletStore((s) => s.endpoints.filter((e) => !e.isStorage));
+  const endpoints = useWalletStore((s) => s.endpoints);
+  const categories = useMemo(() => endpoints.filter((e) => !e.isStorage), [endpoints]);
 
   const selectedCategory = form.destinationId
     ? categories.find((c) => c.id === form.destinationId)

@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useMemo } from 'react';
 import styles from './TransactionCard.module.css';
 import type { Transaction } from '@/features/transactions/types';
 import { TRANSACTION_TYPE_LABELS, TRANSACTION_TYPE_COLORS } from '@/features/transactions/types';
@@ -12,8 +12,9 @@ interface TransactionCardProps {
 }
 
 export function TransactionCard({ transaction, onDelete }: TransactionCardProps) {
-  const wallets = useWalletStore((s) => s.endpoints.filter((e) => e.isStorage));
-  const categories = useWalletStore((s) => s.endpoints.filter((e) => !e.isStorage));
+  const endpoints = useWalletStore((s) => s.endpoints);
+  const wallets = useMemo(() => endpoints.filter((e) => e.isStorage), [endpoints]);
+  const categories = useMemo(() => endpoints.filter((e) => !e.isStorage), [endpoints]);
 
   const description = formatTransactionDescription(transaction, wallets, categories);
   const date = new Date(transaction.date).toLocaleDateString('ru-RU', {

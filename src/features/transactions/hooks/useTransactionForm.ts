@@ -52,8 +52,9 @@ export function useTransactionForm(): UseTransactionFormReturn {
   const [destinationId, setDestinationId] = useState<string | null>(null);
   const [amount, setAmount] = useState('');
 
-  const wallets = useWalletStore((s) => s.endpoints.filter(e => e.isStorage));
-  const categories = useWalletStore((s) => s.endpoints.filter(e => !e.isStorage));
+  const endpoints = useWalletStore((s) => s.endpoints);
+  const wallets = useMemo(() => endpoints.filter(e => e.isStorage), [endpoints]);
+  const categories = useMemo(() => endpoints.filter(e => !e.isStorage), [endpoints]);
 
   const availableSources = useMemo(() => {
     const walletOptions = wallets.map((w) => ({
