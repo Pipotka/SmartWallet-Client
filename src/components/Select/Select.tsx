@@ -14,7 +14,7 @@ export function Select({
   options,
   value,
   onChange,
-  placeholder = 'Select an option',
+  placeholder = 'Выберите',
   disabled = false,
 }: SelectProps) {
   const selectId = `select-${label.replace(/\s+/g, '-').toLowerCase()}`;

@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTransactionStore } from '@/store/useTransactionStore';
 import { Header } from '@/components/Header/Header';
-import { BottomNav } from '@/components/BottomNav/BottomNav';
 import { TransactionForm } from '@/features/transactions/components/TransactionForm';
 import type { CreateTransactionDTO } from '@/features/transactions/types';
 import styles from './TransactionAddPage.module.css';
@@ -34,8 +33,6 @@ export function TransactionAddPage() {
 
         <hr className={styles.separator} />
       </main>
-
-      <BottomNav />
     </div>
   );
 }
