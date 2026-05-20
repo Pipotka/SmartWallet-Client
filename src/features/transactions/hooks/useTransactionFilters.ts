@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import type { Transaction, TransactionType } from '@/features/transactions/types';
 import { TRANSACTION_TYPE_LABELS } from '@/features/transactions/types';
 import { useWalletStore } from '@/store/useWalletStore';
@@ -16,10 +16,18 @@ interface UseTransactionFiltersReturn {
 export function useTransactionFilters(
   transactions: Transaction[]
 ): UseTransactionFiltersReturn {
-  const [selectedType, setSelectedType] = useState<TransactionType | null>(null);
-  const [selectedEndpointId, setSelectedEndpointId] = useState<string | null>(null);
+  const [selectedType, setSelectedTypeState] = useState<TransactionType | null>(null);
+  const [selectedEndpointId, setSelectedEndpointIdState] = useState<string | null>(null);
 
   const endpoints = useWalletStore((state) => state.endpoints);
+
+  const setSelectedType = useCallback((type: TransactionType | null) => {
+    setSelectedTypeState(type);
+  }, []);
+
+  const setSelectedEndpointId = useCallback((id: string | null) => {
+    setSelectedEndpointIdState(id);
+  }, []);
 
   const availableTypes = useMemo(() => {
     const types = Object.entries(TRANSACTION_TYPE_LABELS).map(([value, label]) => ({

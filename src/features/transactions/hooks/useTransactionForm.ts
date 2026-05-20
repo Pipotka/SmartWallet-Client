@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import type { TransactionType } from '@/features/transactions/types';
 import { getTransactionType } from '@/features/transactions/utils';
-import { useWalletStore, getWallets, getCategories } from '@/store/useWalletStore';
+import { useWalletStore } from '@/store/useWalletStore';
 
 interface UseTransactionFormReturn {
   sourceId: string | null;
@@ -52,10 +52,8 @@ export function useTransactionForm(): UseTransactionFormReturn {
   const [destinationId, setDestinationId] = useState<string | null>(null);
   const [amount, setAmount] = useState('');
 
-  const endpoints = useWalletStore((state) => state.endpoints);
-
-  const wallets = useMemo(() => getWallets(), [endpoints]);
-  const categories = useMemo(() => getCategories(), [endpoints]);
+  const wallets = useWalletStore((s) => s.endpoints.filter(e => e.isStorage));
+  const categories = useWalletStore((s) => s.endpoints.filter(e => !e.isStorage));
 
   const availableSources = useMemo(() => {
     const walletOptions = wallets.map((w) => ({
@@ -95,14 +93,12 @@ export function useTransactionForm(): UseTransactionFormReturn {
     return validate(sourceId, destinationId, amount, wallets, categories);
   }, [sourceId, destinationId, amount, wallets, categories]);
 
-  const isValid = useMemo(() => {
-    return Object.values(errors).every((err) => !err);
-  }, [errors]);
+  const isValid = Object.values(errors).every((err) => !err);
 
-  const handleSetSourceId = (id: string | null) => {
+  const handleSetSourceId = useCallback((id: string | null) => {
     setSourceId(id);
     setDestinationId(null);
-  };
+  }, []);
 
   return {
     sourceId,

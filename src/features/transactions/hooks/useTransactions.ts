@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useTransactionStore } from '@/store/useTransactionStore';
 import type { Transaction } from '@/features/transactions/types';
 
@@ -19,8 +20,9 @@ export function useTransactions(): UseTransactionsReturn {
   const deleteTransaction = useTransactionStore((state) => state.deleteTransaction);
   const undoDelete = useTransactionStore((state) => state.undoDelete);
 
-  const filteredTransactions = transactions.filter(
-    (tx) => !optimisticDeleted.has(tx.id)
+  const filteredTransactions = useMemo(
+    () => transactions.filter((tx) => !optimisticDeleted.has(tx.id)),
+    [transactions, optimisticDeleted]
   );
 
   return {
