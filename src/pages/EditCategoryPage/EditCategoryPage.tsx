@@ -23,8 +23,9 @@ export function EditCategoryPage() {
   if (!endpoint && !isNew) {
     return (
       <div className={styles.page}>
-        <Header pageTitle="Категория не найдена" />
+        <Header />
         <main className={styles.content}>
+          <h2 className={styles.title}>Категория не найдена</h2>
           <p>Категория не найдена</p>
         </main>
       </div>
@@ -56,9 +57,10 @@ export function EditCategoryPage() {
 
   return (
     <div className={styles.page}>
-      <Header pageTitle={isNew ? 'Новая категория' : 'Редактирование категории'} />
+      <Header />
 
       <main className={styles.content}>
+        <h2 className={styles.title}>{isNew ? 'Новая категория' : 'Редактирование категории'}</h2>
         <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
           <InputField
             label="Название"

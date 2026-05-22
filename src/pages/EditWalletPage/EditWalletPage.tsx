@@ -24,8 +24,9 @@ export function EditWalletPage() {
   if (!endpoint && !isNew) {
     return (
       <div className={styles.page}>
-        <Header pageTitle="Кошелёк не найден" />
+        <Header />
         <main className={styles.content}>
+          <h2 className={styles.title}>Кошелёк не найден</h2>
           <p>Кошелёк не найден</p>
         </main>
       </div>
@@ -58,9 +59,10 @@ export function EditWalletPage() {
 
   return (
     <div className={styles.page}>
-      <Header pageTitle={isNew ? 'Новый кошелёк' : 'Редактирование Кошелька'} />
+      <Header />
 
       <main className={styles.content}>
+        <h2 className={styles.title}>{isNew ? 'Новый кошелёк' : 'Редактирование Кошелька'}</h2>
         <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
           <InputField
             label="Название"

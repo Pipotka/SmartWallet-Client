@@ -27,11 +27,13 @@ export function TransactionAddPage() {
       <Header />
 
       <main className={styles.content}>
-        <h1 className={styles.title}>Добавление транзакции</h1>
+        <div className={styles.formWrapper}>
+          <h1 className={styles.title}>Добавление транзакции</h1>
 
-        <TransactionForm onSubmit={handleSubmit} onCancel={handleCancel} />
+          <TransactionForm onSubmit={handleSubmit} onCancel={handleCancel} />
 
-        <hr className={styles.separator} />
+          <hr className={styles.separator} />
+        </div>
       </main>
     </div>
   );
