@@ -2,7 +2,7 @@ import { useRef, useState, useCallback, useMemo } from 'react';
 import styles from './TransactionCard.module.css';
 import type { Transaction } from '@/features/transactions/types';
 import { TRANSACTION_TYPE_LABELS, TRANSACTION_TYPE_COLORS } from '@/features/transactions/types';
-import { formatTransactionDescription } from '@/features/transactions/utils';
+import { formatTransactionTitle, formatAmountWithSign } from '@/features/transactions/utils';
 import trashIcon from '@/assets/trash.svg';
 import { useWalletStore } from '@/store/useWalletStore';
 
@@ -16,7 +16,8 @@ export function TransactionCard({ transaction, onDelete }: TransactionCardProps)
   const wallets = useMemo(() => endpoints.filter((e) => e.isStorage), [endpoints]);
   const categories = useMemo(() => endpoints.filter((e) => !e.isStorage), [endpoints]);
 
-  const description = formatTransactionDescription(transaction, wallets, categories);
+  const title = formatTransactionTitle(transaction, wallets, categories);
+  const amountDisplay = formatAmountWithSign(transaction.amount, transaction.type);
   const date = new Date(transaction.date).toLocaleDateString('ru-RU', {
     day: '2-digit',
     month: '2-digit',
@@ -89,12 +90,12 @@ export function TransactionCard({ transaction, onDelete }: TransactionCardProps)
             </div>
             <span className={styles.date}>{date}</span>
           </div>
-          <div className={styles.description}>{description}</div>
+          <div className={styles.description}>{title}</div>
           <div
             className={styles.amount}
             style={{ color: typeColor }}
           >
-            {transaction.amount} ₽
+            {amountDisplay}
           </div>
         </div>
         {showOverlay && (

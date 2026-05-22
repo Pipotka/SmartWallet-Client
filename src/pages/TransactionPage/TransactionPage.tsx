@@ -45,7 +45,7 @@ export function TransactionPage() {
 
   return (
     <div className={styles.page}>
-      <Header pageTitle="Транзакции" />
+      <Header />
 
       <main className={styles.content}>
         <TransactionFilters filters={filters} />
@@ -59,6 +59,8 @@ export function TransactionPage() {
             ))
           )}
         </div>
+
+        <hr className={styles.listSeparator} />
 
         <button
           className={styles.addButton}

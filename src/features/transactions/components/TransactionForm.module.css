@@ -34,10 +34,10 @@
 
 .buttonRow {
   display: flex;
-  gap: var(--spacing-md);
+  gap: var(--spacing-lg);
 }
 
 .buttonRow > * {
   flex: 1;
-  max-width: calc(50% - var(--spacing-md) / 2);
+  max-width: calc(50% - var(--spacing-lg) / 2);
 }

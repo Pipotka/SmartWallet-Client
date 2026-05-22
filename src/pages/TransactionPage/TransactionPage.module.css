@@ -8,11 +8,19 @@
 .content {
   flex: 1;
   padding: var(--spacing-lg) var(--spacing-xl);
-  padding-bottom: calc(var(--nav-height) + var(--spacing-xl));
+  padding-bottom: calc(var(--nav-height) + 61px + var(--spacing-lg) * 2 + var(--spacing-md));
 }
 
 .list {
   margin-top: var(--spacing-lg);
+}
+
+.listSeparator {
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-separator);
+  border: none;
+  margin: var(--spacing-md) 0;
 }
 
 .emptyText {
@@ -24,9 +32,6 @@
 }
 
 .addButton {
-  position: fixed;
-  bottom: calc(var(--nav-height) + var(--spacing-lg));
-  right: var(--spacing-xl);
   width: 127px;
   height: 61px;
   border-radius: 8px;
@@ -38,6 +43,7 @@
   justify-content: center;
   box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
   transition: background-color 0.2s;
+  margin: var(--spacing-lg) auto 0;
 }
 
 .addButton:hover {

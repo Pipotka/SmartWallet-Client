@@ -1,5 +1,6 @@
 import type { Transaction, TransactionType } from './types';
 import type { TransactionEndpoint } from '@/types';
+import type { ReactNode } from 'react';
 
 export function getTransactionType(
   sourceId: string | null,
@@ -33,4 +34,48 @@ export function formatTransactionDescription(
       ?? 'Неизвестно')
     : '—';
   return `${sourceName} → ${destName}`;
+}
+
+export function formatTransactionTitle(
+  transaction: Transaction,
+  wallets: TransactionEndpoint[],
+  categories: TransactionEndpoint[]
+): ReactNode {
+  const sourceName = transaction.sourceId
+    ? wallets.find(w => w.id === transaction.sourceId)?.name ?? 'Неизвестно'
+    : null;
+  const destName = transaction.destinationId
+    ? (wallets.find(w => w.id === transaction.destinationId)?.name
+      ?? categories.find(c => c.id === transaction.destinationId)?.name
+      ?? 'Неизвестно')
+    : null;
+
+  if (sourceName && destName) {
+    return <>Из <strong>{sourceName}</strong> в <strong>{destName}</strong></>;
+  }
+  if (destName) {
+    return <>В <strong>{destName}</strong></>;
+  }
+  if (sourceName) {
+    return <>Из <strong>{sourceName}</strong></>;
+  }
+  return '—';
+}
+
+export function formatAmountWithSign(
+  amount: number,
+  type: TransactionType
+): string {
+  const formatted = amount.toLocaleString('ru-RU');
+  switch (type) {
+    case 'income':
+      return `+${formatted} ₽`;
+    case 'expense':
+    case 'balance_decrease':
+      return `−${formatted} ₽`;
+    case 'transfer':
+      return `${formatted} ₽`;
+    default:
+      return `${formatted} ₽`;
+  }
 }

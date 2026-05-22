@@ -7,6 +7,7 @@ interface SelectProps {
   onChange: (value: string | null) => void;
   placeholder?: string;
   disabled?: boolean;
+  rightBadge?: React.ReactNode;
 }
 
 export function Select({
@@ -16,6 +17,7 @@ export function Select({
   onChange,
   placeholder = 'Выберите',
   disabled = false,
+  rightBadge,
 }: SelectProps) {
   const selectId = `select-${label.replace(/\s+/g, '-').toLowerCase()}`;
 
@@ -39,6 +41,7 @@ export function Select({
             </option>
           ))}
         </select>
+        {rightBadge && <span className={styles.rightBadge}>{rightBadge}</span>}
         <svg
           className={styles.chevron}
           viewBox="0 0 16 16"

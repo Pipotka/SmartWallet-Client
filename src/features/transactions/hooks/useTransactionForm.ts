@@ -15,6 +15,7 @@ interface UseTransactionFormReturn {
   predictedType: TransactionType | null;
   isValid: boolean;
   errors: { source?: string; destination?: string; amount?: string };
+  markTouched: (field: 'source' | 'destination' | 'amount') => void;
 }
 
 function validate(
@@ -51,6 +52,11 @@ export function useTransactionForm(): UseTransactionFormReturn {
   const [sourceId, setSourceId] = useState<string | null>(null);
   const [destinationId, setDestinationId] = useState<string | null>(null);
   const [amount, setAmount] = useState('');
+  const [touched, setTouched] = useState<{
+    source: boolean;
+    destination: boolean;
+    amount: boolean;
+  }>({ source: false, destination: false, amount: false });
 
   const endpoints = useWalletStore((s) => s.endpoints);
   const wallets = useMemo(() => endpoints.filter(e => e.isStorage), [endpoints]);
@@ -91,10 +97,19 @@ export function useTransactionForm(): UseTransactionFormReturn {
   }, [sourceId, destinationId, wallets, categories]);
 
   const errors = useMemo(() => {
-    return validate(sourceId, destinationId, amount, wallets, categories);
-  }, [sourceId, destinationId, amount, wallets, categories]);
+    const allErrors = validate(sourceId, destinationId, amount, wallets, categories);
+    const visibleErrors: typeof allErrors = {};
+    if (touched.source && allErrors.source) visibleErrors.source = allErrors.source;
+    if (touched.destination && allErrors.destination) visibleErrors.destination = allErrors.destination;
+    if (touched.amount && allErrors.amount) visibleErrors.amount = allErrors.amount;
+    return visibleErrors;
+  }, [sourceId, destinationId, amount, wallets, categories, touched]);
 
   const isValid = Object.values(errors).every((err) => !err);
+
+  const markTouched = useCallback((field: 'source' | 'destination' | 'amount') => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+  }, []);
 
   const handleSetSourceId = useCallback((id: string | null) => {
     setSourceId(id);
@@ -113,5 +128,6 @@ export function useTransactionForm(): UseTransactionFormReturn {
     predictedType,
     isValid,
     errors,
+    markTouched,
   };
 }

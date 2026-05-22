@@ -38,12 +38,19 @@ export function useTransactionFilters(
   }, []);
 
   const availableEndpoints = useMemo(() => {
-    const endpointOptions = endpoints.map((ep) => ({
+    const walletsOnlyTypes: TransactionType[] = ['transfer', 'income', 'balance_decrease'];
+    const isWalletsOnly = selectedType !== null && walletsOnlyTypes.includes(selectedType);
+
+    const filteredEndpoints = isWalletsOnly
+      ? endpoints.filter((ep) => ep.isStorage)
+      : endpoints;
+
+    const endpointOptions = filteredEndpoints.map((ep) => ({
       value: ep.id,
       label: ep.name,
     }));
     return [{ value: null, label: 'Все' }, ...endpointOptions];
-  }, [endpoints]);
+  }, [endpoints, selectedType]);
 
   const filteredTransactions = useMemo(() => {
     return transactions.filter((tx) => {

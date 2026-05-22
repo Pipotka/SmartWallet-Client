@@ -9,6 +9,10 @@
   flex: 1;
   padding: var(--spacing-lg) var(--spacing-xl);
   padding-bottom: calc(var(--nav-height) + var(--spacing-xl));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .title {

@@ -6,7 +6,6 @@ import { useWalletStore } from '@/store/useWalletStore';
 import { Select } from '@/components/Select/Select';
 import { InputField } from '@/components/InputField/InputField';
 import { Button, SaveIcon, CloseIcon } from '@/components/Button/Button';
-import { CategoryLimitBadge } from './CategoryLimitBadge';
 
 interface TransactionFormProps {
   onSubmit: (dto: CreateTransactionDTO) => void;
@@ -16,6 +15,7 @@ interface TransactionFormProps {
 export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
   const form = useTransactionForm();
   const endpoints = useWalletStore((s) => s.endpoints);
+  const wallets = useMemo(() => endpoints.filter((e) => e.isStorage), [endpoints]);
   const categories = useMemo(() => endpoints.filter((e) => !e.isStorage), [endpoints]);
 
   const selectedCategory = form.destinationId
@@ -27,6 +27,14 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
     : 0;
 
   const showBadge = selectedCategory && selectedCategory.limitation > 0;
+
+  const selectedSource = form.sourceId
+    ? wallets.find((w) => w.id === form.sourceId)
+    : null;
+  const sourceRemaining = selectedSource && selectedSource.limitation > 0
+    ? selectedSource.limitation - selectedSource.value
+    : null;
+  const showSourceBadge = sourceRemaining !== null;
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
@@ -52,35 +60,39 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
             label: s.label,
           }))}
           value={form.sourceId ?? ''}
-          onChange={(value) => form.setSourceId(value || null)}
+          onChange={(value) => {
+            form.markTouched('source');
+            form.setSourceId(value || null);
+          }}
           placeholder="Выберите источник"
+          rightBadge={showSourceBadge ? <>До лимита: {sourceRemaining} ₽</> : undefined}
         />
 
-        <div className={styles.destinationRow}>
-          <div className={styles.destinationSelect}>
-            <Select
-              label="Назначение"
-              options={form.availableDestinations.map((d) => ({
-                value: d.value,
-                label: d.label,
-              }))}
-              value={form.destinationId ?? ''}
-              onChange={(value) => form.setDestinationId(value || null)}
-              placeholder="Выберите назначение"
-            />
-            {form.errors.destination && (
-              <span className={styles.errorText}>{form.errors.destination}</span>
-            )}
-          </div>
-          {showBadge && (
-            <CategoryLimitBadge remaining={remaining} />
-          )}
-        </div>
+        <Select
+          label="Назначение"
+          options={form.availableDestinations.map((d) => ({
+            value: d.value,
+            label: d.label,
+          }))}
+          value={form.destinationId ?? ''}
+          onChange={(value) => {
+            form.markTouched('destination');
+            form.setDestinationId(value || null);
+          }}
+          placeholder="Выберите назначение"
+          rightBadge={showBadge ? <>До лимита: {remaining} ₽</> : undefined}
+        />
+        {form.errors.destination && (
+          <span className={styles.errorText}>{form.errors.destination}</span>
+        )}
 
         <InputField
           label="Сумма"
           value={form.amount}
-          onChange={form.setAmount}
+          onChange={(value) => {
+            form.markTouched('amount');
+            form.setAmount(value);
+          }}
           type="number"
           error={!!form.errors.amount}
           errorText={form.errors.amount}
