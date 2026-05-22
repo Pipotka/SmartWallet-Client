@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 import styles from './TransactionForm.module.css';
 import type { CreateTransactionDTO } from '@/features/transactions/types';
 import { useTransactionForm } from '@/features/transactions/hooks/useTransactionForm';
+import { validateTransaction } from '@/features/transactions/utils';
 import { useWalletStore } from '@/store/useWalletStore';
 import { Select } from '@/components/Select/Select';
 import { InputField } from '@/components/InputField/InputField';
@@ -22,11 +23,17 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
     ? categories.find((c) => c.id === form.destinationId)
     : null;
 
-  const remaining = selectedCategory
-    ? selectedCategory.limitation - selectedCategory.value
-    : 0;
+  const selectedDestinationWallet = form.destinationId
+    ? wallets.find((w) => w.id === form.destinationId)
+    : null;
 
-  const showBadge = selectedCategory && selectedCategory.limitation > 0;
+  const destRemaining = selectedCategory && selectedCategory.limitation > 0
+    ? selectedCategory.limitation - selectedCategory.value
+    : selectedDestinationWallet && selectedDestinationWallet.limitation > 0
+      ? selectedDestinationWallet.limitation - selectedDestinationWallet.value
+      : null;
+
+  const showBadge = destRemaining !== null;
 
   const selectedSource = form.sourceId
     ? wallets.find((w) => w.id === form.sourceId)
@@ -36,18 +43,31 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
     : null;
   const showSourceBadge = sourceRemaining !== null;
 
+  const { sourceId, destinationId, amount, markAllTouched } = form;
+
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      if (form.isValid) {
+      markAllTouched();
+
+      const allErrors = validateTransaction(
+        sourceId,
+        destinationId,
+        amount,
+        wallets,
+        categories
+      );
+      const hasErrors = Object.values(allErrors).some((err) => err);
+
+      if (!hasErrors) {
         onSubmit({
-          sourceId: form.sourceId,
-          destinationId: form.destinationId,
-          amount: Number(form.amount),
+          sourceId,
+          destinationId,
+          amount: Number(amount),
         });
       }
     },
-    [form.sourceId, form.destinationId, form.amount, form.isValid, onSubmit]
+    [sourceId, destinationId, amount, wallets, categories, onSubmit, markAllTouched]
   );
 
   return (
@@ -80,7 +100,7 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
             form.setDestinationId(value || null);
           }}
           placeholder="Выберите назначение"
-          rightBadge={showBadge ? <>До лимита: {remaining} ₽</> : undefined}
+          rightBadge={showBadge ? <>До лимита: {destRemaining} ₽</> : undefined}
         />
         {form.errors.destination && (
           <span className={styles.errorText}>{form.errors.destination}</span>
@@ -93,6 +113,7 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
             form.markTouched('amount');
             form.setAmount(value);
           }}
+          onBlur={() => form.markTouched('amount')}
           type="number"
           error={!!form.errors.amount}
           errorText={form.errors.amount}

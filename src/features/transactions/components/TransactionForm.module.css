@@ -35,6 +35,7 @@
 .buttonRow {
   display: flex;
   gap: var(--spacing-lg);
+  margin-top: var(--spacing-lg);
 }
 
 .buttonRow > * {

@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from 'react';
 import type { TransactionType } from '@/features/transactions/types';
-import { getTransactionType } from '@/features/transactions/utils';
+import { getTransactionType, validateTransaction } from '@/features/transactions/utils';
 import { useWalletStore } from '@/store/useWalletStore';
 
 interface UseTransactionFormReturn {
@@ -16,36 +16,7 @@ interface UseTransactionFormReturn {
   isValid: boolean;
   errors: { source?: string; destination?: string; amount?: string };
   markTouched: (field: 'source' | 'destination' | 'amount') => void;
-}
-
-function validate(
-  sourceId: string | null,
-  destinationId: string | null,
-  amount: string,
-  wallets: { id: string }[],
-  categories: { id: string }[]
-): { source?: string; destination?: string; amount?: string } {
-  const errors: { source?: string; destination?: string; amount?: string } = {};
-
-  if (destinationId && categories.find(c => c.id === destinationId) && !sourceId) {
-    errors.source = 'Выберите источник';
-  }
-
-  if (!destinationId) {
-    errors.destination = 'Выберите назначение';
-  }
-
-  if (!amount) {
-    errors.amount = 'Введите сумму';
-  } else if (Number(amount) <= 0) {
-    errors.amount = 'Сумма должна быть больше 0';
-  }
-
-  if (sourceId && destinationId && sourceId === destinationId) {
-    errors.destination = 'Источник и назначение не могут совпадать';
-  }
-
-  return errors;
+  markAllTouched: () => void;
 }
 
 export function useTransactionForm(): UseTransactionFormReturn {
@@ -97,7 +68,7 @@ export function useTransactionForm(): UseTransactionFormReturn {
   }, [sourceId, destinationId, wallets, categories]);
 
   const errors = useMemo(() => {
-    const allErrors = validate(sourceId, destinationId, amount, wallets, categories);
+    const allErrors = validateTransaction(sourceId, destinationId, amount, wallets, categories);
     const visibleErrors: typeof allErrors = {};
     if (touched.source && allErrors.source) visibleErrors.source = allErrors.source;
     if (touched.destination && allErrors.destination) visibleErrors.destination = allErrors.destination;
@@ -109,6 +80,10 @@ export function useTransactionForm(): UseTransactionFormReturn {
 
   const markTouched = useCallback((field: 'source' | 'destination' | 'amount') => {
     setTouched(prev => ({ ...prev, [field]: true }));
+  }, []);
+
+  const markAllTouched = useCallback(() => {
+    setTouched({ source: true, destination: true, amount: true });
   }, []);
 
   const handleSetSourceId = useCallback((id: string | null) => {
@@ -129,5 +104,6 @@ export function useTransactionForm(): UseTransactionFormReturn {
     isValid,
     errors,
     markTouched,
+    markAllTouched,
   };
 }

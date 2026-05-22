@@ -40,14 +40,14 @@ export function TransactionCard({ transaction, onDelete }: TransactionCardProps)
     const currentX = e.touches[0].clientX;
     const diff = currentX - startXRef.current;
     if (diff < 0) {
-      const newDelta = Math.max(diff, -80);
+      const newDelta = Math.max(diff, -160);
       deltaXRef.current = newDelta;
       setDeltaX(newDelta);
     }
   }, []);
 
   const handleTouchEnd = useCallback(() => {
-    if (deltaXRef.current < -40) {
+    if (deltaXRef.current < -80) {
       setShowOverlay(true);
     }
     setDeltaX(0);

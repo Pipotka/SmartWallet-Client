@@ -50,7 +50,9 @@ export function TransactionPage() {
       <main className={styles.content}>
         <TransactionFilters filters={filters} />
 
-        <div className={styles.list}>
+        <hr className={styles.listSeparator} />
+
+        <div className={styles.scrollArea}>
           {filters.filteredTransactions.length === 0 ? (
             <p className={styles.emptyText}>Транзакций пока нет</p>
           ) : (
@@ -59,8 +61,6 @@ export function TransactionPage() {
             ))
           )}
         </div>
-
-        <hr className={styles.listSeparator} />
 
         <button
           className={styles.addButton}

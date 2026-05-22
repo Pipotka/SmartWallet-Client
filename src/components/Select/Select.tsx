@@ -24,7 +24,7 @@ export function Select({
   return (
     <div className={styles.field}>
       <label className={styles.label} htmlFor={selectId}>{label}</label>
-      <div className={styles.selectWrapper}>
+      <div className={`${styles.selectWrapper}${rightBadge ? ` ${styles.hasBadge}` : ''}`}>
         <select
           id={selectId}
           className={styles.select}

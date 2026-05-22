@@ -79,3 +79,33 @@ export function formatAmountWithSign(
       return `${formatted} ₽`;
   }
 }
+
+export function validateTransaction(
+  sourceId: string | null,
+  destinationId: string | null,
+  amount: string,
+  wallets: { id: string }[],
+  categories: { id: string }[]
+): { source?: string; destination?: string; amount?: string } {
+  const errors: { source?: string; destination?: string; amount?: string } = {};
+
+  if (destinationId && categories.find(c => c.id === destinationId) && !sourceId) {
+    errors.source = 'Выберите источник';
+  }
+
+  if (!destinationId) {
+    errors.destination = 'Выберите назначение';
+  }
+
+  if (!amount) {
+    errors.amount = 'Введите сумму';
+  } else if (Number(amount) <= 0) {
+    errors.amount = 'Сумма должна быть больше 0';
+  }
+
+  if (sourceId && destinationId && sourceId === destinationId) {
+    errors.destination = 'Источник и назначение не могут совпадать';
+  }
+
+  return errors;
+}
