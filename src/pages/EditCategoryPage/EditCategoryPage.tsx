@@ -86,7 +86,7 @@ export function EditCategoryPage() {
               Отмена
             </Button>
             {!isNew && (
-              <Button variant="danger" onClick={handleDelete}>
+              <Button variant="danger" onClick={handleDelete} className={styles.deleteBtn}>
                 Удал
               </Button>
             )}

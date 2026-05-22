@@ -95,7 +95,7 @@ export function EditWalletPage() {
               Отмена
             </Button>
             {!isNew && (
-              <Button variant="danger" onClick={handleDelete}>
+              <Button variant="danger" onClick={handleDelete} className={styles.deleteBtn}>
                 Удал
               </Button>
             )}

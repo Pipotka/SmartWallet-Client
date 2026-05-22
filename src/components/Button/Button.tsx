@@ -10,6 +10,7 @@ interface ButtonProps {
   fullWidth?: boolean;
   type?: 'button' | 'submit';
   disabled?: boolean;
+  className?: string;
 }
 
 export function Button({
@@ -20,11 +21,13 @@ export function Button({
   fullWidth = false,
   type = 'button',
   disabled = false,
+  className,
 }: ButtonProps) {
   const classNames = [
     styles.button,
     styles[variant],
     fullWidth ? styles.fullWidth : '',
+    className,
   ].filter(Boolean).join(' ');
 
   return (

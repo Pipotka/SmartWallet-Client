@@ -35,7 +35,16 @@
 .buttonGroup {
   display: flex;
   gap: var(--spacing-md);
-  flex-wrap: wrap;
+  width: 100%;
+}
+
+.buttonGroup > * {
+  flex: 1;
+  min-width: 0;
+}
+
+.deleteBtn {
+  flex: 0 0 auto;
 }
 
 .title {
