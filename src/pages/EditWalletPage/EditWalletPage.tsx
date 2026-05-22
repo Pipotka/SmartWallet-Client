@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header/Header';
 import { InputField } from '@/components/InputField/InputField';
-import { Button, SaveIcon, CloseIcon } from '@/components/Button/Button';
+import { Button, SaveIcon, CloseIcon, TrashIcon } from '@/components/Button/Button';
 import { useWalletStore } from '@/store/useWalletStore';
 import styles from './EditWalletPage.module.css';
 
@@ -95,9 +95,7 @@ export function EditWalletPage() {
               Отмена
             </Button>
             {!isNew && (
-              <Button variant="danger" onClick={handleDelete} className={styles.deleteBtn}>
-                Удал
-              </Button>
+              <Button variant="danger" onClick={handleDelete} className={styles.deleteBtn} icon={<TrashIcon />} />
             )}
           </div>
         </form>
