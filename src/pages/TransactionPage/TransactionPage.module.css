@@ -16,19 +16,21 @@
 }
 
 .listSeparator {
-  width: 100%;
+  width: calc(100% + 2 * var(--spacing-xl));
   height: 2px;
   background-color: var(--color-separator);
   border: none;
-  margin: var(--spacing-md) 0;
+  margin: var(--spacing-md) calc(-1 * var(--spacing-xl));
 }
 
 .scrollArea {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  margin-top: var(--spacing-lg);
+  margin-top: 0;
   margin-bottom: var(--spacing-lg);
+  margin-left: calc(-1 * var(--spacing-xl));
+  margin-right: calc(-1 * var(--spacing-xl));
   scrollbar-width: thin;
   scrollbar-color: var(--color-neutral-400) transparent;
   -webkit-overflow-scrolling: touch;
