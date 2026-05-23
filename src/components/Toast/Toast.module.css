@@ -44,7 +44,7 @@
 
 @media (min-width: 768px) {
   .toast {
-    left: calc(var(--sidebar-collapsed-width) + 50%);
+    left: calc(50% + var(--sidebar-collapsed-width) / 2);
     transform: translateX(-50%);
     bottom: var(--spacing-lg);
   }
@@ -52,7 +52,7 @@
 
 @media (min-width: 1024px) {
   .toast {
-    left: calc(var(--sidebar-width) + 50%);
+    left: calc(50% + var(--sidebar-width) / 2);
   }
 }
 
