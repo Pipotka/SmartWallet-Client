@@ -88,8 +88,7 @@
 
 .navItemActive {
   background-color: rgba(59, 130, 246, 0.25);
-  border-left: 3px solid var(--color-blue-500);
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  box-shadow: inset 3px 0 0 var(--color-blue-500);
 }
 
 .navIcon {
