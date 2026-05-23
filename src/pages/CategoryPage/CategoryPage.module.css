@@ -7,7 +7,7 @@
 
 .content {
   flex: 1;
-  padding: var(--spacing-lg) var(--spacing-xl);
+  padding: var(--spacing-lg) var(--content-padding);
   padding-bottom: calc(var(--nav-height) + var(--spacing-xl));
 }
 
@@ -43,16 +43,25 @@
 }
 
 .separator {
-  width: calc(100% + var(--spacing-xl) * 2);
+  width: calc(100% + var(--content-padding) * 2);
   height: 2px;
   background-color: var(--color-neutral-500);
   border: none;
-  margin: var(--spacing-xl) calc(-1 * var(--spacing-xl));
+  margin: var(--spacing-xl) calc(-1 * var(--content-padding));
 }
 
 .categoryGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(var(--grid-columns), 1fr);
   gap: 30px;
   justify-items: center;
+}
+
+@media (min-width: 1024px) {
+  .walletRow {
+    overflow-x: visible;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--card-size), 1fr));
+    gap: var(--spacing-lg);
+  }
 }
