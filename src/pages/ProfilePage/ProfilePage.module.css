@@ -8,7 +8,7 @@
 .content {
   flex: 1;
   padding: var(--spacing-xl) var(--content-padding);
-  padding-bottom: 140px;
+  padding-bottom: calc(var(--nav-height) + var(--spacing-xl));
   display: flex;
   flex-direction: column;
   align-items: center;
