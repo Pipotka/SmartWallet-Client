@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Sidebar } from '@/components/Sidebar/Sidebar';
 import { CategoryPage } from '@/pages/CategoryPage/CategoryPage';
 import { EditWalletPage } from '@/pages/EditWalletPage/EditWalletPage';
 import { EditCategoryPage } from '@/pages/EditCategoryPage/EditCategoryPage';
@@ -14,6 +15,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className={styles.app}>
+        <Sidebar />
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
