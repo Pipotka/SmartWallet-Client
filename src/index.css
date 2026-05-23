@@ -2,11 +2,16 @@
 @import './styles/reset.css';
 
 #root {
-  max-width: var(--mobile-width);
-  margin: 0 auto;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
   background-color: var(--color-bg);
   position: relative;
+}
+
+@media (max-width: 767px) {
+  #root {
+    max-width: var(--mobile-width);
+    margin: 0 auto;
+  }
 }
