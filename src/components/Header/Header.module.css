@@ -68,3 +68,23 @@
   margin: var(--spacing-lg) 0 0 0;
   padding: 0 var(--spacing-xl);
 }
+
+@media (min-width: 768px) {
+  .header {
+    height: var(--header-height);
+    padding: var(--spacing-md) var(--spacing-xl);
+  }
+
+  .logoSection {
+    display: none;
+  }
+
+  .userInfo {
+    display: none;
+  }
+
+  .pageTitle {
+    text-align: left;
+    margin: 0;
+  }
+}
