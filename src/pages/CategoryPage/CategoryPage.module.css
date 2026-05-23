@@ -25,7 +25,7 @@
 
 .walletRow {
   display: flex;
-  gap: 30px;
+  gap: var(--card-gap);
   overflow-x: auto;
   padding: 0 0 var(--spacing-sm) 0;
   margin-right: -6px;
@@ -53,7 +53,7 @@
 .categoryGrid {
   display: grid;
   grid-template-columns: repeat(var(--grid-columns), 1fr);
-  gap: 30px;
+  gap: var(--card-gap);
   justify-items: center;
 }
 

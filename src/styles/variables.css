@@ -70,6 +70,7 @@
   /* Adaptive sizes — default (mobile) */
   --content-padding: 16px;
   --card-size: 100px;
+  --card-gap: 30px;
   --grid-columns: 3;
   --header-height: 120px;
   --nav-height: 124px;
