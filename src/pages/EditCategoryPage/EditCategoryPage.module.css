@@ -7,7 +7,7 @@
 
 .content {
   flex: 1;
-  padding: var(--spacing-xl);
+  padding: var(--spacing-xl) var(--content-padding);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xl);
@@ -20,7 +20,7 @@
   flex-direction: column;
   gap: var(--spacing-lg);
   width: 100%;
-  max-width: 334px;
+  max-width: var(--form-max-width);
   margin: 0 auto;
 }
 
