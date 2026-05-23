@@ -5,3 +5,16 @@
   min-height: 100dvh;
   position: relative;
 }
+
+@media (min-width: 768px) {
+  .app {
+    max-width: none;
+    margin-left: var(--sidebar-collapsed-width);
+  }
+}
+
+@media (min-width: 1024px) {
+  .app {
+    margin-left: var(--sidebar-width);
+  }
+}
