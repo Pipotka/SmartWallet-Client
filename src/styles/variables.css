@@ -61,7 +61,41 @@
   --spacing-xl: 24px;
   --spacing-2xl: 32px;
 
+  /* Note: CSS custom properties cannot be used in @media queries,
+     so breakpoint values are used directly in media queries. */
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1440px;
+
+  /* Adaptive sizes — default (mobile) */
+  --content-padding: 16px;
+  --card-size: 100px;
+  --grid-columns: 3;
   --header-height: 120px;
   --nav-height: 124px;
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 64px;
+  --form-max-width: 334px;
   --mobile-width: 402px;
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  :root {
+    --content-padding: 24px;
+    --card-size: 120px;
+    --grid-columns: 4;
+    --header-height: 80px;
+    --form-max-width: 480px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  :root {
+    --content-padding: 32px;
+    --card-size: 140px;
+    --grid-columns: 5;
+    --nav-height: 0px;
+  }
 }
