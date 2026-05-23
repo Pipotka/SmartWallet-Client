@@ -27,7 +27,9 @@ export function BottomNav() {
   return (
     <nav className={styles.nav}>
       {navItems.map((item) => {
-        const isActive = location.pathname === item.path;
+        const isActive = item.key === 'profile'
+          ? location.pathname.startsWith('/profile')
+          : location.pathname === item.path;
         return (
           <button
             key={item.key}

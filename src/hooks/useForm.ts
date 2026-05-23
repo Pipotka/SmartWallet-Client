@@ -27,34 +27,31 @@ export function useForm<T extends Record<string, string>>(
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const valuesRef = useRef<T>(initialValues);
+  const validateRef = useRef(validate);
+  const onSubmitRef = useRef(onSubmit);
 
   useEffect(() => {
     valuesRef.current = values;
   }, [values]);
 
-  const runValidation = useCallback(
-    (currentValues: T) => {
-      setErrors(validate(currentValues));
-    },
-    [validate],
-  );
+  useEffect(() => {
+    validateRef.current = validate;
+  }, [validate]);
 
-  const handleChange = useCallback(
-    (field: keyof T) => (value: string) => {
-      const next = { ...valuesRef.current, [field]: value };
-      setValues(next);
-      runValidation(next);
-    },
-    [runValidation],
-  );
+  useEffect(() => {
+    onSubmitRef.current = onSubmit;
+  }, [onSubmit]);
 
-  const handleBlur = useCallback(
-    (field: keyof T) => {
-      setTouched((prev) => ({ ...prev, [field]: true }));
-      runValidation(valuesRef.current);
-    },
-    [runValidation],
-  );
+  const handleChange = useCallback((field: keyof T) => (value: string) => {
+    const next = { ...valuesRef.current, [field]: value };
+    setValues(next);
+    setErrors(validateRef.current(next));
+  }, []);
+
+  const handleBlur = useCallback((field: keyof T) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    setErrors(validateRef.current(valuesRef.current));
+  }, []);
 
   const handleSubmit = useCallback(() => {
     const currentValues = valuesRef.current;
@@ -65,7 +62,7 @@ export function useForm<T extends Record<string, string>>(
 
     setTouched(allTouched);
 
-    const validationErrors = validate(currentValues);
+    const validationErrors = validateRef.current(currentValues);
     setErrors(validationErrors);
 
     const hasErrors = Object.values(validationErrors).some(
@@ -75,11 +72,11 @@ export function useForm<T extends Record<string, string>>(
     if (!hasErrors) {
       setIsSubmitting(true);
       setTimeout(() => {
-        onSubmit(currentValues);
+        onSubmitRef.current(currentValues);
         setIsSubmitting(false);
       }, 0);
     }
-  }, [validate, onSubmit]);
+  }, []);
 
   return {
     values,
