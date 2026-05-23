@@ -6,6 +6,12 @@
   align-items: center;
 }
 
+@media (max-width: 767px) {
+  .page {
+    padding: 0;
+  }
+}
+
 .container {
   width: 100%;
   max-width: var(--mobile-width);
@@ -13,6 +19,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: var(--form-max-width);
+    padding: var(--spacing-2xl) var(--spacing-xl);
+  }
 }
 
 .iconWrapper {
