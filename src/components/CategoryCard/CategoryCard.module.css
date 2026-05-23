@@ -10,8 +10,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 100px;
-  height: 100px;
+  width: var(--card-size);
+  height: var(--card-size);
   border-radius: var(--radius-md);
   padding: var(--spacing-sm);
   box-sizing: border-box;
@@ -98,8 +98,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100px;
-  height: 100px;
+  width: var(--card-size);
+  height: var(--card-size);
   border-radius: var(--radius-md);
   border: 2px dashed var(--color-neutral-400);
   background-color: transparent;
