@@ -18,3 +18,7 @@
     margin-left: var(--sidebar-width);
   }
 }
+
+.authPage {
+  margin-left: 0 !important;
+}

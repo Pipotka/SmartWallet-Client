@@ -16,7 +16,7 @@ function AppContent() {
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
   return (
-    <div className={styles.app}>
+    <div className={`${styles.app} ${isAuthPage ? styles.authPage : ''}`}>
       {!isAuthPage && <Sidebar />}
       <Routes>
         <Route path="/login" element={<LoginPage />} />
