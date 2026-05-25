@@ -1,18 +1,17 @@
 import { useState, useMemo, useCallback } from 'react';
-import type { TransactionType } from '@/features/transactions/types';
 import { getTransactionType, validateTransaction } from '@/features/transactions/utils';
-import { useWalletStore } from '@/store/useWalletStore';
+import { useTransactionEndpoints } from '@/api/queries/transaction-endpoint';
 
 interface UseTransactionFormReturn {
-  sourceId: string | null;
-  setSourceId: (id: string | null) => void;
-  destinationId: string | null;
-  setDestinationId: (id: string | null) => void;
+  sourceAccountId: string | null;
+  setSourceAccountId: (id: string | null) => void;
+  destinationAccountId: string | null;
+  setDestinationAccountId: (id: string | null) => void;
   amount: string;
   setAmount: (value: string) => void;
   availableSources: { value: string | null; label: string; isSpecial?: boolean }[];
   availableDestinations: { value: string; label: string }[];
-  predictedType: TransactionType | null;
+  predictedType: number | null;
   isValid: boolean;
   errors: { source?: string; destination?: string; amount?: string };
   markTouched: (field: 'source' | 'destination' | 'amount') => void;
@@ -20,8 +19,8 @@ interface UseTransactionFormReturn {
 }
 
 export function useTransactionForm(): UseTransactionFormReturn {
-  const [sourceId, setSourceId] = useState<string | null>(null);
-  const [destinationId, setDestinationId] = useState<string | null>(null);
+  const [sourceAccountId, setSourceAccountId] = useState<string | null>(null);
+  const [destinationAccountId, setDestinationAccountId] = useState<string | null>(null);
   const [amount, setAmount] = useState('');
   const [touched, setTouched] = useState<{
     source: boolean;
@@ -29,14 +28,14 @@ export function useTransactionForm(): UseTransactionFormReturn {
     amount: boolean;
   }>({ source: false, destination: false, amount: false });
 
-  const endpoints = useWalletStore((s) => s.endpoints);
+  const { data: endpoints = [] } = useTransactionEndpoints();
   const wallets = useMemo(() => endpoints.filter(e => e.isStorage), [endpoints]);
   const categories = useMemo(() => endpoints.filter(e => !e.isStorage), [endpoints]);
 
   const availableSources = useMemo(() => {
     const walletOptions = wallets.map((w) => ({
       value: w.id,
-      label: w.name,
+      label: w.name ?? '',
     }));
     return [
       { value: null, label: 'Без источника', isSpecial: true },
@@ -45,36 +44,36 @@ export function useTransactionForm(): UseTransactionFormReturn {
   }, [wallets]);
 
   const availableDestinations = useMemo(() => {
-    if (sourceId === null) {
+    if (sourceAccountId === null) {
       return wallets.map((w) => ({
         value: w.id,
-        label: w.name,
+        label: w.name ?? '',
       }));
     }
 
     const categoryOptions = categories.map((c) => ({
       value: c.id,
-      label: c.name,
+      label: c.name ?? '',
     }));
     const walletOptions = wallets.map((w) => ({
       value: w.id,
-      label: w.name,
+      label: w.name ?? '',
     }));
     return [...categoryOptions, ...walletOptions];
-  }, [sourceId, wallets, categories]);
+  }, [sourceAccountId, wallets, categories]);
 
   const predictedType = useMemo(() => {
-    return getTransactionType(sourceId, destinationId, wallets, categories);
-  }, [sourceId, destinationId, wallets, categories]);
+    return getTransactionType(sourceAccountId, destinationAccountId, wallets, categories);
+  }, [sourceAccountId, destinationAccountId, wallets, categories]);
 
   const errors = useMemo(() => {
-    const allErrors = validateTransaction(sourceId, destinationId, amount, wallets, categories);
+    const allErrors = validateTransaction(sourceAccountId, destinationAccountId, amount, wallets, categories);
     const visibleErrors: typeof allErrors = {};
     if (touched.source && allErrors.source) visibleErrors.source = allErrors.source;
     if (touched.destination && allErrors.destination) visibleErrors.destination = allErrors.destination;
     if (touched.amount && allErrors.amount) visibleErrors.amount = allErrors.amount;
     return visibleErrors;
-  }, [sourceId, destinationId, amount, wallets, categories, touched]);
+  }, [sourceAccountId, destinationAccountId, amount, wallets, categories, touched]);
 
   const isValid = Object.values(errors).every((err) => !err);
 
@@ -86,16 +85,16 @@ export function useTransactionForm(): UseTransactionFormReturn {
     setTouched({ source: true, destination: true, amount: true });
   }, []);
 
-  const handleSetSourceId = useCallback((id: string | null) => {
-    setSourceId(id);
-    setDestinationId(null);
+  const handleSetSourceAccountId = useCallback((id: string | null) => {
+    setSourceAccountId(id);
+    setDestinationAccountId(null);
   }, []);
 
   return {
-    sourceId,
-    setSourceId: handleSetSourceId,
-    destinationId,
-    setDestinationId,
+    sourceAccountId,
+    setSourceAccountId: handleSetSourceAccountId,
+    destinationAccountId,
+    setDestinationAccountId,
     amount,
     setAmount,
     availableSources,
