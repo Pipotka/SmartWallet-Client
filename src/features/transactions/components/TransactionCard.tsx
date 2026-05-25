@@ -3,8 +3,8 @@ import styles from './TransactionCard.module.css';
 import type { Transaction } from '@/features/transactions/types';
 import { TRANSACTION_TYPE_LABELS, TRANSACTION_TYPE_COLORS } from '@/features/transactions/types';
 import { formatTransactionTitle, formatAmountWithSign } from '@/features/transactions/utils';
+import { useTransactionEndpoints } from '@/api/queries/transaction-endpoint';
 import trashIcon from '@/assets/trash.svg';
-import { useWalletStore } from '@/store/useWalletStore';
 
 interface TransactionCardProps {
   transaction: Transaction;
@@ -12,13 +12,13 @@ interface TransactionCardProps {
 }
 
 export function TransactionCard({ transaction, onDelete }: TransactionCardProps) {
-  const endpoints = useWalletStore((s) => s.endpoints);
+  const { data: endpoints = [] } = useTransactionEndpoints();
   const wallets = useMemo(() => endpoints.filter((e) => e.isStorage), [endpoints]);
   const categories = useMemo(() => endpoints.filter((e) => !e.isStorage), [endpoints]);
 
   const title = formatTransactionTitle(transaction, wallets, categories);
   const amountDisplay = formatAmountWithSign(transaction.amount, transaction.type);
-  const date = new Date(transaction.date).toLocaleDateString('ru-RU', {
+  const date = new Date(transaction.madeAt).toLocaleDateString('ru-RU', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
