@@ -2,11 +2,11 @@ import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header/Header';
 import { BottomNav } from '@/components/BottomNav/BottomNav';
 import { CategoryCard, AddCard } from '@/components/CategoryCard/CategoryCard';
-import { useWalletStore } from '@/store/useWalletStore';
+import { useTransactionEndpoints } from '@/api/queries/transaction-endpoint';
 import styles from './CategoryPage.module.css';
 
 export function CategoryPage() {
-  const endpoints = useWalletStore((s) => s.endpoints);
+  const { data: endpoints = [] } = useTransactionEndpoints();
   const navigate = useNavigate();
 
   const wallets = endpoints.filter((e) => e.isStorage);
