@@ -3,16 +3,21 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header/Header';
 import { InputField } from '@/components/InputField/InputField';
 import { Button, SaveIcon, CloseIcon, TrashIcon } from '@/components/Button/Button';
-import { useWalletStore } from '@/store/useWalletStore';
+import {
+  useTransactionEndpoints,
+  useCreateTransactionEndpoint,
+  useUpdateTransactionEndpoint,
+  useDeleteTransactionEndpoint,
+} from '@/api/queries/transaction-endpoint';
 import styles from './EditCategoryPage.module.css';
 
 export function EditCategoryPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const endpoints = useWalletStore((s) => s.endpoints);
-  const addEndpoint = useWalletStore((s) => s.addEndpoint);
-  const updateEndpoint = useWalletStore((s) => s.updateEndpoint);
-  const deleteEndpoint = useWalletStore((s) => s.deleteEndpoint);
+  const { data: endpoints = [] } = useTransactionEndpoints();
+  const createMutation = useCreateTransactionEndpoint();
+  const updateMutation = useUpdateTransactionEndpoint();
+  const deleteMutation = useDeleteTransactionEndpoint();
 
   const isNew = id === 'new';
   const endpoint = endpoints.find((e) => e.id === id && !e.isStorage);
@@ -32,13 +37,13 @@ export function EditCategoryPage() {
     );
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const limitationNum = Number(limitation);
     if (!isNaN(limitationNum)) {
       if (isNew) {
-        addEndpoint({ name, limitation: limitationNum, isStorage: false });
+        await createMutation.mutateAsync({ name, limitation: limitationNum, isStorage: false });
       } else {
-        updateEndpoint(id!, { name, limitation: limitationNum });
+        await updateMutation.mutateAsync({ id: id!, name, limitation: limitationNum });
       }
       navigate('/');
     }
@@ -48,9 +53,9 @@ export function EditCategoryPage() {
     navigate(-1);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!isNew) {
-      deleteEndpoint(id!);
+      await deleteMutation.mutateAsync({ id: id! });
     }
     navigate('/');
   };
