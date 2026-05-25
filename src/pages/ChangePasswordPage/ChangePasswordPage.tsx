@@ -6,6 +6,7 @@ import { InputField } from '@/components/InputField/InputField';
 import { Button, SaveIcon } from '@/components/Button/Button';
 import { Toast } from '@/components/Toast/Toast';
 import { useForm } from '@/hooks/useForm';
+import { useChangePassword } from '@/api/queries/user';
 import styles from './ChangePasswordPage.module.css';
 
 interface ChangePasswordFormData {
@@ -48,10 +49,19 @@ function validateChangePassword(
 export function ChangePasswordPage() {
   const navigate = useNavigate();
   const [toastVisible, setToastVisible] = useState(false);
+  const changePasswordMutation = useChangePassword();
 
-  const handleSubmit = useCallback(() => {
-    setToastVisible(true);
-  }, []);
+  const handleSubmit = useCallback(async (values: ChangePasswordFormData) => {
+    try {
+      await changePasswordMutation.mutateAsync({
+        oldPasswordHash: values.oldPassword,
+        newPasswordHash: values.newPassword,
+      });
+      setToastVisible(true);
+    } catch {
+      // Error handling — could show an error toast in the future
+    }
+  }, [changePasswordMutation]);
 
   const form = useForm<ChangePasswordFormData>({
     initialValues: {
