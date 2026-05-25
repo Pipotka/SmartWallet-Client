@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTransactionStore } from '@/store/useTransactionStore';
+import { useCreateTransaction } from '@/api/queries/transaction';
 import { Header } from '@/components/Header/Header';
 import { TransactionForm } from '@/features/transactions/components/TransactionForm';
 import type { CreateTransactionDTO } from '@/features/transactions/types';
@@ -8,14 +8,14 @@ import styles from './TransactionAddPage.module.css';
 
 export function TransactionAddPage() {
   const navigate = useNavigate();
-  const createTransaction = useTransactionStore((s) => s.createTransaction);
+  const createMutation = useCreateTransaction();
 
   const handleSubmit = useCallback(
     async (dto: CreateTransactionDTO) => {
-      await createTransaction(dto);
+      await createMutation.mutateAsync(dto);
       navigate('/transactions');
     },
-    [createTransaction, navigate]
+    [createMutation, navigate]
   );
 
   const handleCancel = useCallback(() => {
