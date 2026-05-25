@@ -1,11 +1,12 @@
 import { useState, useMemo, useCallback } from 'react';
-import type { Transaction, TransactionType } from '@/features/transactions/types';
+import type { Transaction } from '@/features/transactions/types';
 import { TRANSACTION_TYPE_LABELS } from '@/features/transactions/types';
-import { useWalletStore } from '@/store/useWalletStore';
+import { useTransactionEndpoints } from '@/api/queries/transaction-endpoint';
+import { TransactionType } from '@/api/schemas/common';
 
-interface UseTransactionFiltersReturn {
-  selectedType: TransactionType | null;
-  setSelectedType: (type: TransactionType | null) => void;
+export interface UseTransactionFiltersReturn {
+  selectedType: number | null;
+  setSelectedType: (type: number | null) => void;
   selectedEndpointId: string | null;
   setSelectedEndpointId: (id: string | null) => void;
   filteredTransactions: Transaction[];
@@ -16,12 +17,12 @@ interface UseTransactionFiltersReturn {
 export function useTransactionFilters(
   transactions: Transaction[]
 ): UseTransactionFiltersReturn {
-  const [selectedType, setSelectedTypeState] = useState<TransactionType | null>(null);
+  const [selectedType, setSelectedTypeState] = useState<number | null>(null);
   const [selectedEndpointId, setSelectedEndpointIdState] = useState<string | null>(null);
 
-  const endpoints = useWalletStore((state) => state.endpoints);
+  const { data: endpoints = [] } = useTransactionEndpoints();
 
-  const setSelectedType = useCallback((type: TransactionType | null) => {
+  const setSelectedType = useCallback((type: number | null) => {
     setSelectedTypeState(type);
   }, []);
 
@@ -38,7 +39,11 @@ export function useTransactionFilters(
   }, []);
 
   const availableEndpoints = useMemo(() => {
-    const walletsOnlyTypes: TransactionType[] = ['transfer', 'income', 'balance_decrease'];
+    const walletsOnlyTypes: number[] = [
+      TransactionType.Transfer,
+      TransactionType.AdjustmentIncrease,
+      TransactionType.Income,
+    ];
     const isWalletsOnly = selectedType !== null && walletsOnlyTypes.includes(selectedType);
 
     const filteredEndpoints = isWalletsOnly
@@ -47,7 +52,7 @@ export function useTransactionFilters(
 
     const endpointOptions = filteredEndpoints.map((ep) => ({
       value: ep.id,
-      label: ep.name,
+      label: ep.name ?? '',
     }));
     return [{ value: null, label: 'Все' }, ...endpointOptions];
   }, [endpoints, selectedType]);
@@ -59,8 +64,8 @@ export function useTransactionFilters(
       }
       if (
         selectedEndpointId !== null &&
-        tx.sourceId !== selectedEndpointId &&
-        tx.destinationId !== selectedEndpointId
+        tx.sourceAccountId !== selectedEndpointId &&
+        tx.destinationAccountId !== selectedEndpointId
       ) {
         return false;
       }
