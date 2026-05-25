@@ -19,9 +19,9 @@ export function TransactionFilters({ filters, onAddClick }: TransactionFiltersPr
               value: t.value ?? '',
               label: t.label,
             }))}
-            value={filters.selectedType ?? ''}
+            value={filters.selectedType?.toString() ?? ''}
             onChange={(value) => {
-              filters.setSelectedType(value as UseTransactionFiltersReturn['selectedType']);
+              filters.setSelectedType(value === '' ? null : Number(value));
             }}
             placeholder="Все"
           />
