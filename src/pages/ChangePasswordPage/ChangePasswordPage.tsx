@@ -54,8 +54,8 @@ export function ChangePasswordPage() {
   const handleSubmit = useCallback(async (values: ChangePasswordFormData) => {
     try {
       await changePasswordMutation.mutateAsync({
-        oldPasswordHash: values.oldPassword,
-        newPasswordHash: values.newPassword,
+        oldPassword: values.oldPassword,
+        newPassword: values.newPassword,
       });
       setToastVisible(true);
     } catch {

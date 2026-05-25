@@ -38,7 +38,7 @@ export function LoginPage() {
       try {
         await loginMutation.mutateAsync({
           email: values.email,
-          passwordHash: values.password,
+          password: values.password,
         });
         navigate('/');
       } catch {
