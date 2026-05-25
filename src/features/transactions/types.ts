@@ -1,30 +1,36 @@
-export type TransactionType = 'expense' | 'transfer' | 'income' | 'balance_decrease';
+import type { ApiTransactionType } from '@/api/schemas/common';
 
-export const TRANSACTION_TYPE_LABELS = {
-  expense: 'Траты',
-  transfer: 'Перевод',
-  income: 'Увеличение баланса',
-  balance_decrease: 'Уменьшение баланса',
-} as const;
+export type TransactionType = ApiTransactionType;
 
-export const TRANSACTION_TYPE_COLORS = {
-  expense: '#ef4444',
-  transfer: '#64748b',
-  income: '#10b981',
-  balance_decrease: '#ef4444',
-} as const;
+export const TRANSACTION_TYPE_LABELS: Record<TransactionType, string> = {
+  [0]: 'Перевод',
+  [1]: 'Траты',
+  [2]: 'Уменьшение баланса',
+  [3]: 'Увеличение баланса',
+  [4]: 'Пополнение',
+  [5]: 'Тест',
+};
+
+export const TRANSACTION_TYPE_COLORS: Record<TransactionType, string> = {
+  [0]: '#64748b',
+  [1]: '#ef4444',
+  [2]: '#ef4444',
+  [3]: '#10b981',
+  [4]: '#10b981',
+  [5]: '#64748b',
+};
 
 export interface Transaction {
   id: string;
-  sourceId: string | null;
-  destinationId: string | null;
+  sourceAccountId: string | null;
+  destinationAccountId: string | null;
   amount: number;
   type: TransactionType;
-  date: string;
+  madeAt: string;
 }
 
 export interface CreateTransactionDTO {
-  sourceId: string | null;
-  destinationId: string | null;
+  sourceAccountId: string | null;
+  destinationAccountId: string | null;
   amount: number;
 }

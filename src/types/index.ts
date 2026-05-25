@@ -1,35 +1,19 @@
-export interface TransactionEndpoint {
-  id: string;
-  name: string;
-  value: number;
-  limitation: number;
-  isStorage: boolean;
-}
+import type { TransactionEndpointApiModel } from '@/api/schemas/transaction-endpoint';
+import type { CreateTransactionEndpointApiModel } from '@/api/schemas/transaction-endpoint';
+import type { UpdateTransactionEndpointApiModel } from '@/api/schemas/transaction-endpoint';
+import type { UserApiModel } from '@/api/schemas/user';
 
-export interface CreateTransactionEndpoint {
-  name: string;
-  limitation: number;
-  isStorage: boolean;
-}
-
-export interface UpdateTransactionEndpoint {
-  id: string;
-  name: string;
-  limitation: number;
-}
+export type TransactionEndpoint = TransactionEndpointApiModel;
+export type CreateTransactionEndpoint = CreateTransactionEndpointApiModel;
+export type UpdateTransactionEndpoint = UpdateTransactionEndpointApiModel;
+export type UserInfo = Pick<UserApiModel, 'firstName' | 'lastName' | 'patronymic'>;
 
 export type NavTab = 'home' | 'analytics' | 'transactions' | 'profile';
-
-export interface UserInfo {
-  lastName: string;
-  firstName: string;
-  middleName: string;
-}
 
 export interface RegistrationFormData {
   firstName: string;
   lastName: string;
-  middleName: string;
+  patronymic: string;
   email: string;
   password: string;
   passwordConfirm: string;
@@ -40,6 +24,6 @@ export interface LoginFormData {
   password: string;
 }
 
-export type { TransactionType } from '../features/transactions/types';
-export type { Transaction } from '../features/transactions/types';
-export type { CreateTransactionDTO } from '../features/transactions/types';
+export type { TransactionType } from '@/features/transactions/types';
+export type { Transaction } from '@/features/transactions/types';
+export type { CreateTransactionDTO } from '@/features/transactions/types';
