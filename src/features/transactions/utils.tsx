@@ -84,7 +84,7 @@ export function validateTransaction(
   sourceAccountId: string | null,
   destinationAccountId: string | null,
   amount: string,
-  wallets: { id: string }[],
+  _wallets: { id: string }[],
   categories: { id: string }[]
 ): { source?: string; destination?: string; amount?: string } {
   const errors: { source?: string; destination?: string; amount?: string } = {};
