@@ -3,16 +3,21 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header/Header';
 import { InputField } from '@/components/InputField/InputField';
 import { Button, SaveIcon, CloseIcon, TrashIcon } from '@/components/Button/Button';
-import { useWalletStore } from '@/store/useWalletStore';
+import {
+  useTransactionEndpoints,
+  useCreateTransactionEndpoint,
+  useUpdateTransactionEndpoint,
+  useDeleteTransactionEndpoint,
+} from '@/api/queries/transaction-endpoint';
 import styles from './EditWalletPage.module.css';
 
 export function EditWalletPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const endpoints = useWalletStore((s) => s.endpoints);
-  const addEndpoint = useWalletStore((s) => s.addEndpoint);
-  const updateEndpoint = useWalletStore((s) => s.updateEndpoint);
-  const deleteEndpoint = useWalletStore((s) => s.deleteEndpoint);
+  const { data: endpoints = [] } = useTransactionEndpoints();
+  const createMutation = useCreateTransactionEndpoint();
+  const updateMutation = useUpdateTransactionEndpoint();
+  const deleteMutation = useDeleteTransactionEndpoint();
 
   const isNew = id === 'new';
   const endpoint = endpoints.find((e) => e.id === id && e.isStorage);
@@ -33,14 +38,14 @@ export function EditWalletPage() {
     );
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const limitationNum = Number(limitation);
     const valueNum = Number(value);
     if (!isNaN(limitationNum) && !isNaN(valueNum)) {
       if (isNew) {
-        addEndpoint({ name, limitation: limitationNum, isStorage: true });
+        await createMutation.mutateAsync({ name, limitation: limitationNum, isStorage: true });
       } else {
-        updateEndpoint(id!, { name, limitation: limitationNum, value: valueNum });
+        await updateMutation.mutateAsync({ id: id!, name, limitation: limitationNum, value: valueNum });
       }
       navigate('/');
     }
@@ -50,9 +55,9 @@ export function EditWalletPage() {
     navigate(-1);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!isNew) {
-      deleteEndpoint(id!);
+      await deleteMutation.mutateAsync({ id: id! });
     }
     navigate('/');
   };
