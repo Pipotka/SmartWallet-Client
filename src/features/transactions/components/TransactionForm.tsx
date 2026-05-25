@@ -3,7 +3,7 @@ import styles from './TransactionForm.module.css';
 import type { CreateTransactionDTO } from '@/features/transactions/types';
 import { useTransactionForm } from '@/features/transactions/hooks/useTransactionForm';
 import { validateTransaction } from '@/features/transactions/utils';
-import { useWalletStore } from '@/store/useWalletStore';
+import { useTransactionEndpoints } from '@/api/queries/transaction-endpoint';
 import { Select } from '@/components/Select/Select';
 import { InputField } from '@/components/InputField/InputField';
 import { Button, SaveIcon, CloseIcon } from '@/components/Button/Button';
@@ -15,35 +15,35 @@ interface TransactionFormProps {
 
 export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
   const form = useTransactionForm();
-  const endpoints = useWalletStore((s) => s.endpoints);
+  const { data: endpoints = [] } = useTransactionEndpoints();
   const wallets = useMemo(() => endpoints.filter((e) => e.isStorage), [endpoints]);
   const categories = useMemo(() => endpoints.filter((e) => !e.isStorage), [endpoints]);
 
-  const selectedCategory = form.destinationId
-    ? categories.find((c) => c.id === form.destinationId)
+  const selectedCategory = form.destinationAccountId
+    ? categories.find((c) => c.id === form.destinationAccountId)
     : null;
 
-  const selectedDestinationWallet = form.destinationId
-    ? wallets.find((w) => w.id === form.destinationId)
+  const selectedDestinationWallet = form.destinationAccountId
+    ? wallets.find((w) => w.id === form.destinationAccountId)
     : null;
 
-  const destRemaining = selectedCategory && selectedCategory.limitation > 0
+  const destRemaining = selectedCategory && selectedCategory.limitation !== null && selectedCategory.limitation > 0
     ? selectedCategory.limitation - selectedCategory.value
-    : selectedDestinationWallet && selectedDestinationWallet.limitation > 0
+    : selectedDestinationWallet && selectedDestinationWallet.limitation !== null && selectedDestinationWallet.limitation > 0
       ? selectedDestinationWallet.limitation - selectedDestinationWallet.value
       : null;
 
   const showBadge = destRemaining !== null;
 
-  const selectedSource = form.sourceId
-    ? wallets.find((w) => w.id === form.sourceId)
+  const selectedSource = form.sourceAccountId
+    ? wallets.find((w) => w.id === form.sourceAccountId)
     : null;
-  const sourceRemaining = selectedSource && selectedSource.limitation > 0
+  const sourceRemaining = selectedSource && selectedSource.limitation !== null && selectedSource.limitation > 0
     ? selectedSource.limitation - selectedSource.value
     : null;
   const showSourceBadge = sourceRemaining !== null;
 
-  const { sourceId, destinationId, amount, markAllTouched } = form;
+  const { sourceAccountId, destinationAccountId, amount, markAllTouched } = form;
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
@@ -51,8 +51,8 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
       markAllTouched();
 
       const allErrors = validateTransaction(
-        sourceId,
-        destinationId,
+        sourceAccountId,
+        destinationAccountId,
         amount,
         wallets,
         categories
@@ -61,13 +61,13 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
 
       if (!hasErrors) {
         onSubmit({
-          sourceId,
-          destinationId,
+          sourceAccountId: sourceAccountId,
+          destinationAccountId: destinationAccountId,
           amount: Number(amount),
         });
       }
     },
-    [sourceId, destinationId, amount, wallets, categories, onSubmit, markAllTouched]
+    [sourceAccountId, destinationAccountId, amount, wallets, categories, onSubmit, markAllTouched]
   );
 
   return (
@@ -79,10 +79,10 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
             value: s.value ?? '',
             label: s.label,
           }))}
-          value={form.sourceId ?? ''}
+          value={form.sourceAccountId ?? ''}
           onChange={(value) => {
             form.markTouched('source');
-            form.setSourceId(value || null);
+            form.setSourceAccountId(value || null);
           }}
           placeholder="Выберите источник"
           rightBadge={showSourceBadge ? <>До лимита: {sourceRemaining} ₽</> : undefined}
@@ -94,10 +94,10 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
             value: d.value,
             label: d.label,
           }))}
-          value={form.destinationId ?? ''}
+          value={form.destinationAccountId ?? ''}
           onChange={(value) => {
             form.markTouched('destination');
-            form.setDestinationId(value || null);
+            form.setDestinationAccountId(value || null);
           }}
           placeholder="Выберите назначение"
           rightBadge={showBadge ? <>До лимита: {destRemaining} ₽</> : undefined}
