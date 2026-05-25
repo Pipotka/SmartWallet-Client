@@ -36,6 +36,14 @@
   -webkit-overflow-scrolling: touch;
 }
 
+@media (min-width: 768px) {
+  .scrollArea {
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+  }
+}
+
 .scrollArea::-webkit-scrollbar {
   width: 6px;
 }
@@ -57,7 +65,7 @@
   margin-top: var(--spacing-2xl);
 }
 
-.addButton {
+.mobileAddButton {
   align-self: center;
   width: 127px;
   height: 61px;
@@ -71,9 +79,16 @@
   box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
   transition: background-color 0.2s;
   flex-shrink: 0;
+  margin-top: var(--spacing-lg);
   margin-bottom: var(--spacing-lg);
 }
 
-.addButton:hover {
+.mobileAddButton:hover {
   background-color: var(--color-primary);
+}
+
+@media (min-width: 768px) {
+  .mobileAddButton {
+    display: none;
+  }
 }

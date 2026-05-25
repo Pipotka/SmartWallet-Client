@@ -1,12 +1,14 @@
 import styles from './TransactionFilters.module.css';
 import type { UseTransactionFiltersReturn } from '@/features/transactions/hooks/useTransactionFilters';
 import { Select } from '@/components/Select/Select';
+import plusIcon from '@/assets/plus-icon.svg';
 
 interface TransactionFiltersProps {
   filters: UseTransactionFiltersReturn;
+  onAddClick: () => void;
 }
 
-export function TransactionFilters({ filters }: TransactionFiltersProps) {
+export function TransactionFilters({ filters, onAddClick }: TransactionFiltersProps) {
   return (
     <div className={styles.filters}>
       <div className={styles.filterRow}>
@@ -38,6 +40,13 @@ export function TransactionFilters({ filters }: TransactionFiltersProps) {
             placeholder="Все"
           />
         </div>
+        <button
+          className={styles.addButton}
+          onClick={onAddClick}
+          aria-label="Добавить транзакцию"
+        >
+          <img src={plusIcon} alt="" />
+        </button>
       </div>
     </div>
   );

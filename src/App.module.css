@@ -9,12 +9,14 @@
 @media (min-width: 768px) {
   .app {
     max-width: none;
+    width: calc(100% - var(--sidebar-collapsed-width));
     margin-left: var(--sidebar-collapsed-width);
   }
 }
 
 @media (min-width: 1024px) {
   .app {
+    width: calc(100% - var(--sidebar-width));
     margin-left: var(--sidebar-width);
   }
 }

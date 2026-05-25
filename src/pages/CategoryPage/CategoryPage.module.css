@@ -33,6 +33,10 @@
   -webkit-overflow-scrolling: touch;
 }
 
+.walletRow .cardItem {
+  flex: 0 0 var(--card-size);
+}
+
 .walletRow::-webkit-scrollbar {
   height: 4px;
 }
@@ -51,17 +55,21 @@
 }
 
 .categoryGrid {
-  display: grid;
-  grid-template-columns: repeat(var(--grid-columns), 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: var(--card-gap);
-  justify-items: center;
+}
+
+.categoryGrid .cardItem {
+  flex: 0 0 var(--card-size);
 }
 
 @media (min-width: 1024px) {
   .walletRow {
-    overflow-x: visible;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(var(--card-size), 1fr));
-    gap: var(--spacing-lg);
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0;
+    margin-right: 0;
   }
 }

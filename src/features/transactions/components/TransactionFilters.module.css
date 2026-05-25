@@ -6,9 +6,40 @@
   display: flex;
   gap: var(--spacing-md);
   flex-wrap: wrap;
+  align-items: flex-end;
 }
 
 .filterItem {
   flex: 1;
   min-width: 0;
+}
+
+.addButton {
+  display: none;
+  flex-shrink: 0;
+  height: 42px;
+  width: 127px;
+  border-radius: 8px;
+  background-color: var(--color-blue-500);
+  border: none;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  transition: background-color 0.2s;
+}
+
+@media (min-width: 768px) {
+  .addButton {
+    display: flex;
+  }
+}
+
+.addButton:hover {
+  background-color: var(--color-primary);
+}
+
+.addButton img {
+  width: 20px;
+  height: 20px;
 }

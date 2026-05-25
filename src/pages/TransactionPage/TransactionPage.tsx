@@ -48,7 +48,7 @@ export function TransactionPage() {
       <Header />
 
       <main className={styles.content}>
-        <TransactionFilters filters={filters} />
+        <TransactionFilters filters={filters} onAddClick={() => navigate('/transactions/add')} />
 
         <hr className={styles.listSeparator} />
 
@@ -61,15 +61,15 @@ export function TransactionPage() {
             ))
           )}
         </div>
-
-        <button
-          className={styles.addButton}
-          onClick={() => navigate('/transactions/add')}
-          aria-label="Добавить транзакцию"
-        >
-          <img src={plusIcon} alt="" />
-        </button>
       </main>
+
+      <button
+        className={styles.mobileAddButton}
+        onClick={() => navigate('/transactions/add')}
+        aria-label="Добавить транзакцию"
+      >
+        <img src={plusIcon} alt="" />
+      </button>
 
       <BottomNav />
 
