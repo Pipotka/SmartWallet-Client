@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthLayout } from '@/components/AuthLayout/AuthLayout';
 import { useForm } from '@/hooks/useForm';
 import type { RegistrationFormData } from '@/types';
-import { useWalletStore } from '@/store/useWalletStore';
+import { useCreateUser } from '@/api/queries/user';
 import { InputField } from '@/components/InputField/InputField';
 import { Button } from '@/components/Button/Button';
 import styles from './RegisterPage.module.css';
@@ -12,7 +12,6 @@ function validateRegistration(values: RegistrationFormData): Partial<Record<keyo
 
   if (!values.firstName.trim()) errors.firstName = 'Поле обязательно для заполнения';
   if (!values.lastName.trim()) errors.lastName = 'Поле обязательно для заполнения';
-  // middleName is optional
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!values.email.trim()) {
@@ -41,23 +40,25 @@ function validateRegistration(values: RegistrationFormData): Partial<Record<keyo
 
 export function RegisterPage() {
   const navigate = useNavigate();
-  const setUserInfo = useWalletStore((state) => state.setUserInfo);
+  const createMutation = useCreateUser();
 
   const form = useForm<RegistrationFormData>({
     initialValues: {
       firstName: '',
       lastName: '',
-      middleName: '',
+      patronymic: '',
       email: '',
       password: '',
       passwordConfirm: '',
     },
     validate: validateRegistration,
-    onSubmit: (values) => {
-      setUserInfo({
+    onSubmit: async (values) => {
+      await createMutation.mutateAsync({
         firstName: values.firstName,
         lastName: values.lastName,
-        middleName: values.middleName,
+        patronymic: values.patronymic,
+        email: values.email,
+        password: values.password,
       });
       navigate('/');
     },
@@ -65,7 +66,6 @@ export function RegisterPage() {
 
   return (
     <AuthLayout title="Регистрация в Smart Wallet">
-      {/* Form */}
         <form className={styles.form} onSubmit={(e) => { e.preventDefault(); form.handleSubmit(); }}>
           <InputField
             label="Имя"
@@ -85,11 +85,11 @@ export function RegisterPage() {
           />
           <InputField
             label="Отчество"
-            value={form.values.middleName}
-            onChange={form.handleChange('middleName')}
-            onBlur={() => form.handleBlur('middleName')}
-            error={!!form.touched.middleName && !!form.errors.middleName}
-            errorText={form.touched.middleName ? form.errors.middleName : undefined}
+            value={form.values.patronymic}
+            onChange={form.handleChange('patronymic')}
+            onBlur={() => form.handleBlur('patronymic')}
+            error={!!form.touched.patronymic && !!form.errors.patronymic}
+            errorText={form.touched.patronymic ? form.errors.patronymic : undefined}
           />
           <InputField
             label="Email"
@@ -126,7 +126,6 @@ export function RegisterPage() {
           </div>
         </form>
 
-        {/* Login Link */}
         <div className={styles.loginLink}>
           Уже есть аккаунт?{' '}
           <span
@@ -139,6 +138,6 @@ export function RegisterPage() {
             Войти →
           </span>
         </div>
-      </AuthLayout>
+    </AuthLayout>
   );
 }
