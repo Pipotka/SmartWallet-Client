@@ -23,9 +23,9 @@ export function CategoryPage() {
               <CategoryCard
                 key={wallet.id}
                 id={wallet.id}
-                name={wallet.name}
+                name={wallet.name ?? ''}
                 value={wallet.value}
-                limitation={wallet.limitation}
+                limitation={wallet.limitation ?? 0}
                 type="wallet"
               />
             ))}
@@ -41,9 +41,9 @@ export function CategoryPage() {
               <CategoryCard
                 key={category.id}
                 id={category.id}
-                name={category.name}
+                name={category.name ?? ''}
                 value={category.value}
-                limitation={category.limitation}
+                limitation={category.limitation ?? 0}
                 type="category"
               />
             ))}

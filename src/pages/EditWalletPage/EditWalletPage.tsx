@@ -45,7 +45,7 @@ export function EditWalletPage() {
       if (isNew) {
         await createMutation.mutateAsync({ name, limitation: limitationNum, isStorage: true });
       } else {
-        await updateMutation.mutateAsync({ id: id!, name, limitation: limitationNum, value: valueNum });
+        await updateMutation.mutateAsync({ id: id!, name, limitation: limitationNum });
       }
       navigate('/');
     }
