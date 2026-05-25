@@ -25,7 +25,7 @@ export function Toast({ message, actionLabel, onAction, onClose, visible }: Toas
     return () => clearTimeout(timer);
   }, [visible]);
 
-  const handleAnimationEnd = (e: React.AnimationEvent<HTMLDivElement>) => {
+  const handleAnimationEnd = () => {
     if (!closing) return;
     setClosing(false);
     onClose?.();

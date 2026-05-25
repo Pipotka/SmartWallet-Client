@@ -7,7 +7,7 @@ type ButtonVariant = 'primary' | 'neutral' | 'danger';
 
 interface ButtonProps {
   variant?: ButtonVariant;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   onClick?: () => void;
   icon?: React.ReactNode;
   fullWidth?: boolean;

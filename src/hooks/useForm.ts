@@ -16,7 +16,7 @@ export interface UseFormReturn<T> {
   handleSubmit: () => void;
 }
 
-export function useForm<T extends Record<string, string>>(
+export function useForm<T extends { [K in keyof T]: string }>(
   options: UseFormOptions<T>,
 ): UseFormReturn<T> {
   const { initialValues, validate, onSubmit } = options;
