@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useWalletStore } from '@/store/useWalletStore';
+import { useUser } from '@/api/queries/user';
 import type { NavTab } from '@/types';
 import logoSvg from '@/assets/logo.svg';
 import categoriesIcon from '@/assets/categories-icon.svg';
@@ -25,7 +25,7 @@ const navItems: NavItem[] = [
 export function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const userInfo = useWalletStore((s) => s.userInfo);
+  const { data: user } = useUser();
 
   return (
     <aside className={styles.sidebar}>
@@ -60,9 +60,9 @@ export function Sidebar() {
       </nav>
 
       <div className={styles.userInfo}>
-        <span className={styles.userName}>{userInfo.lastName}</span>
-        <span className={styles.userName}>{userInfo.firstName}</span>
-        <span className={styles.userName}>{userInfo.middleName}</span>
+        <span className={styles.userName}>{user?.lastName ?? ''}</span>
+        <span className={styles.userName}>{user?.firstName ?? ''}</span>
+        <span className={styles.userName}>{user?.patronymic ?? ''}</span>
       </div>
     </aside>
   );
