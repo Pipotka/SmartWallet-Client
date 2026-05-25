@@ -1,4 +1,4 @@
-import { useWalletStore } from '@/store/useWalletStore';
+import { useUser } from '@/api/queries/user';
 import logoSvg from '@/assets/logo.svg';
 import styles from './Header.module.css';
 
@@ -7,7 +7,7 @@ interface HeaderProps {
 }
 
 export function Header({ pageTitle }: HeaderProps) {
-  const userInfo = useWalletStore((s) => s.userInfo);
+  const { data: user } = useUser();
 
   return (
     <>
@@ -21,9 +21,9 @@ export function Header({ pageTitle }: HeaderProps) {
         </div>
 
         <div className={styles.userInfo}>
-          <span className={styles.userName}>{userInfo.lastName}</span>
-          <span className={styles.userName}>{userInfo.firstName}</span>
-          <span className={styles.userName}>{userInfo.middleName}</span>
+          <span className={styles.userName}>{user?.lastName ?? ''}</span>
+          <span className={styles.userName}>{user?.firstName ?? ''}</span>
+          <span className={styles.userName}>{user?.patronymic ?? ''}</span>
         </div>
       </header>
       {pageTitle && <h2 className={styles.pageTitle}>{pageTitle}</h2>}
