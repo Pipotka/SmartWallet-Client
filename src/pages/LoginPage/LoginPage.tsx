@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useForm } from '@/hooks/useForm';
 import type { LoginFormData } from '@/types';
+import { useLogin } from '@/api/queries/user';
 import { AuthLayout } from '@/components/AuthLayout/AuthLayout';
 import { InputField } from '@/components/InputField/InputField';
 import { Button } from '@/components/Button/Button';
@@ -25,6 +26,7 @@ function validateLogin(values: LoginFormData): Partial<Record<keyof LoginFormDat
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const loginMutation = useLogin();
 
   const form = useForm<LoginFormData>({
     initialValues: {
@@ -32,8 +34,16 @@ export function LoginPage() {
       password: '',
     },
     validate: validateLogin,
-    onSubmit: () => {
-      alert('Функция будет добавлена позже');
+    onSubmit: async (values) => {
+      try {
+        await loginMutation.mutateAsync({
+          email: values.email,
+          passwordHash: values.password,
+        });
+        navigate('/');
+      } catch {
+        // Error handling — could show a toast in the future
+      }
     },
   });
 
