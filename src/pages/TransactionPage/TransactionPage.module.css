@@ -44,6 +44,12 @@
   }
 }
 
+@media (max-width: 767px) {
+  .scrollArea {
+    margin-bottom: calc(61px + var(--spacing-lg));
+  }
+}
+
 .scrollArea::-webkit-scrollbar {
   width: 6px;
 }
@@ -66,7 +72,10 @@
 }
 
 .mobileAddButton {
-  align-self: center;
+  position: fixed;
+  bottom: calc(var(--nav-height) + var(--spacing-sm));
+  left: 50%;
+  transform: translateX(-50%);
   width: 127px;
   height: 61px;
   border-radius: 8px;
@@ -78,9 +87,7 @@
   justify-content: center;
   box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
   transition: background-color 0.2s;
-  flex-shrink: 0;
-  margin-top: var(--spacing-lg);
-  margin-bottom: var(--spacing-lg);
+  z-index: 10;
 }
 
 .mobileAddButton:hover {
