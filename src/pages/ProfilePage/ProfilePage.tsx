@@ -5,41 +5,44 @@ import { BottomNav } from '@/components/BottomNav/BottomNav';
 import { InputField } from '@/components/InputField/InputField';
 import { Button, SaveIcon } from '@/components/Button/Button';
 import { Toast } from '@/components/Toast/Toast';
-import { useWalletStore } from '@/store/useWalletStore';
+import { useUser, useUpdateUser } from '@/api/queries/user';
 import { useForm } from '@/hooks/useForm';
 import styles from './ProfilePage.module.css';
 
 interface ProfileFormData {
   lastName: string;
   firstName: string;
-  middleName: string;
+  patronymic: string;
 }
 
 function validateProfile(values: ProfileFormData): Partial<Record<keyof ProfileFormData, string>> {
   const errors: Partial<Record<keyof ProfileFormData, string>> = {};
   if (!values.lastName.trim()) errors.lastName = 'Поле обязательно для заполнения';
   if (!values.firstName.trim()) errors.firstName = 'Поле обязательно для заполнения';
-  // middleName is optional — no validation
   return errors;
 }
 
 export function ProfilePage() {
   const navigate = useNavigate();
-  const userInfo = useWalletStore((state) => state.userInfo);
-  const setUserInfo = useWalletStore((state) => state.setUserInfo);
+  const { data: user } = useUser();
+  const updateMutation = useUpdateUser();
 
   const [toastVisible, setToastVisible] = useState(false);
 
-  const handleSubmit = useCallback((values: ProfileFormData) => {
-    setUserInfo(values);
+  const handleSubmit = useCallback(async (values: ProfileFormData) => {
+    await updateMutation.mutateAsync({
+      firstName: values.firstName,
+      lastName: values.lastName,
+      patronymic: values.patronymic,
+    });
     setToastVisible(true);
-  }, [setUserInfo]);
+  }, [updateMutation]);
 
   const initialValues = useMemo(() => ({
-    lastName: userInfo.lastName,
-    firstName: userInfo.firstName,
-    middleName: userInfo.middleName,
-  }), [userInfo]);
+    lastName: user?.lastName ?? '',
+    firstName: user?.firstName ?? '',
+    patronymic: user?.patronymic ?? '',
+  }), [user]);
 
   const form = useForm<ProfileFormData>({
     initialValues,
@@ -79,11 +82,11 @@ export function ProfilePage() {
             />
             <InputField
               label="Отчество"
-              value={form.values.middleName}
-              onChange={form.handleChange('middleName')}
-              onBlur={() => form.handleBlur('middleName')}
-              error={!!form.touched.middleName && !!form.errors.middleName}
-              errorText={form.touched.middleName ? form.errors.middleName : undefined}
+              value={form.values.patronymic}
+              onChange={form.handleChange('patronymic')}
+              onBlur={() => form.handleBlur('patronymic')}
+              error={!!form.touched.patronymic && !!form.errors.patronymic}
+              errorText={form.touched.patronymic ? form.errors.patronymic : undefined}
             />
 
             <div className={styles.submitRow}>
