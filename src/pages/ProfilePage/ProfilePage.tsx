@@ -5,7 +5,7 @@ import { BottomNav } from '@/components/BottomNav/BottomNav';
 import { InputField } from '@/components/InputField/InputField';
 import { Button, SaveIcon } from '@/components/Button/Button';
 import { Toast } from '@/components/Toast/Toast';
-import { useUser, useUpdateUser } from '@/api/queries/user';
+import { useUser, useUpdateUser, useLogout } from '@/api/queries/user';
 import { useForm } from '@/hooks/useForm';
 import styles from './ProfilePage.module.css';
 
@@ -26,6 +26,7 @@ export function ProfilePage() {
   const navigate = useNavigate();
   const { data: user } = useUser();
   const updateMutation = useUpdateUser();
+  const logoutMutation = useLogout();
 
   const [toastVisible, setToastVisible] = useState(false);
 
@@ -37,6 +38,17 @@ export function ProfilePage() {
     });
     setToastVisible(true);
   }, [updateMutation]);
+
+  const handleLogout = useCallback(() => {
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        navigate('/login');
+      },
+      onError: (error) => {
+        console.error('Logout failed:', error);
+      },
+    });
+  }, [logoutMutation, navigate]);
 
   const initialValues = useMemo(() => ({
     lastName: user?.lastName ?? '',
@@ -110,6 +122,17 @@ export function ProfilePage() {
             onClick={() => navigate('/profile/change-password')}
           >
             Изменить пароль
+          </button>
+        </div>
+
+        <div className={styles.logoutSection}>
+          <button
+            type="button"
+            className={styles.logoutButton}
+            onClick={handleLogout}
+            disabled={logoutMutation.isPending}
+          >
+            Выйти из аккаунта
           </button>
         </div>
       </main>
