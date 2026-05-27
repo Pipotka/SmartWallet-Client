@@ -15,7 +15,7 @@ export function useUser() {
   return useQuery({
     queryKey: ['user'],
     queryFn: ({ signal }) =>
-      apiClient<unknown>('/api/User', 'GET', { signal }),
+      apiClient<unknown>('/api/users', 'GET', { signal }),
     select: (data) => UserApiModelSchema.parse(data),
   });
 }
@@ -24,7 +24,7 @@ export function useCreateUser() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (body: CreateUserApiModel) => {
-      const data = await apiClient<unknown>('/api/User', 'POST', { body });
+      const data = await apiClient<unknown>('/api/users', 'POST', { body });
       return UserApiModelSchema.parse(data);
     },
     onSuccess: () => {
@@ -37,7 +37,7 @@ export function useUpdateUser() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (body: UpdateUserApiModel) => {
-      const data = await apiClient<unknown>('/api/User', 'PUT', { body });
+      const data = await apiClient<unknown>('/api/users', 'PUT', { body });
       return UserApiModelSchema.parse(data);
     },
     onSuccess: () => {
@@ -50,7 +50,7 @@ export function useDeleteUser() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (body: DeleteUserApiModel) =>
-      apiClient<unknown>('/api/User', 'DELETE', { body }),
+      apiClient<unknown>('/api/users', 'DELETE', { body }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['user'] });
     },
@@ -60,7 +60,7 @@ export function useDeleteUser() {
 export function useLogin() {
   return useMutation({
     mutationFn: async (body: RequestLogInApiModel) => {
-      const data = await apiClient<unknown>('/api/User/login', 'PUT', { body });
+      const data = await apiClient<unknown>('/api/users/login', 'PUT', { body });
       return ResponseLogInApiModelSchema.parse(data);
     },
     onSuccess: (data) => {
@@ -73,7 +73,7 @@ export function useLogout() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () =>
-      apiClient<unknown>('/api/User/logout', 'POST'),
+      apiClient<unknown>('/api/users/logout', 'POST'),
     onSuccess: () => {
       useAuthStore.getState().clearAuth();
       void queryClient.invalidateQueries({ queryKey: ['user'] });
@@ -84,6 +84,6 @@ export function useLogout() {
 export function useChangePassword() {
   return useMutation({
     mutationFn: (body: ChangePasswordApiModel) =>
-      apiClient<unknown>('/api/User/password', 'PUT', { body }),
+      apiClient<unknown>('/api/users/password', 'PUT', { body }),
   });
 }

@@ -13,7 +13,7 @@ export function useCategorizedSpending(request: CategorizingSpendingApiRequest |
   return useQuery({
     queryKey: ['financial-analytics', 'categorized-spending', request],
     queryFn: ({ signal }) =>
-      apiClient<unknown>('/api/FinancialAnalytics/categorized-spending', 'PUT', {
+      apiClient<unknown>('/api/financial-analytics/categorized-spending', 'PUT', {
         body: request!,
         signal,
       }),
@@ -26,7 +26,7 @@ export function useCategoryComparativeAnalysis(request: CategoryComparativeAnaly
   return useQuery({
     queryKey: ['financial-analytics', 'category-comparative-analysis', request],
     queryFn: ({ signal }) =>
-      apiClient<unknown>('/api/FinancialAnalytics/category-comparative-analysis', 'PUT', {
+      apiClient<unknown>('/api/financial-analytics/category-comparative-analysis', 'PUT', {
         body: request!,
         signal,
       }),
@@ -39,7 +39,7 @@ export function useSpendingTrendLine(request: SpendingTrendLineApiRequest | null
   return useQuery({
     queryKey: ['financial-analytics', 'spending-trend-line', request],
     queryFn: ({ signal }) =>
-      apiClient<unknown>('/api/FinancialAnalytics/spending-trend-line', 'PUT', {
+      apiClient<unknown>('/api/financial-analytics/spending-trend-line', 'PUT', {
         body: request!,
         signal,
       }),

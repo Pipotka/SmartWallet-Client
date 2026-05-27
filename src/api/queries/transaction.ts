@@ -11,7 +11,7 @@ export function useTransactions() {
   return useQuery({
     queryKey: ['transactions'],
     queryFn: ({ signal }) =>
-      apiClient<unknown>('/api/Transaction/list', 'GET', { signal }),
+      apiClient<unknown>('/api/transactions/list', 'GET', { signal }),
     select: (data) => TransactionListSchema.parse(data),
   });
 }
@@ -20,7 +20,7 @@ export function useCreateTransaction() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (body: CreateTransactionApiModel) => {
-      const data = await apiClient<unknown>('/api/Transaction', 'POST', { body });
+      const data = await apiClient<unknown>('/api/transactions', 'POST', { body });
       return TransactionApiModelSchema.parse(data);
     },
     onSuccess: () => {
@@ -34,7 +34,7 @@ export function useDeleteTransaction() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (body: DeleteTransactionApiModel) =>
-      apiClient<unknown>('/api/Transaction', 'DELETE', { body }),
+      apiClient<unknown>('/api/transactions', 'DELETE', { body }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['transactions'] });
       void queryClient.invalidateQueries({ queryKey: ['transaction-endpoints'] });

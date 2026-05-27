@@ -12,7 +12,7 @@ export function useTransactionEndpoints() {
   return useQuery({
     queryKey: ['transaction-endpoints'],
     queryFn: ({ signal }) =>
-      apiClient<unknown>('/api/TransactionEndpoint/list', 'GET', { signal }),
+      apiClient<unknown>('/api/transaction-endpoints/list', 'GET', { signal }),
     select: (data) => TransactionEndpointListSchema.parse(data),
   });
 }
@@ -21,7 +21,7 @@ export function useCreateTransactionEndpoint() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (body: CreateTransactionEndpointApiModel) => {
-      const data = await apiClient<unknown>('/api/TransactionEndpoint', 'POST', { body });
+      const data = await apiClient<unknown>('/api/transaction-endpoints', 'POST', { body });
       return TransactionEndpointApiModelSchema.parse(data);
     },
     onSuccess: () => {
@@ -34,7 +34,7 @@ export function useUpdateTransactionEndpoint() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (body: UpdateTransactionEndpointApiModel) => {
-      const data = await apiClient<unknown>('/api/TransactionEndpoint', 'PUT', { body });
+      const data = await apiClient<unknown>('/api/transaction-endpoints', 'PUT', { body });
       return TransactionEndpointApiModelSchema.parse(data);
     },
     onSuccess: () => {
@@ -47,7 +47,7 @@ export function useDeleteTransactionEndpoint() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (body: DeleteTransactionEndpointApiModel) =>
-      apiClient<unknown>('/api/TransactionEndpoint', 'DELETE', { body }),
+      apiClient<unknown>('/api/transaction-endpoints', 'DELETE', { body }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['transaction-endpoints'] });
     },
