@@ -9,6 +9,7 @@ import {
   ResponseLogInApiModelSchema,
   type ChangePasswordApiModel,
 } from '@/api/schemas/user';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export function useUser() {
   return useQuery({
@@ -61,6 +62,21 @@ export function useLogin() {
     mutationFn: async (body: RequestLogInApiModel) => {
       const data = await apiClient<unknown>('/api/User/login', 'PUT', { body });
       return ResponseLogInApiModelSchema.parse(data);
+    },
+    onSuccess: (data) => {
+      useAuthStore.getState().setAccessToken(data.accessToken);
+    },
+  });
+}
+
+export function useLogout() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () =>
+      apiClient<unknown>('/api/User/logout', 'POST'),
+    onSuccess: () => {
+      useAuthStore.getState().clearAuth();
+      void queryClient.invalidateQueries({ queryKey: ['user'] });
     },
   });
 }
