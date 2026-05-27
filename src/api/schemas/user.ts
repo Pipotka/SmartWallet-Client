@@ -42,10 +42,16 @@ export const RequestLogInApiModelSchema = z.object({
 export type RequestLogInApiModel = z.infer<typeof RequestLogInApiModelSchema>;
 
 export const ResponseLogInApiModelSchema = z.object({
-  jwtToken: z.string().nullable(),
+  accessToken: z.string(),
 });
 
 export type ResponseLogInApiModel = z.infer<typeof ResponseLogInApiModelSchema>;
+
+export const ResponseRefreshApiModelSchema = z.object({
+  accessToken: z.string(),
+});
+
+export type ResponseRefreshApiModel = z.infer<typeof ResponseRefreshApiModelSchema>;
 
 export const ChangePasswordApiModelSchema = z.object({
   oldPassword: z.string().nullable(),
