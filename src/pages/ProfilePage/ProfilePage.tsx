@@ -29,6 +29,7 @@ export function ProfilePage() {
   const logoutMutation = useLogout();
 
   const [toastVisible, setToastVisible] = useState(false);
+  const [logoutErrorVisible, setLogoutErrorVisible] = useState(false);
 
   const handleSubmit = useCallback(async (values: ProfileFormData) => {
     await updateMutation.mutateAsync({
@@ -40,12 +41,16 @@ export function ProfilePage() {
   }, [updateMutation]);
 
   const handleLogout = useCallback(() => {
+    if (!window.confirm('Вы уверены, что хотите выйти?')) {
+      return;
+    }
     logoutMutation.mutate(undefined, {
       onSuccess: () => {
         navigate('/login');
       },
       onError: (error) => {
         console.error('Logout failed:', error);
+        setLogoutErrorVisible(true);
       },
     });
   }, [logoutMutation, navigate]);
@@ -139,6 +144,11 @@ export function ProfilePage() {
 
       <BottomNav />
 
+      <Toast
+        message="Ошибка выхода, попробуйте снова"
+        onClose={() => setLogoutErrorVisible(false)}
+        visible={logoutErrorVisible}
+      />
       <Toast
         message="Профиль обновлён"
         onClose={() => setToastVisible(false)}
