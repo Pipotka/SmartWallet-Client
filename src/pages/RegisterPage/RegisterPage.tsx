@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthLayout } from '@/components/AuthLayout/AuthLayout';
 import { useForm } from '@/hooks/useForm';
@@ -5,6 +6,7 @@ import type { RegistrationFormData } from '@/types';
 import { useCreateUser } from '@/api/queries/user';
 import { InputField } from '@/components/InputField/InputField';
 import { Button } from '@/components/Button/Button';
+import { useAuthStore } from '@/store/useAuthStore';
 import styles from './RegisterPage.module.css';
 
 function validateRegistration(values: RegistrationFormData): Partial<Record<keyof RegistrationFormData, string>> {
@@ -41,6 +43,13 @@ function validateRegistration(values: RegistrationFormData): Partial<Record<keyo
 export function RegisterPage() {
   const navigate = useNavigate();
   const createMutation = useCreateUser();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const form = useForm<RegistrationFormData>({
     initialValues: {
