@@ -1,5 +1,5 @@
 import { type ReactNode, useState, useEffect } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/store/useAuthStore';
 import { refreshAccessToken } from '@/api/client';
 import styles from './ProtectedRoute.module.css';
@@ -21,25 +21,30 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 
 export function AuthInitGuard({ children }: ProtectedRouteProps) {
   const [isInitializing, setIsInitializing] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    let cancelled = false;
     refreshAccessToken()
       .then((token) => {
         if (!token) {
           useAuthStore.getState().clearAuth();
+          if (!cancelled) navigate('/login', { replace: true });
         }
       })
       .catch(() => {
         useAuthStore.getState().clearAuth();
+        if (!cancelled) navigate('/login', { replace: true });
       })
       .finally(() => {
-        setIsInitializing(false);
+        if (!cancelled) setIsInitializing(false);
       });
+    return () => { cancelled = true; };
   }, []);
 
   if (isInitializing) {
     return (
-      <div className={styles.loadingOverlay}>
+      <div className={styles.loadingOverlay} role="status" aria-label="Загрузка приложения">
         <div className={styles.spinner} />
       </div>
     );
