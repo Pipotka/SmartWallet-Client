@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Sidebar } from '@/components/Sidebar/Sidebar';
+import { ProtectedRoute, AuthInitGuard } from '@/components/ProtectedRoute/ProtectedRoute';
 import { CategoryPage } from '@/pages/CategoryPage/CategoryPage';
 import { EditWalletPage } from '@/pages/EditWalletPage/EditWalletPage';
 import { EditCategoryPage } from '@/pages/EditCategoryPage/EditCategoryPage';
@@ -21,13 +22,13 @@ function AppContent() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/" element={<CategoryPage />} />
-        <Route path="/wallet/:id" element={<EditWalletPage />} />
-        <Route path="/category/:id" element={<EditCategoryPage />} />
-        <Route path="/transactions/add" element={<TransactionAddPage />} />
-        <Route path="/transactions" element={<TransactionPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/profile/change-password" element={<ChangePasswordPage />} />
+        <Route path="/" element={<ProtectedRoute><CategoryPage /></ProtectedRoute>} />
+        <Route path="/wallet/:id" element={<ProtectedRoute><EditWalletPage /></ProtectedRoute>} />
+        <Route path="/category/:id" element={<ProtectedRoute><EditCategoryPage /></ProtectedRoute>} />
+        <Route path="/transactions/add" element={<ProtectedRoute><TransactionAddPage /></ProtectedRoute>} />
+        <Route path="/transactions" element={<ProtectedRoute><TransactionPage /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+        <Route path="/profile/change-password" element={<ProtectedRoute><ChangePasswordPage /></ProtectedRoute>} />
       </Routes>
     </div>
   );
@@ -36,7 +37,9 @@ function AppContent() {
 function App() {
   return (
     <BrowserRouter>
-      <AppContent />
+      <AuthInitGuard>
+        <AppContent />
+      </AuthInitGuard>
     </BrowserRouter>
   );
 }
