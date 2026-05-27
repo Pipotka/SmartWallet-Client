@@ -1,4 +1,5 @@
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from '@/hooks/useForm';
 import type { LoginFormData } from '@/types';
 import { useLogin } from '@/api/queries/user';
@@ -30,9 +31,11 @@ export function LoginPage() {
   const loginMutation = useLogin();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
-  if (isAuthenticated) {
-    return <Navigate to="/" replace />;
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const form = useForm<LoginFormData>({
     initialValues: {
