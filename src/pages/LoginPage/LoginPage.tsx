@@ -1,7 +1,8 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { useForm } from '@/hooks/useForm';
 import type { LoginFormData } from '@/types';
 import { useLogin } from '@/api/queries/user';
+import { useAuthStore } from '@/store/useAuthStore';
 import { AuthLayout } from '@/components/AuthLayout/AuthLayout';
 import { InputField } from '@/components/InputField/InputField';
 import { Button } from '@/components/Button/Button';
@@ -27,6 +28,11 @@ function validateLogin(values: LoginFormData): Partial<Record<keyof LoginFormDat
 export function LoginPage() {
   const navigate = useNavigate();
   const loginMutation = useLogin();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
 
   const form = useForm<LoginFormData>({
     initialValues: {
