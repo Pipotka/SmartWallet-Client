@@ -33,6 +33,9 @@ export function Sidebar() {
       onSuccess: () => {
         navigate('/login');
       },
+      onError: (error) => {
+        console.error('Logout failed:', error);
+      },
     });
   };
 
