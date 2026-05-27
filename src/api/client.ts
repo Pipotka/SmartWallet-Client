@@ -1,4 +1,6 @@
 import { getConfig } from '@/api/config';
+import { useAuthStore } from '@/store/useAuthStore';
+import { ResponseRefreshApiModelSchema } from '@/api/schemas/user';
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -14,10 +16,50 @@ export class ApiError extends Error {
   }
 }
 
-export async function apiClient<T>(
+let refreshPromise: Promise<string | null> | null = null;
+
+async function refreshAccessToken(): Promise<string | null> {
+  if (refreshPromise) {
+    return refreshPromise;
+  }
+
+  refreshPromise = (async () => {
+    try {
+      const { apiBaseUrl } = getConfig();
+      const response = await fetch(`${apiBaseUrl}/api/users/refresh`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        return null;
+      }
+
+      const data: unknown = await response.json();
+      const parsed = ResponseRefreshApiModelSchema.safeParse(data);
+      if (!parsed.success) {
+        return null;
+      }
+
+      useAuthStore.getState().setAccessToken(parsed.data.accessToken);
+      return parsed.data.accessToken;
+    } catch {
+      return null;
+    } finally {
+      refreshPromise = null;
+    }
+  })();
+
+  return refreshPromise;
+}
+
+export { refreshAccessToken };
+
+async function apiClientInternal<T>(
   path: string,
   method: HttpMethod,
-  options?: { body?: unknown; signal?: AbortSignal }
+  options?: { body?: unknown; signal?: AbortSignal },
+  isRetry?: boolean,
 ): Promise<T> {
   const { apiBaseUrl } = getConfig();
   const url = `${apiBaseUrl}${path}`;
@@ -30,6 +72,11 @@ export async function apiClient<T>(
     body = JSON.stringify(options.body);
   }
 
+  const { accessToken } = useAuthStore.getState();
+  if (accessToken) {
+    headers['Authorization'] = `Bearer ${accessToken}`;
+  }
+
   const response = await fetch(url, {
     method,
     headers,
@@ -37,6 +84,16 @@ export async function apiClient<T>(
     signal: options?.signal,
     credentials: 'include',
   });
+
+  if (response.status === 401 && !isRetry) {
+    const newToken = await refreshAccessToken();
+    if (newToken) {
+      return apiClientInternal<T>(path, method, options, true);
+    }
+    useAuthStore.getState().clearAuth();
+    window.location.href = '/login';
+    throw new ApiError(401, { message: 'Session expired' });
+  }
 
   if (!response.ok) {
     let errorData: unknown;
@@ -54,4 +111,12 @@ export async function apiClient<T>(
 
   const data: T = await response.json();
   return data;
+}
+
+export async function apiClient<T>(
+  path: string,
+  method: HttpMethod,
+  options?: { body?: unknown; signal?: AbortSignal },
+): Promise<T> {
+  return apiClientInternal<T>(path, method, options, false);
 }
