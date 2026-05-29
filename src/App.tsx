@@ -9,6 +9,7 @@ import { LoginPage } from '@/pages/LoginPage/LoginPage';
 import { TransactionPage } from '@/pages/TransactionPage/TransactionPage';
 import { TransactionAddPage } from '@/pages/TransactionAddPage/TransactionAddPage';
 import { ProfilePage } from '@/pages/ProfilePage/ProfilePage';
+import { AnalyticsPage } from '@/pages/AnalyticsPage/AnalyticsPage';
 import { ChangePasswordPage } from '@/pages/ChangePasswordPage/ChangePasswordPage';
 import styles from './App.module.css';
 
@@ -27,6 +28,7 @@ function AppContent() {
         <Route path="/category/:id" element={<ProtectedRoute><EditCategoryPage /></ProtectedRoute>} />
         <Route path="/transactions/add" element={<ProtectedRoute><TransactionAddPage /></ProtectedRoute>} />
         <Route path="/transactions" element={<ProtectedRoute><TransactionPage /></ProtectedRoute>} />
+        <Route path="/analytics" element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         <Route path="/profile/change-password" element={<ProtectedRoute><ChangePasswordPage /></ProtectedRoute>} />
       </Routes>
