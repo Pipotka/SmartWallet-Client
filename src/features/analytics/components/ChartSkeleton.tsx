@@ -2,7 +2,7 @@ import styles from './ChartSkeleton.module.css';
 
 export function ChartSkeleton() {
   return (
-    <div className={styles.skeleton} aria-label="Загрузка данных">
+    <div className={styles.skeleton} aria-label="Загрузка данных" role="status">
       <div className={styles.chartArea}>
         <div className={styles.shimmerBlock} />
         <div className={`${styles.shimmerLine} ${styles.wide}`} />
