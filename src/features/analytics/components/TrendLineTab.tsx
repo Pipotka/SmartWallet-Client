@@ -91,12 +91,12 @@ export function TrendLineTab() {
             <LineChart data={lineData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="label" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip formatter={(value) => formatAmount(Number(value))} />
+              <YAxis tick={{ fontSize: 12 }} tickFormatter={(v: number) => formatAmount(v)} />
+              <Tooltip formatter={(value, name) => [formatAmount(Number(value)), name as string]} />
               <Legend />
               {categoryNames.map((name, index) => (
                 <Line
-                  key={name}
+                  key={`${name}-${index}`}
                   type="monotone"
                   dataKey={name}
                   stroke={CHART_COLORS[index % CHART_COLORS.length]}
