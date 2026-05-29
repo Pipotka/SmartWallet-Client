@@ -30,7 +30,7 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
   const destRemaining = selectedCategory && selectedCategory.limitation !== null && selectedCategory.limitation > 0
     ? selectedCategory.limitation - selectedCategory.value
     : selectedDestinationWallet && selectedDestinationWallet.limitation !== null && selectedDestinationWallet.limitation > 0
-      ? selectedDestinationWallet.limitation - selectedDestinationWallet.value
+      ? selectedDestinationWallet.value - selectedDestinationWallet.limitation > 0 ? selectedDestinationWallet.value - selectedDestinationWallet.limitation : 0
       : null;
 
   const showBadge = destRemaining !== null;
@@ -39,7 +39,7 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
     ? wallets.find((w) => w.id === form.sourceAccountId)
     : null;
   const sourceRemaining = selectedSource && selectedSource.limitation !== null && selectedSource.limitation > 0
-    ? selectedSource.limitation - selectedSource.value
+    ? selectedSource.value - selectedSource.limitation > 0 ? selectedSource.value - selectedSource.limitation : 0 
     : null;
   const showSourceBadge = sourceRemaining !== null;
 
