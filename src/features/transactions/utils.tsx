@@ -68,6 +68,7 @@ export function formatAmountWithSign(
 ): string {
   const formatted = amount.toLocaleString('ru-RU');
   switch (type) {
+    case TransactionType.AdjustmentIncrease:
     case TransactionType.Income:
       return `+${formatted} ₽`;
     case TransactionType.Expense:
