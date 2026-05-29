@@ -1,4 +1,4 @@
-import type { TimeUnit } from '@/api/schemas/common';
+import { TimeUnit } from '@/api/schemas/common';
 import { Select } from '@/components/Select/Select';
 import { TIME_UNIT_OPTIONS } from '../constants';
 import styles from './PeriodPicker.module.css';
@@ -26,7 +26,11 @@ export function PeriodPicker({
 }: PeriodPickerProps) {
   const handleTimeUnitChange = (value: string | null) => {
     if (value !== null) {
-      onTimeUnitChange(Number(value) as TimeUnit);
+      const num = Number(value);
+      const validValues: number[] = [TimeUnit.Day, TimeUnit.Month, TimeUnit.Year];
+      if (validValues.includes(num)) {
+        onTimeUnitChange(num as TimeUnit);
+      }
     }
   };
 
