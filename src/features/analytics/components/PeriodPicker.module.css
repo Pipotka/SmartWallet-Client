@@ -1,0 +1,97 @@
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.periodGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.periodLabel {
+  font-family: var(--font);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.label {
+  font-family: var(--font);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.input {
+  font-family: var(--font);
+  font-size: var(--text-base);
+  color: var(--color-text-primary);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.settingsRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.numberField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.numberInput {
+  font-family: var(--font);
+  font-size: var(--text-base);
+  color: var(--color-text-primary);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+  -moz-appearance: textfield;
+}
+
+.numberInput:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.numberInput::-webkit-inner-spin-button,
+.numberInput::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .settingsRow {
+    flex-direction: row;
+    gap: var(--spacing-lg);
+  }
+
+  .numberField {
+    flex: 0 0 120px;
+  }
+}
