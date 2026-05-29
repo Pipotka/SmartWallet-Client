@@ -6,7 +6,7 @@ import styles from './AnalyticsPage.module.css';
 export function AnalyticsPage() {
   return (
     <div className={styles.page}>
-      <Header pageTitle="Аналитика" />
+      <Header />
       <main className={styles.content}>
         <AnalyticsTabs />
       </main>
