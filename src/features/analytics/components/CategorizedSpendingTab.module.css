@@ -1,0 +1,97 @@
+.tab {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.chartContainer {
+  width: 100%;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pieChartWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  height: 320px;
+}
+
+.centerLabel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.centerLabelTitle {
+  font-family: var(--font);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.centerLabelValue {
+  font-family: var(--font);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm) var(--spacing-lg);
+  justify-content: center;
+  margin-top: var(--spacing-md);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.legendColor {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.legendName {
+  font-family: var(--font);
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+}
+
+.legendAmount {
+  font-family: var(--font);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-left: var(--spacing-xs);
+}
+
+@media (min-width: 768px) {
+  .pieChartWrapper {
+    max-width: 360px;
+    height: 360px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .tab {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .chartContainer {
+    flex: 1;
+    align-items: center;
+  }
+}
