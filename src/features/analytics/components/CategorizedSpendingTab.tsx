@@ -3,6 +3,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { useCategorizedSpending } from '@/api/queries/financial-analytics';
 import type { CategorizingSpendingApiRequest } from '@/api/schemas/financial-analytics';
 import { CHART_COLORS } from '../constants';
+import { formatAmount } from '../utils/formatAmount';
 import type { DateRange } from '../types';
 import { DateRangePicker } from './DateRangePicker';
 import { ChartSkeleton } from './ChartSkeleton';
@@ -14,13 +15,6 @@ interface PieEntry {
   name: string;
   value: number;
   colorIndex: number;
-}
-
-function formatAmount(amount: number): string {
-  return amount.toLocaleString('ru-RU', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  });
 }
 
 export function CategorizedSpendingTab() {

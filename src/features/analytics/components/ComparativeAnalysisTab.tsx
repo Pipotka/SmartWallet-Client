@@ -4,18 +4,12 @@ import { useCategoryComparativeAnalysis } from '@/api/queries/financial-analytic
 import type { CategoryComparativeAnalysisApiRequest } from '@/api/schemas/financial-analytics';
 import { TimeUnit } from '@/api/schemas/common';
 import { CHART_COLORS } from '../constants';
+import { formatAmount } from '../utils/formatAmount';
 import { PeriodPicker } from './PeriodPicker';
 import { ChartSkeleton } from './ChartSkeleton';
 import { EmptyChartState } from './EmptyChartState';
 import { ChartErrorState } from './ChartErrorState';
 import styles from './ComparativeAnalysisTab.module.css';
-
-function formatAmount(amount: number): string {
-  return amount.toLocaleString('ru-RU', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  });
-}
 
 export function ComparativeAnalysisTab() {
   const [firstPeriod, setFirstPeriod] = useState('');
@@ -49,60 +43,6 @@ export function ComparativeAnalysisTab() {
   const isEmpty =
     !isLoading && !isError && data !== undefined && barData.length === 0;
 
-  if (isLoading) {
-    return (
-      <div className={styles.tab}>
-        <PeriodPicker
-          firstPeriod={firstPeriod}
-          secondPeriod={secondPeriod}
-          timeUnit={timeUnit}
-          timeUnitCount={timeUnitCount}
-          onFirstPeriodChange={setFirstPeriod}
-          onSecondPeriodChange={setSecondPeriod}
-          onTimeUnitChange={setTimeUnit}
-          onTimeUnitCountChange={setTimeUnitCount}
-        />
-        <ChartSkeleton />
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className={styles.tab}>
-        <PeriodPicker
-          firstPeriod={firstPeriod}
-          secondPeriod={secondPeriod}
-          timeUnit={timeUnit}
-          timeUnitCount={timeUnitCount}
-          onFirstPeriodChange={setFirstPeriod}
-          onSecondPeriodChange={setSecondPeriod}
-          onTimeUnitChange={setTimeUnit}
-          onTimeUnitCountChange={setTimeUnitCount}
-        />
-        <ChartErrorState onRetry={() => refetch()} />
-      </div>
-    );
-  }
-
-  if (isEmpty) {
-    return (
-      <div className={styles.tab}>
-        <PeriodPicker
-          firstPeriod={firstPeriod}
-          secondPeriod={secondPeriod}
-          timeUnit={timeUnit}
-          timeUnitCount={timeUnitCount}
-          onFirstPeriodChange={setFirstPeriod}
-          onSecondPeriodChange={setSecondPeriod}
-          onTimeUnitChange={setTimeUnit}
-          onTimeUnitCountChange={setTimeUnitCount}
-        />
-        <EmptyChartState />
-      </div>
-    );
-  }
-
   return (
     <div className={styles.tab}>
       <PeriodPicker
@@ -116,7 +56,11 @@ export function ComparativeAnalysisTab() {
         onTimeUnitCountChange={setTimeUnitCount}
       />
 
-      {barData.length > 0 && (
+      {isLoading && <ChartSkeleton />}
+      {isError && <ChartErrorState onRetry={() => refetch()} />}
+      {isEmpty && <EmptyChartState />}
+
+      {!isLoading && !isError && !isEmpty && barData.length > 0 && (
         <>
           <div className={styles.summary}>
             <div className={styles.summaryItem}>
