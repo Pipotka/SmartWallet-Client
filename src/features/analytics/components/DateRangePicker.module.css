@@ -1,0 +1,95 @@
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+.presetButton {
+  font-family: var(--font);
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.presetButton:hover {
+  background-color: var(--color-bg);
+}
+
+.presetButtonActive {
+  background-color: var(--color-blue-500);
+  color: var(--color-text-light);
+  border-color: var(--color-blue-500);
+}
+
+.presetButtonActive:hover {
+  background-color: var(--color-primary);
+}
+
+.dateFields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.label {
+  font-family: var(--font);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.input {
+  font-family: var(--font);
+  font-size: var(--text-base);
+  color: var(--color-text-primary);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.inputInvalid {
+  border-color: var(--color-red-500);
+}
+
+.errorMessage {
+  font-family: var(--font);
+  font-size: var(--text-xs);
+  color: var(--color-red-500);
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .dateFields {
+    flex-direction: row;
+    gap: var(--spacing-md);
+  }
+
+  .field {
+    flex: 1;
+  }
+}
