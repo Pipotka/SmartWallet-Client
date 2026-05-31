@@ -1,21 +1,33 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCreateTransaction } from '@/api/queries/transaction';
+import { parseApiError } from '@/api/parseApiError';
 import { Header } from '@/components/Header/Header';
 import { TransactionForm } from '@/features/transactions/components/TransactionForm';
+import { useToastStore } from '@/store/useToastStore';
 import type { CreateTransactionDTO } from '@/features/transactions/types';
 import styles from './TransactionAddPage.module.css';
 
 export function TransactionAddPage() {
   const navigate = useNavigate();
   const createMutation = useCreateTransaction();
+  const showError = useToastStore((s) => s.showError);
 
   const handleSubmit = useCallback(
     async (dto: CreateTransactionDTO) => {
-      await createMutation.mutateAsync(dto);
-      navigate('/transactions');
+      try {
+        await createMutation.mutateAsync(dto);
+        navigate('/transactions');
+      } catch (error) {
+        const { generalErrors } = parseApiError(error);
+        if (generalErrors.length > 0) {
+          generalErrors.forEach((msg) => showError(msg));
+        } else {
+          showError('Произошла ошибка');
+        }
+      }
     },
-    [createMutation, navigate]
+    [createMutation, navigate],
   );
 
   const handleCancel = useCallback(() => {
