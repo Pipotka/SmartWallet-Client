@@ -9,6 +9,8 @@ import {
   useUpdateTransactionEndpoint,
   useDeleteTransactionEndpoint,
 } from '@/api/queries/transaction-endpoint';
+import { useToastStore } from '@/store/useToastStore';
+import { parseApiError } from '@/api/parseApiError';
 import styles from './EditCategoryPage.module.css';
 
 export function EditCategoryPage() {
@@ -18,6 +20,8 @@ export function EditCategoryPage() {
   const createMutation = useCreateTransactionEndpoint();
   const updateMutation = useUpdateTransactionEndpoint();
   const deleteMutation = useDeleteTransactionEndpoint();
+  const showError = useToastStore((s) => s.showError);
+  const showSuccess = useToastStore((s) => s.showSuccess);
 
   const isNew = id === 'new';
   const endpoint = endpoints.find((e) => e.id === id && !e.isStorage);
@@ -40,12 +44,22 @@ export function EditCategoryPage() {
   const handleSave = async () => {
     const limitationNum = Number(limitation);
     if (!isNaN(limitationNum)) {
-      if (isNew) {
-        await createMutation.mutateAsync({ name, limitation: limitationNum, isStorage: false });
-      } else {
-        await updateMutation.mutateAsync({ id: id!, name, limitation: limitationNum });
+      try {
+        if (isNew) {
+          await createMutation.mutateAsync({ name, limitation: limitationNum, isStorage: false });
+        } else {
+          await updateMutation.mutateAsync({ id: id!, name, limitation: limitationNum });
+        }
+        showSuccess('Категория сохранена');
+        navigate('/');
+      } catch (error) {
+        const { generalErrors } = parseApiError(error);
+        if (generalErrors.length > 0) {
+          generalErrors.forEach((msg) => showError(msg));
+        } else {
+          showError('Произошла ошибка');
+        }
       }
-      navigate('/');
     }
   };
 
@@ -55,9 +69,19 @@ export function EditCategoryPage() {
 
   const handleDelete = async () => {
     if (!isNew) {
-      await deleteMutation.mutateAsync({ id: id! });
+      try {
+        await deleteMutation.mutateAsync({ id: id! });
+        showSuccess('Категория удалена');
+        navigate('/');
+      } catch (error) {
+        const { generalErrors } = parseApiError(error);
+        if (generalErrors.length > 0) {
+          generalErrors.forEach((msg) => showError(msg));
+        } else {
+          showError('Произошла ошибка');
+        }
+      }
     }
-    navigate('/');
   };
 
   return (
