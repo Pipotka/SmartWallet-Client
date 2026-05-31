@@ -1,12 +1,13 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header/Header';
 import { BottomNav } from '@/components/BottomNav/BottomNav';
 import { InputField } from '@/components/InputField/InputField';
 import { Button, SaveIcon } from '@/components/Button/Button';
-import { Toast } from '@/components/Toast/Toast';
 import { useUser, useUpdateUser, useLogout } from '@/api/queries/user';
 import { useForm } from '@/hooks/useForm';
+import { useFormServerErrors } from '@/hooks/useFormServerErrors';
+import { useToastStore } from '@/store/useToastStore';
 import styles from './ProfilePage.module.css';
 
 interface ProfileFormData {
@@ -27,18 +28,22 @@ export function ProfilePage() {
   const { data: user } = useUser();
   const updateMutation = useUpdateUser();
   const logoutMutation = useLogout();
-
-  const [toastVisible, setToastVisible] = useState(false);
-  const [logoutErrorVisible, setLogoutErrorVisible] = useState(false);
+  const showSuccess = useToastStore((s) => s.showSuccess);
+  const showError = useToastStore((s) => s.showError);
 
   const handleSubmit = useCallback(async (values: ProfileFormData) => {
-    await updateMutation.mutateAsync({
-      firstName: values.firstName,
-      lastName: values.lastName,
-      patronymic: values.patronymic,
-    });
-    setToastVisible(true);
-  }, [updateMutation]);
+    try {
+      await updateMutation.mutateAsync({
+        firstName: values.firstName,
+        lastName: values.lastName,
+        patronymic: values.patronymic,
+      });
+      showSuccess('Профиль обновлён');
+    } catch (error) {
+      const generalErrors = setServerErrors(error);
+      generalErrors.forEach((msg) => showError(msg));
+    }
+  }, [updateMutation, showError]);
 
   const handleLogout = useCallback(() => {
     if (!window.confirm('Вы уверены, что хотите выйти?')) {
@@ -48,12 +53,11 @@ export function ProfilePage() {
       onSuccess: () => {
         navigate('/login');
       },
-      onError: (error) => {
-        console.error('Logout failed:', error);
-        setLogoutErrorVisible(true);
+      onError: () => {
+        showError('Ошибка выхода, попробуйте снова');
       },
     });
-  }, [logoutMutation, navigate]);
+  }, [logoutMutation, navigate, showError]);
 
   const initialValues = useMemo(() => ({
     lastName: user?.lastName ?? '',
@@ -65,6 +69,12 @@ export function ProfilePage() {
     initialValues,
     validate: validateProfile,
     onSubmit: handleSubmit,
+  });
+
+  const { setServerErrors } = useFormServerErrors(form, {
+    FirstName: 'firstName',
+    LastName: 'lastName',
+    Patronymic: 'patronymic',
   });
 
   return (
@@ -143,17 +153,6 @@ export function ProfilePage() {
       </main>
 
       <BottomNav />
-
-      <Toast
-        message="Ошибка выхода, попробуйте снова"
-        onClose={() => setLogoutErrorVisible(false)}
-        visible={logoutErrorVisible}
-      />
-      <Toast
-        message="Профиль обновлён"
-        onClose={() => setToastVisible(false)}
-        visible={toastVisible}
-      />
     </div>
   );
 }
