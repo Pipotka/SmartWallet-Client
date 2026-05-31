@@ -22,25 +22,27 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 export function AuthInitGuard({ children }: ProtectedRouteProps) {
   const [isInitializing, setIsInitializing] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     let cancelled = false;
+    const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
     refreshAccessToken()
       .then((token) => {
         if (!token) {
           useAuthStore.getState().clearAuth();
-          if (!cancelled) navigate('/login', { replace: true });
+          if (!cancelled && !isAuthPage) navigate('/login', { replace: true });
         }
       })
       .catch(() => {
         useAuthStore.getState().clearAuth();
-        if (!cancelled) navigate('/login', { replace: true });
+        if (!cancelled && !isAuthPage) navigate('/login', { replace: true });
       })
       .finally(() => {
         if (!cancelled) setIsInitializing(false);
       });
     return () => { cancelled = true; };
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
   if (isInitializing) {
     return (
