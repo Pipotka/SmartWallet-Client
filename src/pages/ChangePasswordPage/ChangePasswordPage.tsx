@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header/Header';
 import { BottomNav } from '@/components/BottomNav/BottomNav';
@@ -52,7 +51,7 @@ export function ChangePasswordPage() {
   const changePasswordMutation = useChangePassword();
   const showError = useToastStore((s) => s.showError);
 
-  const handleSubmit = useCallback(async (values: ChangePasswordFormData) => {
+  const handleSubmit = async (values: ChangePasswordFormData) => {
     try {
       await changePasswordMutation.mutateAsync({
         oldPassword: values.oldPassword,
@@ -63,7 +62,7 @@ export function ChangePasswordPage() {
       const generalErrors = setServerErrors(error);
       generalErrors.forEach((msg) => showError(msg));
     }
-  }, [changePasswordMutation, navigate]);
+  };
 
   const form = useForm<ChangePasswordFormData>({
     initialValues: {

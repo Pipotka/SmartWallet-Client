@@ -40,7 +40,7 @@ export function AuthInitGuard({ children }: ProtectedRouteProps) {
         if (!cancelled) setIsInitializing(false);
       });
     return () => { cancelled = true; };
-  }, []);
+  }, [navigate]);
 
   if (isInitializing) {
     return (

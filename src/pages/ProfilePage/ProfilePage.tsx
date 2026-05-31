@@ -31,7 +31,7 @@ export function ProfilePage() {
   const showSuccess = useToastStore((s) => s.showSuccess);
   const showError = useToastStore((s) => s.showError);
 
-  const handleSubmit = useCallback(async (values: ProfileFormData) => {
+  const handleSubmit = async (values: ProfileFormData) => {
     try {
       await updateMutation.mutateAsync({
         firstName: values.firstName,
@@ -43,7 +43,7 @@ export function ProfilePage() {
       const generalErrors = setServerErrors(error);
       generalErrors.forEach((msg) => showError(msg));
     }
-  }, [updateMutation, showError]);
+  };
 
   const handleLogout = useCallback(() => {
     if (!window.confirm('Вы уверены, что хотите выйти?')) {

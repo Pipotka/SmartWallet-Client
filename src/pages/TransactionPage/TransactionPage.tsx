@@ -18,7 +18,6 @@ export function TransactionPage() {
   const filters = useTransactionFilters(transactions);
   const navigate = useNavigate();
 
-  const showSuccessToast = useToastStore((s) => s.showSuccess);
   const showErrorToast = useToastStore((s) => s.showError);
 
   const handleDelete = useCallback(

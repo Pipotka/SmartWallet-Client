@@ -27,7 +27,7 @@ export function TransactionAddPage() {
         }
       }
     },
-    [createMutation, navigate],
+    [createMutation, navigate, showError],
   );
 
   const handleCancel = useCallback(() => {
