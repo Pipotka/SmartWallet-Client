@@ -14,6 +14,8 @@ export interface UseFormReturn<T> {
   handleChange: (field: keyof T) => (value: string) => void;
   handleBlur: (field: keyof T) => void;
   handleSubmit: () => void;
+  setFieldErrors: (errors: Partial<Record<keyof T, string>>) => void;
+  setFieldTouched: (fields: Partial<Record<keyof T, string>>) => void;
 }
 
 export function useForm<T extends { [K in keyof T]: string }>(
@@ -78,6 +80,18 @@ export function useForm<T extends { [K in keyof T]: string }>(
     }
   }, []);
 
+  const setFieldErrors = useCallback((errors: Partial<Record<keyof T, string>>) => {
+    setErrors(errors);
+  }, []);
+
+  const setFieldTouched = useCallback((fields: Partial<Record<keyof T, string>>) => {
+    const newTouched: Partial<Record<keyof T, boolean>> = {};
+    for (const key of Object.keys(fields) as Array<keyof T>) {
+      newTouched[key] = true;
+    }
+    setTouched((prev) => ({ ...prev, ...newTouched }));
+  }, []);
+
   return {
     values,
     errors,
@@ -86,5 +100,7 @@ export function useForm<T extends { [K in keyof T]: string }>(
     handleChange,
     handleBlur,
     handleSubmit,
+    setFieldErrors,
+    setFieldTouched,
   };
 }
