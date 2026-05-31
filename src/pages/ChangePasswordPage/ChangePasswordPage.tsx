@@ -1,12 +1,13 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header/Header';
 import { BottomNav } from '@/components/BottomNav/BottomNav';
 import { InputField } from '@/components/InputField/InputField';
 import { Button, SaveIcon } from '@/components/Button/Button';
-import { Toast } from '@/components/Toast/Toast';
 import { useForm } from '@/hooks/useForm';
+import { useFormServerErrors } from '@/hooks/useFormServerErrors';
 import { useChangePassword } from '@/api/queries/user';
+import { useToastStore } from '@/store/useToastStore';
 import styles from './ChangePasswordPage.module.css';
 
 interface ChangePasswordFormData {
@@ -48,8 +49,8 @@ function validateChangePassword(
 
 export function ChangePasswordPage() {
   const navigate = useNavigate();
-  const [toastVisible, setToastVisible] = useState(false);
   const changePasswordMutation = useChangePassword();
+  const showError = useToastStore((s) => s.showError);
 
   const handleSubmit = useCallback(async (values: ChangePasswordFormData) => {
     try {
@@ -57,11 +58,12 @@ export function ChangePasswordPage() {
         oldPassword: values.oldPassword,
         newPassword: values.newPassword,
       });
-      setToastVisible(true);
-    } catch {
-      // Error handling — could show an error toast in the future
+      navigate('/profile');
+    } catch (error) {
+      const generalErrors = setServerErrors(error);
+      generalErrors.forEach((msg) => showError(msg));
     }
-  }, [changePasswordMutation]);
+  }, [changePasswordMutation, navigate]);
 
   const form = useForm<ChangePasswordFormData>({
     initialValues: {
@@ -73,10 +75,10 @@ export function ChangePasswordPage() {
     onSubmit: handleSubmit,
   });
 
-  const handleToastClose = () => {
-    setToastVisible(false);
-    navigate('/profile');
-  };
+  const { setServerErrors } = useFormServerErrors(form, {
+    OldPassword: 'oldPassword',
+    NewPassword: 'newPassword',
+  });
 
   return (
     <div className={styles.page}>
@@ -146,12 +148,6 @@ export function ChangePasswordPage() {
       </main>
 
       <BottomNav />
-
-      <Toast
-        message="Пароль изменён"
-        onClose={handleToastClose}
-        visible={toastVisible}
-      />
     </div>
   );
 }
