@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from '@/hooks/useForm';
+import { useFormServerErrors } from '@/hooks/useFormServerErrors';
 import type { LoginFormData } from '@/types';
 import { useLogin } from '@/api/queries/user';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useToastStore } from '@/store/useToastStore';
 import { AuthLayout } from '@/components/AuthLayout/AuthLayout';
 import { InputField } from '@/components/InputField/InputField';
 import { Button } from '@/components/Button/Button';
@@ -30,6 +32,7 @@ export function LoginPage() {
   const navigate = useNavigate();
   const loginMutation = useLogin();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const showError = useToastStore((s) => s.showError);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -50,11 +53,14 @@ export function LoginPage() {
           password: values.password,
         });
         navigate('/');
-      } catch {
-        // Error handling — could show a toast in the future
+      } catch (error) {
+        const generalErrors = setServerErrors(error);
+        generalErrors.forEach((msg) => showError(msg));
       }
     },
   });
+
+  const { setServerErrors } = useFormServerErrors(form);
 
   return (
     <AuthLayout title="Вход в Smart Wallet">
