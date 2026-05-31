@@ -9,6 +9,8 @@ import {
   useUpdateTransactionEndpoint,
   useDeleteTransactionEndpoint,
 } from '@/api/queries/transaction-endpoint';
+import { useToastStore } from '@/store/useToastStore';
+import { parseApiError } from '@/api/parseApiError';
 import styles from './EditWalletPage.module.css';
 
 export function EditWalletPage() {
@@ -18,6 +20,9 @@ export function EditWalletPage() {
   const createMutation = useCreateTransactionEndpoint();
   const updateMutation = useUpdateTransactionEndpoint();
   const deleteMutation = useDeleteTransactionEndpoint();
+
+  const showError = useToastStore((s) => s.showError);
+  const showSuccess = useToastStore((s) => s.showSuccess);
 
   const isNew = id === 'new';
   const endpoint = endpoints.find((e) => e.id === id && e.isStorage);
@@ -42,12 +47,22 @@ export function EditWalletPage() {
     const limitationNum = Number(limitation);
     const valueNum = Number(value);
     if (!isNaN(limitationNum) && !isNaN(valueNum)) {
-      if (isNew) {
-        await createMutation.mutateAsync({ name, limitation: limitationNum, isStorage: true });
-      } else {
-        await updateMutation.mutateAsync({ id: id!, name, limitation: limitationNum });
+      try {
+        if (isNew) {
+          await createMutation.mutateAsync({ name, limitation: limitationNum, isStorage: true });
+        } else {
+          await updateMutation.mutateAsync({ id: id!, name, limitation: limitationNum });
+        }
+        showSuccess('Кошелёк сохранён');
+        navigate('/');
+      } catch (error) {
+        const { generalErrors } = parseApiError(error);
+        if (generalErrors.length > 0) {
+          generalErrors.forEach((msg) => showError(msg));
+        } else {
+          showError('Произошла ошибка');
+        }
       }
-      navigate('/');
     }
   };
 
@@ -57,9 +72,19 @@ export function EditWalletPage() {
 
   const handleDelete = async () => {
     if (!isNew) {
-      await deleteMutation.mutateAsync({ id: id! });
+      try {
+        await deleteMutation.mutateAsync({ id: id! });
+        showSuccess('Кошелёк удалён');
+        navigate('/');
+      } catch (error) {
+        const { generalErrors } = parseApiError(error);
+        if (generalErrors.length > 0) {
+          generalErrors.forEach((msg) => showError(msg));
+        } else {
+          showError('Произошла ошибка');
+        }
+      }
     }
-    navigate('/');
   };
 
   return (
