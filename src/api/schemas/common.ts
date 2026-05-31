@@ -42,6 +42,7 @@ export const ProblemDetailsSchema = z.object({
   status: z.number().nullable(),
   detail: z.string().nullable(),
   instance: z.string().nullable(),
+  errors: z.record(z.string(), z.array(z.string())).nullable().optional(),
 });
 
 export type ProblemDetails = z.infer<typeof ProblemDetailsSchema>;
