@@ -11,6 +11,7 @@ import { TransactionAddPage } from '@/pages/TransactionAddPage/TransactionAddPag
 import { ProfilePage } from '@/pages/ProfilePage/ProfilePage';
 import { AnalyticsPage } from '@/pages/AnalyticsPage/AnalyticsPage';
 import { ChangePasswordPage } from '@/pages/ChangePasswordPage/ChangePasswordPage';
+import { ToastContainer } from '@/components/Toast/ToastContainer';
 import styles from './App.module.css';
 
 function AppContent() {
@@ -20,6 +21,7 @@ function AppContent() {
   return (
     <div className={`${styles.app} ${isAuthPage ? styles.authPage : ''}`}>
       {!isAuthPage && <Sidebar />}
+      <ToastContainer />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

@@ -1,59 +1,32 @@
-import { useEffect, useState } from 'react';
 import styles from './Toast.module.css';
+import type { ToastVariant } from '@/store/useToastStore';
 
 interface ToastProps {
+  id: string;
   message: string;
+  variant: ToastVariant;
   actionLabel?: string;
   onAction?: () => void;
-  onClose?: () => void;
-  visible: boolean;
+  onClose: (id: string) => void;
 }
 
-export function Toast({ message, actionLabel, onAction, onClose, visible }: ToastProps) {
-  const [closing, setClosing] = useState(false);
-
-  useEffect(() => {
-    if (!visible) {
-      setClosing(false);
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      setClosing(true);
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, [visible]);
-
-  const handleAnimationEnd = () => {
-    if (!closing) return;
-    setClosing(false);
-    onClose?.();
-  };
-
+export function Toast({ id, message, variant, actionLabel, onAction, onClose }: ToastProps) {
   const handleAction = () => {
-    try {
-      onAction?.();
-    } finally {
-      onClose?.();
-    }
+    onAction?.();
+    onClose(id);
   };
-
-  if (!visible) return null;
 
   return (
-    <div
-      role="status"
-      aria-live="polite"
-      className={`${styles.toast}${closing ? ` ${styles.closing}` : ''}`}
-      onAnimationEnd={handleAnimationEnd}
-    >
+    <div role="status" aria-live="polite" className={`${styles.toast} ${styles[variant]}`}>
       <span className={styles.message}>{message}</span>
       {actionLabel && onAction && (
         <button className={styles.actionButton} onClick={handleAction}>
           {actionLabel}
         </button>
       )}
+      <button className={styles.closeButton} onClick={() => onClose(id)} aria-label="Закрыть">
+        ×
+      </button>
     </div>
   );
 }

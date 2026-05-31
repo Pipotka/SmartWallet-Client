@@ -1,0 +1,28 @@
+.container {
+  position: fixed;
+  bottom: calc(var(--nav-height) + var(--spacing-sm));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--spacing-sm);
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.container > * {
+  pointer-events: auto;
+}
+
+@media (min-width: 768px) {
+  .container {
+    left: calc(50% + var(--sidebar-collapsed-width) / 2);
+    bottom: var(--spacing-lg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    left: calc(50% + var(--sidebar-width) / 2);
+  }
+}
