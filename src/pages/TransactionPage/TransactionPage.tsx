@@ -1,8 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header/Header';
 import { BottomNav } from '@/components/BottomNav/BottomNav';
-import { Toast } from '@/components/Toast/Toast';
+import { useToastStore } from '@/store/useToastStore';
 import { TransactionCard } from '@/features/transactions/components/TransactionCard';
 import { TransactionFilters } from '@/features/transactions/components/TransactionFilters';
 import { useTransactions } from '@/features/transactions/hooks/useTransactions';
@@ -17,36 +17,31 @@ export function TransactionPage() {
   const confirmDeleted = useTransactionStore((s) => s.confirmDeleted);
   const filters = useTransactionFilters(transactions);
   const navigate = useNavigate();
-  const [deletedId, setDeletedId] = useState<string | null>(null);
-  const [toastVisible, setToastVisible] = useState(false);
+
+  const showSuccessToast = useToastStore((s) => s.showSuccess);
+  const showErrorToast = useToastStore((s) => s.showError);
 
   const handleDelete = useCallback(
     async (id: string) => {
-      setDeletedId(id);
+      const undoId = useToastStore.getState().addToast('Транзакция удалена', 'success', {
+        actionLabel: 'Отмена',
+        onAction: () => {
+          undoDelete(id);
+        },
+      });
+
       markOptimisticDeleted(id);
       try {
         await deleteTransaction(id);
         confirmDeleted(id);
       } catch {
         undoDelete(id);
+        useToastStore.getState().removeToast(undoId);
+        showErrorToast('Ошибка удаления транзакции');
       }
-      setToastVisible(true);
     },
-    [deleteTransaction, markOptimisticDeleted, confirmDeleted, undoDelete]
+    [deleteTransaction, markOptimisticDeleted, confirmDeleted, undoDelete, showErrorToast],
   );
-
-  const handleUndo = useCallback(() => {
-    if (deletedId) {
-      undoDelete(deletedId);
-      setDeletedId(null);
-      setToastVisible(false);
-    }
-  }, [deletedId, undoDelete]);
-
-  const handleToastClose = useCallback(() => {
-    setToastVisible(false);
-    setDeletedId(null);
-  }, []);
 
   if (isLoading) {
     return (
@@ -101,14 +96,6 @@ export function TransactionPage() {
       </button>
 
       <BottomNav />
-
-      <Toast
-        message="Транзакция удалена"
-        actionLabel="Отмена"
-        onAction={handleUndo}
-        onClose={handleToastClose}
-        visible={toastVisible}
-      />
     </div>
   );
 }
