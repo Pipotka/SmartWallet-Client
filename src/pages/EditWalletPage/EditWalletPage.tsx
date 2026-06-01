@@ -13,6 +13,10 @@ import { useToastStore } from '@/store/useToastStore';
 import { parseApiError } from '@/api/parseApiError';
 import styles from './EditWalletPage.module.css';
 
+const FIELD_MAP: Record<string, string> = {
+  Name: 'name',
+};
+
 export function EditWalletPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -30,6 +34,7 @@ export function EditWalletPage() {
   const [name, setName] = useState(endpoint?.name ?? '');
   const [limitation, setLimitation] = useState(String(endpoint?.limitation ?? ''));
   const [value, setValue] = useState(String(endpoint?.value ?? ''));
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   if (!endpoint && !isNew) {
     return (
@@ -56,10 +61,16 @@ export function EditWalletPage() {
         showSuccess('Кошелёк сохранён');
         navigate('/');
       } catch (error) {
-        const { generalErrors } = parseApiError(error);
+        const { fieldErrors: serverFieldErrors, generalErrors } = parseApiError(error);
+        const mappedFieldErrors: Record<string, string> = {};
+        for (const [serverField, errorMessage] of Object.entries(serverFieldErrors)) {
+          const formField = FIELD_MAP[serverField] ?? serverField;
+          mappedFieldErrors[formField] = errorMessage;
+        }
+        setFieldErrors(mappedFieldErrors);
         if (generalErrors.length > 0) {
           generalErrors.forEach((msg) => showError(msg));
-        } else {
+        } else if (Object.keys(mappedFieldErrors).length === 0) {
           showError('Произошла ошибка');
         }
       }
@@ -99,6 +110,8 @@ export function EditWalletPage() {
             value={name}
             onChange={setName}
             placeholder="Название кошелька"
+            error={!!fieldErrors.name}
+            errorText={fieldErrors.name}
           />
           <InputField
             label="Лимиты"
