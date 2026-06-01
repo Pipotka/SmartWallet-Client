@@ -81,7 +81,13 @@ export function RegisterPage() {
     },
   });
 
-  const { setServerErrors } = useFormServerErrors(form);
+  const { setServerErrors } = useFormServerErrors(form, {
+    Email: 'email',
+    Password: 'password',
+    FirstName: 'firstName',
+    LastName: 'lastName',
+    Patronymic: 'patronymic',
+  });
 
   return (
     <AuthLayout title="Регистрация в Smart Wallet">
