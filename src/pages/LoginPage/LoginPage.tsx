@@ -23,6 +23,11 @@ function validateLogin(values: LoginFormData): Partial<Record<keyof LoginFormDat
 
   if (!values.password) {
     errors.password = 'Поле обязательно для заполнения';
+  } else {
+    if (values.password.length < 8) errors.password = 'Пароль должен содержать минимум 8 символов';
+    else if (!/[A-ZА-Я]/.test(values.password)) errors.password = 'Пароль должен содержать хотя бы одну заглавную букву';
+    else if (!/\d/.test(values.password)) errors.password = 'Пароль должен содержать хотя бы одну цифру';
+    else if (!/[!@#$%^&*()_+=\]{};':"\\|,.<>?/[-]/.test(values.password)) errors.password = 'Пароль должен содержать хотя бы один специальный символ';
   }
 
   return errors;
