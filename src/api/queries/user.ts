@@ -60,7 +60,7 @@ export function useDeleteUser() {
 export function useLogin() {
   return useMutation({
     mutationFn: async (body: RequestLogInApiModel) => {
-      const data = await apiClient<unknown>('/api/users/login', 'PUT', { body });
+      const data = await apiClient<unknown>('/api/users/login', 'PUT', { body, skipAuthRefresh: true });
       return ResponseLogInApiModelSchema.parse(data);
     },
     onSuccess: (data) => {

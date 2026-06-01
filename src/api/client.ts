@@ -58,7 +58,7 @@ export { refreshAccessToken };
 async function apiClientInternal<T>(
   path: string,
   method: HttpMethod,
-  options?: { body?: unknown; signal?: AbortSignal },
+  options?: { body?: unknown; signal?: AbortSignal; skipAuthRefresh?: boolean },
   isRetry?: boolean,
 ): Promise<T> {
   const { apiBaseUrl } = getConfig();
@@ -85,7 +85,7 @@ async function apiClientInternal<T>(
     credentials: 'include',
   });
 
-  if (response.status === 401 && !isRetry) {
+  if (response.status === 401 && !isRetry && !options?.skipAuthRefresh) {
     const newToken = await refreshAccessToken();
     if (newToken) {
       return apiClientInternal<T>(path, method, options, true);
@@ -116,7 +116,7 @@ async function apiClientInternal<T>(
 export async function apiClient<T>(
   path: string,
   method: HttpMethod,
-  options?: { body?: unknown; signal?: AbortSignal },
+  options?: { body?: unknown; signal?: AbortSignal; skipAuthRefresh?: boolean },
 ): Promise<T> {
   return apiClientInternal<T>(path, method, options, false);
 }
