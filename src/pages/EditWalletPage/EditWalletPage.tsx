@@ -52,7 +52,20 @@ export function EditWalletPage() {
   const handleSave = async () => {
     const limitationNum = Number(limitation);
     const valueNum = Number(value);
-    if (!isNaN(limitationNum) && !isNaN(valueNum)) {
+
+    // Clear previous client-side limitation error before re-validation
+    setFieldErrors((prev) => {
+      const next = { ...prev };
+      delete next.limitation;
+      return next;
+    });
+
+    if (isNaN(limitationNum) || limitationNum <= 0) {
+      setFieldErrors((prev) => ({ ...prev, limitation: 'Лимиты должны быть больше нуля' }));
+      return;
+    }
+
+    if (!isNaN(valueNum)) {
       try {
         if (isNew) {
           await createMutation.mutateAsync({ name, limitation: limitationNum, isStorage: true });
@@ -117,7 +130,26 @@ export function EditWalletPage() {
           <InputField
             label="Лимиты"
             value={limitation}
-            onChange={setLimitation}
+            onChange={(val) => {
+              setLimitation(val);
+              setFieldErrors((prev) => {
+                const next = { ...prev };
+                delete next.limitation;
+                return next;
+              });
+            }}
+            onBlur={() => {
+              const limitationNum = Number(limitation);
+              if (isNaN(limitationNum) || limitationNum <= 0) {
+                setFieldErrors((prev) => ({ ...prev, limitation: 'Лимиты должны быть больше нуля' }));
+              } else {
+                setFieldErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.limitation;
+                  return next;
+                });
+              }
+            }}
             type="number"
             placeholder="0"
             error={!!fieldErrors.limitation}

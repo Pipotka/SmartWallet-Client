@@ -49,28 +49,39 @@ export function EditCategoryPage() {
 
   const handleSave = async () => {
     const limitationNum = Number(limitation);
-    if (!isNaN(limitationNum)) {
-      try {
-        if (isNew) {
-          await createMutation.mutateAsync({ name, limitation: limitationNum, isStorage: false });
-        } else {
-          await updateMutation.mutateAsync({ id: id!, name, limitation: limitationNum });
-        }
-        showSuccess('Категория сохранена');
-        navigate('/');
-      } catch (error) {
-        const { fieldErrors: serverFieldErrors, generalErrors } = parseApiError(error);
-        const mappedFieldErrors: Record<string, string> = {};
-        for (const [serverField, errorMessage] of Object.entries(serverFieldErrors)) {
-          const formField = FIELD_MAP[serverField] ?? serverField;
-          mappedFieldErrors[formField] = errorMessage;
-        }
-        setFieldErrors(mappedFieldErrors);
-        if (generalErrors.length > 0) {
-          generalErrors.forEach((msg) => showError(msg));
-        } else if (Object.keys(mappedFieldErrors).length === 0) {
-          showError('Произошла ошибка');
-        }
+
+    // Clear previous client-side limitation error before re-validation
+    setFieldErrors((prev) => {
+      const next = { ...prev };
+      delete next.limitation;
+      return next;
+    });
+
+    if (isNaN(limitationNum) || limitationNum <= 0) {
+      setFieldErrors((prev) => ({ ...prev, limitation: 'Лимиты должны быть больше нуля' }));
+      return;
+    }
+
+    try {
+      if (isNew) {
+        await createMutation.mutateAsync({ name, limitation: limitationNum, isStorage: false });
+      } else {
+        await updateMutation.mutateAsync({ id: id!, name, limitation: limitationNum });
+      }
+      showSuccess('Категория сохранена');
+      navigate('/');
+    } catch (error) {
+      const { fieldErrors: serverFieldErrors, generalErrors } = parseApiError(error);
+      const mappedFieldErrors: Record<string, string> = {};
+      for (const [serverField, errorMessage] of Object.entries(serverFieldErrors)) {
+        const formField = FIELD_MAP[serverField] ?? serverField;
+        mappedFieldErrors[formField] = errorMessage;
+      }
+      setFieldErrors(mappedFieldErrors);
+      if (generalErrors.length > 0) {
+        generalErrors.forEach((msg) => showError(msg));
+      } else if (Object.keys(mappedFieldErrors).length === 0) {
+        showError('Произошла ошибка');
       }
     }
   };
@@ -114,7 +125,26 @@ export function EditCategoryPage() {
           <InputField
             label="Лимиты"
             value={limitation}
-            onChange={setLimitation}
+            onChange={(val) => {
+              setLimitation(val);
+              setFieldErrors((prev) => {
+                const next = { ...prev };
+                delete next.limitation;
+                return next;
+              });
+            }}
+            onBlur={() => {
+              const limitationNum = Number(limitation);
+              if (isNaN(limitationNum) || limitationNum <= 0) {
+                setFieldErrors((prev) => ({ ...prev, limitation: 'Лимиты должны быть больше нуля' }));
+              } else {
+                setFieldErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.limitation;
+                  return next;
+                });
+              }
+            }}
             type="number"
             placeholder="0"
             error={!!fieldErrors.limitation}
