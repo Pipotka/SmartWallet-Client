@@ -28,6 +28,11 @@ export function EditCategoryPage() {
 
   const [name, setName] = useState(endpoint?.name ?? '');
   const [limitation, setLimitation] = useState(String(endpoint?.limitation ?? ''));
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  const FIELD_MAP: Record<string, string> = {
+    Name: 'name',
+  };
 
   if (!endpoint && !isNew) {
     return (
@@ -53,10 +58,16 @@ export function EditCategoryPage() {
         showSuccess('Категория сохранена');
         navigate('/');
       } catch (error) {
-        const { generalErrors } = parseApiError(error);
+        const { fieldErrors: serverFieldErrors, generalErrors } = parseApiError(error);
+        const mappedFieldErrors: Record<string, string> = {};
+        for (const [serverField, errorMessage] of Object.entries(serverFieldErrors)) {
+          const formField = FIELD_MAP[serverField] ?? serverField;
+          mappedFieldErrors[formField] = errorMessage;
+        }
+        setFieldErrors(mappedFieldErrors);
         if (generalErrors.length > 0) {
           generalErrors.forEach((msg) => showError(msg));
-        } else {
+        } else if (Object.keys(mappedFieldErrors).length === 0) {
           showError('Произошла ошибка');
         }
       }
@@ -96,6 +107,8 @@ export function EditCategoryPage() {
             value={name}
             onChange={setName}
             placeholder="Название категории"
+            error={!!fieldErrors.name}
+            errorText={fieldErrors.name}
           />
           <InputField
             label="Лимиты"
