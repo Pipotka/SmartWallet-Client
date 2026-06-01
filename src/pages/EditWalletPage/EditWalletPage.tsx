@@ -15,6 +15,7 @@ import styles from './EditWalletPage.module.css';
 
 const FIELD_MAP: Record<string, string> = {
   Name: 'name',
+  Limitation: 'limitation',
 };
 
 export function EditWalletPage() {
@@ -119,6 +120,8 @@ export function EditWalletPage() {
             onChange={setLimitation}
             type="number"
             placeholder="0"
+            error={!!fieldErrors.limitation}
+            errorText={fieldErrors.limitation}
           />
           <InputField
             label="Значение"

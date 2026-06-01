@@ -32,6 +32,7 @@ export function EditCategoryPage() {
 
   const FIELD_MAP: Record<string, string> = {
     Name: 'name',
+    Limitation: 'limitation',
   };
 
   if (!endpoint && !isNew) {
@@ -116,6 +117,8 @@ export function EditCategoryPage() {
             onChange={setLimitation}
             type="number"
             placeholder="0"
+            error={!!fieldErrors.limitation}
+            errorText={fieldErrors.limitation}
           />
 
           <hr className={styles.separator} />
