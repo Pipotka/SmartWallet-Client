@@ -60,7 +60,10 @@ export function LoginPage() {
     },
   });
 
-  const { setServerErrors } = useFormServerErrors(form);
+  const { setServerErrors } = useFormServerErrors(form, {
+    Email: 'email',
+    Password: 'password',
+  });
 
   return (
     <AuthLayout title="Вход в Smart Wallet">
