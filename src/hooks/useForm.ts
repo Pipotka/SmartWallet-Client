@@ -47,12 +47,16 @@ export function useForm<T extends { [K in keyof T]: string }>(
   const handleChange = useCallback((field: keyof T) => (value: string) => {
     const next = { ...valuesRef.current, [field]: value };
     setValues(next);
-    setErrors(validateRef.current(next));
+    const clientErrors = validateRef.current(next);
+    // Only update the error for the field being edited; preserve errors for other fields (including server errors)
+    setErrors((prev) => ({ ...prev, [field]: clientErrors[field] }));
   }, []);
 
   const handleBlur = useCallback((field: keyof T) => {
     setTouched((prev) => ({ ...prev, [field]: true }));
-    setErrors(validateRef.current(valuesRef.current));
+    const clientErrors = validateRef.current(valuesRef.current);
+    // Only update the error for the blurred field; preserve errors for other fields
+    setErrors((prev) => ({ ...prev, [field]: clientErrors[field] }));
   }, []);
 
   const handleSubmit = useCallback(() => {
@@ -65,7 +69,8 @@ export function useForm<T extends { [K in keyof T]: string }>(
     setTouched(allTouched);
 
     const validationErrors = validateRef.current(currentValues);
-    setErrors(validationErrors);
+    // On submit, merge client errors with existing server errors
+    setErrors((prev) => ({ ...prev, ...validationErrors }));
 
     const hasErrors = Object.values(validationErrors).some(
       (error) => error !== undefined && error !== '',
@@ -81,7 +86,7 @@ export function useForm<T extends { [K in keyof T]: string }>(
   }, []);
 
   const setFieldErrors = useCallback((errors: Partial<Record<keyof T, string>>) => {
-    setErrors(errors);
+    setErrors((prev) => ({ ...prev, ...errors }));
   }, []);
 
   const setFieldTouched = useCallback((fields: Partial<Record<keyof T, string>>) => {
