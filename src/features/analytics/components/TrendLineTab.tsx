@@ -40,8 +40,12 @@ export function TrendLineTab() {
 
   const errorMessage = isError
     ? (() => {
-        const { generalErrors } = parseApiError(error);
-        return generalErrors.length > 0 ? generalErrors.join('; ') : 'Ошибка загрузки данных';
+        const { fieldErrors, generalErrors } = parseApiError(error);
+        const allMessages = [
+          ...Object.values(fieldErrors),
+          ...generalErrors,
+        ];
+        return allMessages.length > 0 ? allMessages.join('; ') : 'Ошибка загрузки данных';
       })()
     : undefined;
 
