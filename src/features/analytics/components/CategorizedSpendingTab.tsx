@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { useCategorizedSpending } from '@/api/queries/financial-analytics';
 import type { CategorizingSpendingApiRequest } from '@/api/schemas/financial-analytics';
+import { parseApiError } from '@/api/parseApiError';
 import { CHART_COLORS } from '../constants';
 import { formatAmount } from '../utils/formatAmount';
 import type { DateRange } from '../types';
@@ -34,7 +35,14 @@ export function CategorizedSpendingTab() {
     return { startDate: dateRange.startDate, endDate: dateRange.endDate };
   }, [dateRange]);
 
-  const { data, isLoading, isError, refetch } = useCategorizedSpending(request);
+  const { data, isLoading, isError, error, refetch } = useCategorizedSpending(request);
+
+  const errorMessage = isError
+    ? (() => {
+        const { generalErrors } = parseApiError(error);
+        return generalErrors.length > 0 ? generalErrors.join('; ') : 'Ошибка загрузки данных';
+      })()
+    : undefined;
 
   const pieData: PieEntry[] = useMemo(() => {
     if (!data?.categories) return [];
@@ -60,7 +68,7 @@ export function CategorizedSpendingTab() {
     return (
       <div className={styles.tab}>
         <DateRangePicker value={dateRange} onChange={setDateRange} />
-        <ChartErrorState onRetry={() => refetch()} />
+        <ChartErrorState message={errorMessage} onRetry={() => refetch()} />
       </div>
     );
   }

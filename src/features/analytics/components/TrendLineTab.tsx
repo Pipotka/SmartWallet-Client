@@ -11,6 +11,7 @@ import { ChartSkeleton } from './ChartSkeleton';
 import { EmptyChartState } from './EmptyChartState';
 import { ChartErrorState } from './ChartErrorState';
 import { Select } from '@/components/Select/Select';
+import { parseApiError } from '@/api/parseApiError';
 import styles from './TrendLineTab.module.css';
 
 export function TrendLineTab() {
@@ -35,7 +36,14 @@ export function TrendLineTab() {
     };
   }, [dateRange, timeUnit]);
 
-  const { data, isLoading, isError, refetch } = useSpendingTrendLine(request);
+  const { data, isLoading, isError, error, refetch } = useSpendingTrendLine(request);
+
+  const errorMessage = isError
+    ? (() => {
+        const { generalErrors } = parseApiError(error);
+        return generalErrors.length > 0 ? generalErrors.join('; ') : 'Ошибка загрузки данных';
+      })()
+    : undefined;
 
   const lineData = useMemo(() => {
     if (!data?.labels || !data?.categories) return [];
@@ -82,7 +90,7 @@ export function TrendLineTab() {
       </div>
 
       {isLoading && <ChartSkeleton />}
-      {isError && <ChartErrorState onRetry={() => refetch()} />}
+      {isError && <ChartErrorState message={errorMessage} onRetry={() => refetch()} />}
       {isEmpty && <EmptyChartState onChangePeriod={() => setDateRange(null)} />}
 
       {!isLoading && !isError && !isEmpty && lineData.length > 0 && (

@@ -3,6 +3,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import { useCategoryComparativeAnalysis } from '@/api/queries/financial-analytics';
 import type { CategoryComparativeAnalysisApiRequest } from '@/api/schemas/financial-analytics';
 import { TimeUnit } from '@/api/schemas/common';
+import { parseApiError } from '@/api/parseApiError';
 import { CHART_COLORS } from '../constants';
 import { formatAmount } from '../utils/formatAmount';
 import { PeriodPicker } from './PeriodPicker';
@@ -29,7 +30,14 @@ export function ComparativeAnalysisTab() {
     };
   }, [firstPeriod, secondPeriod, timeUnit, timeUnitCount]);
 
-  const { data, isLoading, isError, refetch } = useCategoryComparativeAnalysis(request);
+  const { data, isLoading, isError, error, refetch } = useCategoryComparativeAnalysis(request);
+
+  const errorMessage = isError
+    ? (() => {
+        const { generalErrors } = parseApiError(error);
+        return generalErrors.length > 0 ? generalErrors.join('; ') : 'Ошибка загрузки данных';
+      })()
+    : undefined;
 
   const barData = useMemo(() => {
     if (!data?.categoryComparativeAnalyses) return [];
@@ -57,7 +65,7 @@ export function ComparativeAnalysisTab() {
       />
 
       {isLoading && <ChartSkeleton />}
-      {isError && <ChartErrorState onRetry={() => refetch()} />}
+      {isError && <ChartErrorState message={errorMessage} onRetry={() => refetch()} />}
       {isEmpty && <EmptyChartState />}
 
       {!isLoading && !isError && !isEmpty && barData.length > 0 && (
