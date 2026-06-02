@@ -37,18 +37,3 @@
   width: 100%;
   min-height: 300px;
 }
-
-@media (min-width: 1024px) {
-  .tab {
-    flex-direction: row;
-    align-items: flex-start;
-  }
-
-  .summary {
-    flex: 0 0 200px;
-  }
-
-  .chartContainer {
-    flex: 1;
-  }
-}

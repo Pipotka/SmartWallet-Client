@@ -85,13 +85,7 @@
 }
 
 @media (min-width: 1024px) {
-  .tab {
-    flex-direction: row;
-    align-items: flex-start;
-  }
-
   .chartContainer {
-    flex: 1;
     align-items: center;
   }
 }

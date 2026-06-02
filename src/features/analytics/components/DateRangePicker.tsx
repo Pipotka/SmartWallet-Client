@@ -25,9 +25,7 @@ export function DateRangePicker({ value, onChange }: DateRangePickerProps) {
       setActivePreset(null);
       const startDate = e.target.value;
       const endDate = value?.endDate ?? '';
-      if (startDate && endDate) {
-        onChange({ startDate, endDate });
-      }
+      onChange({ startDate, endDate });
     },
     [value, onChange]
   );
@@ -37,9 +35,7 @@ export function DateRangePicker({ value, onChange }: DateRangePickerProps) {
       setActivePreset(null);
       const endDate = e.target.value;
       const startDate = value?.startDate ?? '';
-      if (startDate && endDate) {
-        onChange({ startDate, endDate });
-      }
+      onChange({ startDate, endDate });
     },
     [value, onChange]
   );
