@@ -42,6 +42,7 @@ export function TrendLineTab() {
   const generalErrors = isError ? parseApiError(error).generalErrors : [];
   const startDateError = fieldErrors['StartDate'];
   const endDateError = fieldErrors['EndDate'];
+  const timeUnitError = fieldErrors['TimeUnit'];
   const generalErrorMessage = generalErrors.length > 0
     ? generalErrors.join('; ')
     : (Object.keys(fieldErrors).length > 0 ? undefined : 'Ошибка загрузки данных');
@@ -87,6 +88,8 @@ export function TrendLineTab() {
           value={String(timeUnit)}
           onChange={handleTimeUnitChange}
           placeholder="Выберите"
+          error={!!timeUnitError}
+          errorText={timeUnitError}
         />
       </div>
 
