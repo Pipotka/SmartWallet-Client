@@ -21,23 +21,23 @@ export function TransactionPage() {
   const showErrorToast = useToastStore((s) => s.showError);
 
   const handleDelete = useCallback(
-    async (id: string) => {
-      const undoId = useToastStore.getState().addToast('Транзакция удалена', 'success', {
+    (id: string) => {
+      useToastStore.getState().addToast('Транзакция удалена', 'success', {
         actionLabel: 'Отмена',
         onAction: () => {
           undoDelete(id);
         },
       });
 
-      markOptimisticDeleted(id);
-      try {
-        await deleteTransaction(id);
-        confirmDeleted(id);
-      } catch {
-        undoDelete(id);
-        useToastStore.getState().removeToast(undoId);
-        showErrorToast('Ошибка удаления транзакции');
-      }
+      markOptimisticDeleted(id, async () => {
+        try {
+          await deleteTransaction(id);
+          confirmDeleted(id);
+        } catch {
+          undoDelete(id);
+          showErrorToast('Ошибка удаления транзакции');
+        }
+      });
     },
     [deleteTransaction, markOptimisticDeleted, confirmDeleted, undoDelete, showErrorToast],
   );
