@@ -11,9 +11,10 @@ import { Button, SaveIcon, CloseIcon } from '@/components/Button/Button';
 interface TransactionFormProps {
   onSubmit: (dto: CreateTransactionDTO) => void;
   onCancel: () => void;
+  serverErrors?: { source?: string; destination?: string; amount?: string };
 }
 
-export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
+export function TransactionForm({ onSubmit, onCancel, serverErrors }: TransactionFormProps) {
   const form = useTransactionForm();
   const { data: endpoints = [] } = useTransactionEndpoints();
   const wallets = useMemo(() => endpoints.filter((e) => e.isStorage), [endpoints]);
@@ -44,6 +45,12 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
   const showSourceBadge = sourceRemaining !== null;
 
   const { sourceAccountId, destinationAccountId, amount, markAllTouched } = form;
+
+  const displayErrors = {
+    source: serverErrors?.source || form.errors.source,
+    destination: serverErrors?.destination || form.errors.destination,
+    amount: serverErrors?.amount || form.errors.amount,
+  };
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
@@ -86,6 +93,8 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
           }}
           placeholder="Выберите источник"
           rightBadge={showSourceBadge ? <>До лимита: {sourceRemaining} ₽</> : undefined}
+          error={!!displayErrors.source}
+          errorText={displayErrors.source}
         />
 
         <Select
@@ -101,9 +110,11 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
           }}
           placeholder="Выберите назначение"
           rightBadge={showBadge ? <>До лимита: {destRemaining} ₽</> : undefined}
+          error={!!displayErrors.destination}
+          errorText={displayErrors.destination}
         />
-        {form.errors.destination && (
-          <span className={styles.errorText}>{form.errors.destination}</span>
+        {displayErrors.destination && (
+          <span className={styles.errorText}>{displayErrors.destination}</span>
         )}
 
         <InputField
@@ -115,8 +126,8 @@ export function TransactionForm({ onSubmit, onCancel }: TransactionFormProps) {
           }}
           onBlur={() => form.markTouched('amount')}
           type="number"
-          error={!!form.errors.amount}
-          errorText={form.errors.amount}
+          error={!!displayErrors.amount}
+          errorText={displayErrors.amount}
         />
 
         <div className={styles.buttonRow}>

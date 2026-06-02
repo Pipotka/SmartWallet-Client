@@ -19,6 +19,10 @@ export function parseApiError(error: unknown): ParsedApiError {
     return parse400Error(error);
   }
 
+  if (error.statusCode === 409) {
+    return parse422Error(error);
+  }
+
   return parseOtherError(error);
 }
 

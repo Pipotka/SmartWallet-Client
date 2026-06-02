@@ -8,6 +8,8 @@ interface SelectProps {
   placeholder?: string;
   disabled?: boolean;
   rightBadge?: React.ReactNode;
+  error?: boolean;
+  errorText?: string;
 }
 
 export function Select({
@@ -18,13 +20,15 @@ export function Select({
   placeholder = 'Выберите',
   disabled = false,
   rightBadge,
+  error,
+  errorText,
 }: SelectProps) {
   const selectId = `select-${label.replace(/\s+/g, '-').toLowerCase()}`;
 
   return (
     <div className={styles.field}>
       <label className={styles.label} htmlFor={selectId}>{label}</label>
-      <div className={`${styles.selectWrapper}${rightBadge ? ` ${styles.hasBadge}` : ''}`}>
+      <div className={`${styles.selectWrapper}${rightBadge ? ` ${styles.hasBadge}` : ''}${error ? ` ${styles.error}` : ''}`}>
         <select
           id={selectId}
           className={styles.select}
@@ -55,6 +59,7 @@ export function Select({
           <path d="M4 6l4 4 4-4" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
+      {error && errorText && <span className={styles.errorText}>{errorText}</span>}
     </div>
   );
 }
