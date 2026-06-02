@@ -49,6 +49,10 @@ export function TransactionAddPage() {
     navigate(-1);
   }, [navigate]);
 
+  const handleClearServerError = useCallback(() => {
+    setServerErrors({});
+  }, []);
+
   return (
     <div className={styles.page}>
       <Header />
@@ -57,7 +61,7 @@ export function TransactionAddPage() {
         <div className={styles.formWrapper}>
           <h1 className={styles.title}>Добавление транзакции</h1>
 
-          <TransactionForm onSubmit={handleSubmit} onCancel={handleCancel} serverErrors={serverErrors} />
+          <TransactionForm onSubmit={handleSubmit} onCancel={handleCancel} serverErrors={serverErrors} onClearServerError={handleClearServerError} />
 
           <hr className={styles.separator} />
         </div>

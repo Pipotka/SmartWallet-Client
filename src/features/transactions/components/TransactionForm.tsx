@@ -12,9 +12,10 @@ interface TransactionFormProps {
   onSubmit: (dto: CreateTransactionDTO) => void;
   onCancel: () => void;
   serverErrors?: { source?: string; destination?: string; amount?: string };
+  onClearServerError?: () => void;
 }
 
-export function TransactionForm({ onSubmit, onCancel, serverErrors }: TransactionFormProps) {
+export function TransactionForm({ onSubmit, onCancel, serverErrors, onClearServerError }: TransactionFormProps) {
   const form = useTransactionForm();
   const { data: endpoints = [] } = useTransactionEndpoints();
   const wallets = useMemo(() => endpoints.filter((e) => e.isStorage), [endpoints]);
@@ -88,6 +89,7 @@ export function TransactionForm({ onSubmit, onCancel, serverErrors }: Transactio
           }))}
           value={form.sourceAccountId ?? ''}
           onChange={(value) => {
+            onClearServerError?.();
             form.markTouched('source');
             form.setSourceAccountId(value || null);
           }}
@@ -105,6 +107,7 @@ export function TransactionForm({ onSubmit, onCancel, serverErrors }: Transactio
           }))}
           value={form.destinationAccountId ?? ''}
           onChange={(value) => {
+            onClearServerError?.();
             form.markTouched('destination');
             form.setDestinationAccountId(value || null);
           }}
@@ -113,14 +116,12 @@ export function TransactionForm({ onSubmit, onCancel, serverErrors }: Transactio
           error={!!displayErrors.destination}
           errorText={displayErrors.destination}
         />
-        {displayErrors.destination && (
-          <span className={styles.errorText}>{displayErrors.destination}</span>
-        )}
 
         <InputField
           label="Сумма"
           value={form.amount}
           onChange={(value) => {
+            onClearServerError?.();
             form.markTouched('amount');
             form.setAmount(value);
           }}
