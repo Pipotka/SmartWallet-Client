@@ -6,9 +6,11 @@ import styles from './DateRangePicker.module.css';
 interface DateRangePickerProps {
   value: DateRange | null;
   onChange: (range: DateRange) => void;
+  startDateError?: string;
+  endDateError?: string;
 }
 
-export function DateRangePicker({ value, onChange }: DateRangePickerProps) {
+export function DateRangePicker({ value, onChange, startDateError, endDateError }: DateRangePickerProps) {
   const [activePreset, setActivePreset] = useState<number | null>(null);
 
   const handlePresetClick = useCallback(
@@ -68,10 +70,11 @@ export function DateRangePicker({ value, onChange }: DateRangePickerProps) {
           <input
             id="date-range-start"
             type="date"
-            className={`${styles.input} ${isInvalid ? styles.inputInvalid : ''}`}
+            className={`${styles.input} ${(isInvalid || startDateError) ? styles.inputInvalid : ''}`}
             value={value?.startDate ?? ''}
             onChange={handleStartDateChange}
           />
+          {startDateError && <p className={styles.errorMessage}>{startDateError}</p>}
         </div>
         <div className={styles.field}>
           <label className={styles.label} htmlFor="date-range-end">
@@ -80,13 +83,14 @@ export function DateRangePicker({ value, onChange }: DateRangePickerProps) {
           <input
             id="date-range-end"
             type="date"
-            className={`${styles.input} ${isInvalid ? styles.inputInvalid : ''}`}
+            className={`${styles.input} ${(isInvalid || endDateError) ? styles.inputInvalid : ''}`}
             value={value?.endDate ?? ''}
             onChange={handleEndDateChange}
           />
+          {endDateError && <p className={styles.errorMessage}>{endDateError}</p>}
         </div>
       </div>
-      {isInvalid && (
+      {isInvalid && !endDateError && (
         <p className={styles.errorMessage}>
           Дата окончания не может быть раньше даты начала
         </p>

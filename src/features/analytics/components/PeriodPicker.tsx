@@ -12,6 +12,8 @@ interface PeriodPickerProps {
   onSecondPeriodChange: (value: string) => void;
   onTimeUnitChange: (value: TimeUnit) => void;
   onTimeUnitCountChange: (value: number) => void;
+  firstPeriodError?: string;
+  secondPeriodError?: string;
 }
 
 export function PeriodPicker({
@@ -23,6 +25,8 @@ export function PeriodPicker({
   onSecondPeriodChange,
   onTimeUnitChange,
   onTimeUnitCountChange,
+  firstPeriodError,
+  secondPeriodError,
 }: PeriodPickerProps) {
   const handleTimeUnitChange = (value: string | null) => {
     if (value !== null) {
@@ -52,10 +56,11 @@ export function PeriodPicker({
           <input
             id="period-first"
             type="date"
-            className={styles.input}
+            className={`${styles.input} ${firstPeriodError ? styles.inputInvalid : ''}`}
             value={firstPeriod}
             onChange={(e) => onFirstPeriodChange(e.target.value)}
           />
+          {firstPeriodError && <p className={styles.errorMessage}>{firstPeriodError}</p>}
         </div>
       </div>
 
@@ -68,10 +73,11 @@ export function PeriodPicker({
           <input
             id="period-second"
             type="date"
-            className={styles.input}
+            className={`${styles.input} ${secondPeriodError ? styles.inputInvalid : ''}`}
             value={secondPeriod}
             onChange={(e) => onSecondPeriodChange(e.target.value)}
           />
+          {secondPeriodError && <p className={styles.errorMessage}>{secondPeriodError}</p>}
         </div>
       </div>
 

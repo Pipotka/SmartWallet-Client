@@ -48,6 +48,17 @@
   outline: none;
 }
 
+.inputInvalid {
+  border-color: var(--color-red-500);
+}
+
+.errorMessage {
+  font-family: var(--font);
+  font-size: var(--text-xs);
+  color: var(--color-red-500);
+  margin: 0;
+}
+
 .settingsRow {
   display: flex;
   flex-direction: column;

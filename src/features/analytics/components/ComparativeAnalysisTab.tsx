@@ -32,16 +32,13 @@ export function ComparativeAnalysisTab() {
 
   const { data, isLoading, isError, error, refetch } = useCategoryComparativeAnalysis(request);
 
-  const errorMessage = isError
-    ? (() => {
-        const { fieldErrors, generalErrors } = parseApiError(error);
-        const allMessages = [
-          ...Object.values(fieldErrors),
-          ...generalErrors,
-        ];
-        return allMessages.length > 0 ? allMessages.join('; ') : 'Ошибка загрузки данных';
-      })()
-    : undefined;
+  const fieldErrors = isError ? parseApiError(error).fieldErrors : {};
+  const generalErrors = isError ? parseApiError(error).generalErrors : [];
+  const firstPeriodError = fieldErrors['FirstPeriod'];
+  const secondPeriodError = fieldErrors['SecondPeriod'];
+  const generalErrorMessage = generalErrors.length > 0
+    ? generalErrors.join('; ')
+    : (Object.keys(fieldErrors).length > 0 ? undefined : 'Ошибка загрузки данных');
 
   const barData = useMemo(() => {
     if (!data?.categoryComparativeAnalyses) return [];
@@ -66,10 +63,12 @@ export function ComparativeAnalysisTab() {
         onSecondPeriodChange={setSecondPeriod}
         onTimeUnitChange={setTimeUnit}
         onTimeUnitCountChange={setTimeUnitCount}
+        firstPeriodError={firstPeriodError}
+        secondPeriodError={secondPeriodError}
       />
 
       {isLoading && <ChartSkeleton />}
-      {isError && <ChartErrorState message={errorMessage} onRetry={() => refetch()} />}
+      {isError && generalErrorMessage && <ChartErrorState message={generalErrorMessage} onRetry={() => refetch()} />}
       {isEmpty && <EmptyChartState />}
 
       {!isLoading && !isError && !isEmpty && barData.length > 0 && (

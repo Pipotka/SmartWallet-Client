@@ -38,16 +38,13 @@ export function TrendLineTab() {
 
   const { data, isLoading, isError, error, refetch } = useSpendingTrendLine(request);
 
-  const errorMessage = isError
-    ? (() => {
-        const { fieldErrors, generalErrors } = parseApiError(error);
-        const allMessages = [
-          ...Object.values(fieldErrors),
-          ...generalErrors,
-        ];
-        return allMessages.length > 0 ? allMessages.join('; ') : 'Ошибка загрузки данных';
-      })()
-    : undefined;
+  const fieldErrors = isError ? parseApiError(error).fieldErrors : {};
+  const generalErrors = isError ? parseApiError(error).generalErrors : [];
+  const startDateError = fieldErrors['StartDate'];
+  const endDateError = fieldErrors['EndDate'];
+  const generalErrorMessage = generalErrors.length > 0
+    ? generalErrors.join('; ')
+    : (Object.keys(fieldErrors).length > 0 ? undefined : 'Ошибка загрузки данных');
 
   const lineData = useMemo(() => {
     if (!data?.labels || !data?.categories) return [];
@@ -83,7 +80,7 @@ export function TrendLineTab() {
   return (
     <div className={styles.tab}>
       <div className={styles.controls}>
-        <DateRangePicker value={dateRange} onChange={setDateRange} />
+        <DateRangePicker value={dateRange} onChange={setDateRange} startDateError={startDateError} endDateError={endDateError} />
         <Select
           label="Единица времени"
           options={TIME_UNIT_OPTIONS}
@@ -94,7 +91,7 @@ export function TrendLineTab() {
       </div>
 
       {isLoading && <ChartSkeleton />}
-      {isError && <ChartErrorState message={errorMessage} onRetry={() => refetch()} />}
+      {isError && generalErrorMessage && <ChartErrorState message={generalErrorMessage} onRetry={() => refetch()} />}
       {isEmpty && <EmptyChartState onChangePeriod={() => setDateRange(null)} />}
 
       {!isLoading && !isError && !isEmpty && lineData.length > 0 && (

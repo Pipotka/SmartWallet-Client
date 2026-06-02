@@ -37,16 +37,13 @@ export function CategorizedSpendingTab() {
 
   const { data, isLoading, isError, error, refetch } = useCategorizedSpending(request);
 
-  const errorMessage = isError
-    ? (() => {
-        const { fieldErrors, generalErrors } = parseApiError(error);
-        const allMessages = [
-          ...Object.values(fieldErrors),
-          ...generalErrors,
-        ];
-        return allMessages.length > 0 ? allMessages.join('; ') : 'Ошибка загрузки данных';
-      })()
-    : undefined;
+  const fieldErrors = isError ? parseApiError(error).fieldErrors : {};
+  const generalErrors = isError ? parseApiError(error).generalErrors : [];
+  const startDateError = fieldErrors['StartDate'];
+  const endDateError = fieldErrors['EndDate'];
+  const generalErrorMessage = generalErrors.length > 0
+    ? generalErrors.join('; ')
+    : (Object.keys(fieldErrors).length > 0 ? undefined : 'Ошибка загрузки данных');
 
   const pieData: PieEntry[] = useMemo(() => {
     if (!data?.categories) return [];
@@ -62,7 +59,7 @@ export function CategorizedSpendingTab() {
   if (isLoading) {
     return (
       <div className={styles.tab}>
-        <DateRangePicker value={dateRange} onChange={setDateRange} />
+        <DateRangePicker value={dateRange} onChange={setDateRange} startDateError={startDateError} endDateError={endDateError} />
         <ChartSkeleton />
       </div>
     );
@@ -71,8 +68,8 @@ export function CategorizedSpendingTab() {
   if (isError) {
     return (
       <div className={styles.tab}>
-        <DateRangePicker value={dateRange} onChange={setDateRange} />
-        <ChartErrorState message={errorMessage} onRetry={() => refetch()} />
+        <DateRangePicker value={dateRange} onChange={setDateRange} startDateError={startDateError} endDateError={endDateError} />
+        <ChartErrorState message={generalErrorMessage} onRetry={() => refetch()} />
       </div>
     );
   }
@@ -80,7 +77,7 @@ export function CategorizedSpendingTab() {
   if (isEmpty) {
     return (
       <div className={styles.tab}>
-        <DateRangePicker value={dateRange} onChange={setDateRange} />
+        <DateRangePicker value={dateRange} onChange={setDateRange} startDateError={startDateError} endDateError={endDateError} />
         <EmptyChartState onChangePeriod={() => setDateRange(null)} />
       </div>
     );
@@ -88,7 +85,7 @@ export function CategorizedSpendingTab() {
 
   return (
     <div className={styles.tab}>
-      <DateRangePicker value={dateRange} onChange={setDateRange} />
+      <DateRangePicker value={dateRange} onChange={setDateRange} startDateError={startDateError} endDateError={endDateError} />
 
       {pieData.length > 0 && (
         <div className={styles.chartContainer}>
