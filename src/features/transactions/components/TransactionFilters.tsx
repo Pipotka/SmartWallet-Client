@@ -21,7 +21,7 @@ export function TransactionFilters({ filters, onAddClick }: TransactionFiltersPr
             }))}
             value={filters.selectedType?.toString() ?? ''}
             onChange={(value) => {
-              filters.setSelectedType(value === '' ? null : Number(value));
+              filters.setSelectedType(value === '' || value === null ? null : Number(value));
             }}
             placeholder="Все"
           />

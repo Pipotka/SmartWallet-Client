@@ -57,16 +57,18 @@ export function EditCategoryPage() {
       return next;
     });
 
-    if (isNaN(limitationNum) || limitationNum <= 0) {
+    if (limitation !== '' && (isNaN(limitationNum) || limitationNum <= 0)) {
       setFieldErrors((prev) => ({ ...prev, limitation: 'Лимиты должны быть больше нуля' }));
       return;
     }
 
+    const limitationValue = limitation === '' ? null : limitationNum;
+
     try {
       if (isNew) {
-        await createMutation.mutateAsync({ name, limitation: limitationNum, isStorage: false });
+        await createMutation.mutateAsync({ name, limitation: limitationValue, isStorage: false });
       } else {
-        await updateMutation.mutateAsync({ id: id!, name, limitation: limitationNum });
+        await updateMutation.mutateAsync({ id: id!, name, limitation: limitationValue });
       }
       showSuccess('Категория сохранена');
       navigate('/');
@@ -134,6 +136,14 @@ export function EditCategoryPage() {
               });
             }}
             onBlur={() => {
+              if (limitation === '') {
+                setFieldErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.limitation;
+                  return next;
+                });
+                return;
+              }
               const limitationNum = Number(limitation);
               if (isNaN(limitationNum) || limitationNum <= 0) {
                 setFieldErrors((prev) => ({ ...prev, limitation: 'Лимиты должны быть больше нуля' }));

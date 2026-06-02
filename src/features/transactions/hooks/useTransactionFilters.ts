@@ -31,10 +31,13 @@ export function useTransactionFilters(
   }, []);
 
   const availableTypes = useMemo(() => {
-    const types = Object.entries(TRANSACTION_TYPE_LABELS).map(([value, label]) => ({
-      value,
-      label,
-    }));
+    const excludedTypes = new Set([4, 5]);
+    const types = Object.entries(TRANSACTION_TYPE_LABELS)
+      .filter(([value]) => !excludedTypes.has(Number(value)))
+      .map(([value, label]) => ({
+        value,
+        label,
+      }));
     return [{ value: null, label: 'Все' }, ...types];
   }, []);
 

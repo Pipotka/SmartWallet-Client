@@ -9,6 +9,8 @@ import {
   useUpdateTransactionEndpoint,
   useDeleteTransactionEndpoint,
 } from '@/api/queries/transaction-endpoint';
+import { useCreateTransaction } from '@/api/queries/transaction';
+import type { CreateTransactionApiModel } from '@/api/schemas/transaction';
 import { useToastStore } from '@/store/useToastStore';
 import { parseApiError } from '@/api/parseApiError';
 import styles from './EditWalletPage.module.css';
@@ -25,6 +27,7 @@ export function EditWalletPage() {
   const createMutation = useCreateTransactionEndpoint();
   const updateMutation = useUpdateTransactionEndpoint();
   const deleteMutation = useDeleteTransactionEndpoint();
+  const createTransactionMutation = useCreateTransaction();
 
   const showError = useToastStore((s) => s.showError);
   const showSuccess = useToastStore((s) => s.showSuccess);
@@ -60,17 +63,48 @@ export function EditWalletPage() {
       return next;
     });
 
-    if (isNaN(limitationNum) || limitationNum <= 0) {
+    if (limitation !== '' && (isNaN(limitationNum) || limitationNum <= 0)) {
       setFieldErrors((prev) => ({ ...prev, limitation: 'Лимиты должны быть больше нуля' }));
       return;
     }
 
+    if (value !== '' && (isNaN(valueNum) || valueNum <= 0)) {
+      setFieldErrors((prev) => ({ ...prev, value: 'Значение должно быть больше нуля' }));
+      return;
+    }
+
+    const limitationValue = limitation === '' ? null : limitationNum;
+
     if (!isNaN(valueNum)) {
       try {
         if (isNew) {
-          await createMutation.mutateAsync({ name, limitation: limitationNum, isStorage: true });
+          const newWallet = await createMutation.mutateAsync({ name, limitation: limitationValue, isStorage: true });
+          if (valueNum > 0) {
+            const txBody: CreateTransactionApiModel = {
+              sourceAccountId: null,
+              destinationAccountId: newWallet.id,
+              amount: valueNum,
+            };
+            await createTransactionMutation.mutateAsync(txBody);
+          }
         } else {
-          await updateMutation.mutateAsync({ id: id!, name, limitation: limitationNum });
+          await updateMutation.mutateAsync({ id: id!, name, limitation: limitationValue });
+          const originalValue = endpoint!.value;
+          if (valueNum !== originalValue) {
+            const txBody: CreateTransactionApiModel =
+              valueNum > originalValue
+                ? {
+                    sourceAccountId: null,
+                    destinationAccountId: id!,
+                    amount: valueNum - originalValue,
+                  }
+                : {
+                    sourceAccountId: id!,
+                    destinationAccountId: null,
+                    amount: originalValue - valueNum,
+                  };
+            await createTransactionMutation.mutateAsync(txBody);
+          }
         }
         showSuccess('Кошелёк сохранён');
         navigate('/');
@@ -139,6 +173,14 @@ export function EditWalletPage() {
               });
             }}
             onBlur={() => {
+              if (limitation === '') {
+                setFieldErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.limitation;
+                  return next;
+                });
+                return;
+              }
               const limitationNum = Number(limitation);
               if (isNaN(limitationNum) || limitationNum <= 0) {
                 setFieldErrors((prev) => ({ ...prev, limitation: 'Лимиты должны быть больше нуля' }));
@@ -158,9 +200,38 @@ export function EditWalletPage() {
           <InputField
             label="Значение"
             value={value}
-            onChange={setValue}
+            onChange={(val) => {
+              setValue(val);
+              setFieldErrors((prev) => {
+                const next = { ...prev };
+                delete next.value;
+                return next;
+              });
+            }}
+            onBlur={() => {
+              if (value === '') {
+                setFieldErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.value;
+                  return next;
+                });
+                return;
+              }
+              const valueNum = Number(value);
+              if (isNaN(valueNum) || valueNum <= 0) {
+                setFieldErrors((prev) => ({ ...prev, value: 'Значение должно быть больше нуля' }));
+              } else {
+                setFieldErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.value;
+                  return next;
+                });
+              }
+            }}
             type="number"
             placeholder="0"
+            error={!!fieldErrors.value}
+            errorText={fieldErrors.value}
           />
 
           <hr className={styles.separator} />
