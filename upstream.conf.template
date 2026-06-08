@@ -1,0 +1,16 @@
+# =============================================================================
+# upstream.conf.template — Upstream backend definition (http context)
+#
+# This template is processed by envsubst at container startup ONLY when
+# BACKEND_HOST is set. The result is written to:
+#   /etc/nginx/conf.d/upstream-backend.conf
+#
+# It is included by the glob directive in nginx.conf:
+#   include /etc/nginx/conf.d/upstream-*.conf;
+#
+# When BACKEND_HOST is NOT set, this template is ignored and the glob
+# matches zero files — nginx operates in static-only mode.
+# =============================================================================
+upstream backend {
+    server ${BACKEND_HOST};
+}

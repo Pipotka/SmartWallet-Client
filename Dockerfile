@@ -1,17 +1,24 @@
-# syntax=docker/dockerfile:1.7
-
 # =============================================================================
-# Smart Wallet Web App — Approach C: Reverse Proxy Architecture
+# Smart Wallet Web App — Frontend Container
 #
-# nginx is the single entry point. It serves frontend static files AND proxies
-# /api/* requests to the backend service, eliminating CORS issues and ensuring
-# HTTP-only cookies work transparently (same origin).
+# nginx is the single entry point. It serves frontend static files and
+# optionally proxies /api/* requests to the backend service.
 #
-#   Browser ──> nginx:8080
-#                 ├── /api/*        → proxy_pass backend:8080
-#                 ├── /assets/*     → static files (1yr immutable cache)
-#                 ├── /config.json  → runtime-generated (no-cache)
-#                 └── /*            → SPA fallback → index.html
+# Operating modes:
+#
+#   Proxy mode (BACKEND_HOST is set):
+#     Browser ──> nginx:8080
+#                   ├── /api/*        → proxy_pass <BACKEND_HOST>
+#                   ├── /assets/*     → static files (1yr immutable cache)
+#                   ├── /config.json  → runtime-generated (no-cache)
+#                   └── /*            → SPA fallback → index.html
+#
+#   Static-only mode (BACKEND_HOST is NOT set):
+#     Browser ──> nginx:8080
+#                   ├── /assets/*     → static files (1yr immutable cache)
+#                   ├── /config.json  → runtime-generated (no-cache)
+#                   └── /*            → SPA fallback → index.html
+#     Use this mode when an external reverse proxy handles API routing.
 #
 # ENVIRONMENT VARIABLES:
 #
@@ -19,11 +26,11 @@
 #                 Default: "" (empty — browser sends same-origin requests
 #                 that nginx proxies to the backend transparently).
 #
-#   BACKEND_HOST  Upstream address for nginx proxy_pass.
+#   BACKEND_HOST  (OPTIONAL) Upstream address for nginx proxy_pass.
 #                 Must match the docker-compose service name and port.
-#                 Default: "backend:8080"
+#                 When NOT set, nginx runs in static-only mode.
 #
-# SAMPLE docker-compose.yml (placed in the backend repository):
+# SAMPLE docker-compose.yml (proxy mode):
 #
 #   services:
 #     backend:
@@ -41,12 +48,29 @@
 #       depends_on:
 #         - backend
 #
+# SAMPLE docker-compose.yml (static-only mode, behind external reverse proxy):
+#
+#   services:
+#     frontend:
+#       image: smart-wallet-frontend:latest
+#       expose:
+#         - "8080"
+#       environment:
+#         API_BASE_URL: ""
+#         # BACKEND_HOST is intentionally NOT set
+#
 # BUILD:
 #   docker build -t smart-wallet-frontend:latest .
 #
-# RUN:
+# RUN (proxy mode):
 #   docker run -d -p 3000:8080 \
 #     -e BACKEND_HOST=backend:8080 \
+#     -e API_BASE_URL="" \
+#     --name smart-wallet-frontend \
+#     smart-wallet-frontend:latest
+#
+# RUN (static-only mode):
+#   docker run -d -p 3000:8080 \
 #     -e API_BASE_URL="" \
 #     --name smart-wallet-frontend \
 #     smart-wallet-frontend:latest
@@ -91,11 +115,20 @@ RUN apk add --no-cache gettext && \
              /tmp/nginx/uwsgi \
              /tmp/nginx/scgi
 
-# Copy nginx configuration template.
-# The ${BACKEND_HOST} placeholder is substituted at container startup by the
-# entrypoint script using envsubst with an explicit variable list, so nginx
-# internal variables ($uri, $host, etc.) are preserved.
-COPY nginx.conf /etc/nginx/templates/nginx.conf.template
+# Remove the default nginx site configuration to avoid conflicts.
+RUN rm -f /etc/nginx/conf.d/default.conf
+
+# Copy nginx configuration as a STATIC file (no envsubst needed).
+# This file contains glob include directives that pull in proxy configuration
+# at runtime when BACKEND_HOST is set.
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copy proxy configuration templates.
+# These are processed by envsubst at container startup ONLY when BACKEND_HOST
+# is set. The generated files are written to /etc/nginx/conf.d/ and picked up
+# by the glob includes in nginx.conf.
+COPY upstream.conf.template /etc/nginx/templates/upstream.conf.template
+COPY proxy.conf.template    /etc/nginx/templates/proxy.conf.template
 
 # Copy entrypoint script.
 COPY docker-entrypoint.sh /docker-entrypoint.sh
@@ -105,11 +138,21 @@ COPY --from=build /app/dist /usr/share/nginx/html
 
 # Generate config.json template, set entrypoint permissions, and fix ownership
 # so the non-root user (UID 1001) can read/write all required paths.
+#
+# Key permission changes:
+#   - /etc/nginx/conf.d/       → writable by appuser (entrypoint writes proxy
+#                                 config files here at runtime)
+#   - /etc/nginx/templates/    → readable by appuser (entrypoint reads templates)
+#   - /usr/share/nginx/html    → writable by appuser (entrypoint writes config.json)
+#   - /var/cache/nginx         → writable by appuser (nginx runtime cache)
+#   - /var/log/nginx           → writable by appuser (nginx runtime logs)
+#   - /tmp/nginx               → writable by appuser (nginx temp files)
 RUN printf '{"apiBaseUrl":"${API_BASE_URL}"}\n' \
         > /etc/nginx/templates/config.json.template && \
     chmod +x /docker-entrypoint.sh && \
-    chown -R 1001:1001 /usr/share/nginx/html \
+    chown -R 1001:1001 /etc/nginx/conf.d \
                         /etc/nginx/templates \
+                        /usr/share/nginx/html \
                         /var/cache/nginx \
                         /var/log/nginx \
                         /tmp/nginx
