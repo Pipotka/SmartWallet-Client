@@ -1,10 +1,13 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { AuthLayout } from '@/components/AuthLayout/AuthLayout';
 import { useForm } from '@/hooks/useForm';
 import { useFormServerErrors } from '@/hooks/useFormServerErrors';
 import type { RegistrationFormData } from '@/types';
 import { useCreateUser } from '@/api/queries/user';
+import { apiClient } from '@/api/client';
+import { ResponseLogInApiModelSchema } from '@/api/schemas/user';
 import { InputField } from '@/components/InputField/InputField';
 import { Button } from '@/components/Button/Button';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -44,6 +47,7 @@ function validateRegistration(values: RegistrationFormData): Partial<Record<keyo
 
 export function RegisterPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const createMutation = useCreateUser();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const showError = useToastStore((s) => s.showError);
@@ -73,6 +77,15 @@ export function RegisterPage() {
           email: values.email,
           password: values.password,
         });
+
+        const loginData = await apiClient<unknown>('/api/users/login', 'POST', {
+          body: { email: values.email, password: values.password },
+          skipAuthRefresh: true,
+        });
+        const { accessToken } = ResponseLogInApiModelSchema.parse(loginData);
+        useAuthStore.getState().setAccessToken(accessToken);
+        await queryClient.invalidateQueries({ queryKey: ['user'] });
+
         navigate('/');
       } catch (error) {
         const generalErrors = setServerErrors(error);
