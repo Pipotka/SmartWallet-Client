@@ -3,7 +3,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { useSpendingTrendLine } from '@/api/queries/financial-analytics';
 import type { SpendingTrendLineApiRequest } from '@/api/schemas/financial-analytics';
 import { TimeUnit } from '@/api/schemas/common';
-import { CHART_COLORS, TIME_UNIT_OPTIONS } from '../constants';
+import { TIME_UNIT_OPTIONS } from '../constants';
+import { getColor } from '../colorManager';
 import type { DateRange } from '../types';
 import { formatAmount } from '../utils/formatAmount';
 import { DateRangePicker } from './DateRangePicker';
@@ -106,12 +107,12 @@ export function TrendLineTab() {
               <YAxis tick={{ fontSize: 12 }} tickFormatter={(v: number) => formatAmount(v)} />
               <Tooltip formatter={(value, name) => [formatAmount(Number(value)), name as string]} />
               <Legend />
-              {categoryNames.map((name, index) => (
+              {categoryNames.map((name) => (
                 <Line
-                  key={`${name}-${index}`}
+                  key={name}
                   type="monotone"
                   dataKey={name}
-                  stroke={CHART_COLORS[index % CHART_COLORS.length]}
+                  stroke={getColor(name)}
                   dot={false}
                   strokeWidth={2}
                 />
