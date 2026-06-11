@@ -1,11 +1,50 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { apiClient } from '@/api/client';
 import {
   TransactionListSchema,
+  TransactionPagedResultSchema,
   TransactionApiModelSchema,
   type CreateTransactionApiModel,
   type DeleteTransactionApiModel,
 } from '@/api/schemas/transaction';
+
+const TRANSACTIONS_PAGE_SIZE = 20;
+
+export interface TransactionsFilterParams {
+  type?: number;
+  accountId?: string;
+}
+
+export function useTransactionsInfinite(params: TransactionsFilterParams = {}) {
+  return useInfiniteQuery({
+    queryKey: ['transactions', params],
+    queryFn: ({ signal, pageParam }) => {
+      const searchParams = new URLSearchParams();
+      searchParams.set('Page', String(pageParam));
+      searchParams.set('PageSize', String(TRANSACTIONS_PAGE_SIZE));
+      if (params.type !== undefined) {
+        searchParams.set('Type', String(params.type));
+      }
+      if (params.accountId !== undefined) {
+        searchParams.set('AccountId', params.accountId);
+      }
+      const url = `/api/transactions?${searchParams.toString()}`;
+      return apiClient<unknown>(url, 'GET', { signal });
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: unknown) => {
+      const parsed = TransactionPagedResultSchema.parse(lastPage);
+      if (parsed.page < parsed.totalPages) {
+        return parsed.page + 1;
+      }
+      return undefined;
+    },
+    select: (data) => ({
+      pages: data.pages.map((page) => TransactionPagedResultSchema.parse(page)),
+      pageParams: data.pageParams,
+    }),
+  });
+}
 
 export function useTransactions() {
   return useQuery({
