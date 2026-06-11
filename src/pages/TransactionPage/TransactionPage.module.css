@@ -99,3 +99,16 @@
     display: none;
   }
 }
+
+.sentinel {
+  height: 1px;
+  width: 100%;
+}
+
+.loadingMore {
+  font-family: var(--font);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: var(--spacing-md) 0;
+}

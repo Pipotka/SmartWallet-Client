@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header/Header';
 import { BottomNav } from '@/components/BottomNav/BottomNav';
@@ -12,10 +12,11 @@ import plusIcon from '@/assets/plus-icon.svg';
 import styles from './TransactionPage.module.css';
 
 export function TransactionPage() {
-  const { transactions, isLoading, error, deleteTransaction, undoDelete } = useTransactions();
+  const filters = useTransactionFilters();
+  const { transactions, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, error, deleteTransaction, undoDelete } =
+    useTransactions(filters.filterParams);
   const markOptimisticDeleted = useTransactionStore((s) => s.markOptimisticDeleted);
   const confirmDeleted = useTransactionStore((s) => s.confirmDeleted);
-  const filters = useTransactionFilters(transactions);
   const navigate = useNavigate();
 
   const showErrorToast = useToastStore((s) => s.showError);
@@ -41,6 +42,27 @@ export function TransactionPage() {
     },
     [deleteTransaction, markOptimisticDeleted, confirmDeleted, undoDelete, showErrorToast],
   );
+
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!hasNextPage || isFetchingNextPage) return;
+
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { rootMargin: '200px' },
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (isLoading) {
     return (
@@ -76,12 +98,16 @@ export function TransactionPage() {
         <hr className={styles.listSeparator} />
 
         <div className={styles.scrollArea}>
-          {filters.filteredTransactions.length === 0 ? (
+          {transactions.length === 0 ? (
             <p className={styles.emptyText}>Транзакций пока нет</p>
           ) : (
-            filters.filteredTransactions.map((tx) => (
+            transactions.map((tx) => (
               <TransactionCard key={tx.id} transaction={tx} onDelete={handleDelete} />
             ))
+          )}
+          <div ref={sentinelRef} className={styles.sentinel} />
+          {isFetchingNextPage && (
+            <p className={styles.loadingMore}>Загрузка...</p>
           )}
         </div>
       </main>
