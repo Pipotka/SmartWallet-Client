@@ -39,7 +39,7 @@ export function useSpendingTrendLine(request: SpendingTrendLineApiRequest | null
   return useQuery({
     queryKey: ['financial-analytics', 'spending-trend-line', request],
     queryFn: ({ signal }) =>
-      apiClient<unknown>('/api/financial-analytics/spending-trend-line', 'PUT', {
+      apiClient<unknown>('/api/financial-analytics/spending-trend-line', 'POST', {
         body: request!,
         signal,
       }),
