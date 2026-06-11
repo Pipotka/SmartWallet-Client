@@ -49,7 +49,7 @@ export function getColorMap(ids: string[]): Map<string, string> {
 }
 
 export function clearColors(): void {
-  cachedMapping = {};
+  cachedMapping = null;
   try {
     localStorage.removeItem(STORAGE_KEY);
   } catch {
