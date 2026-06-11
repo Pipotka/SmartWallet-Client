@@ -6,7 +6,7 @@
   },
   "paths": {
     "/api/financial-analytics/categorized-spending": {
-      "put": {
+      "post": {
         "tags": [
           "FinancialAnalytics"
         ],
@@ -86,6 +86,26 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionDetails"
                 }
               }
             }
@@ -94,7 +114,7 @@
       }
     },
     "/api/financial-analytics/category-comparative-analysis": {
-      "put": {
+      "post": {
         "tags": [
           "FinancialAnalytics"
         ],
@@ -194,6 +214,26 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionDetails"
                 }
               }
             }
@@ -202,7 +242,7 @@
       }
     },
     "/api/financial-analytics/spending-trend-line": {
-      "put": {
+      "post": {
         "tags": [
           "FinancialAnalytics"
         ],
@@ -305,14 +345,79 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionDetails"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/api/transactions/list": {
+    "/health": {
+      "get": {
+        "tags": [
+          "SmartWallet"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/transactions": {
       "get": {
         "tags": [
           "Transaction"
+        ],
+        "parameters": [
+          {
+            "name": "Page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Type",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/TransactionType"
+            }
+          },
+          {
+            "name": "AccountId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -320,26 +425,37 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TransactionApiModel"
-                  }
+                  "$ref": "#/components/schemas/TransactionApiModelPagedResultApiModel"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TransactionApiModel"
-                  }
+                  "$ref": "#/components/schemas/TransactionApiModelPagedResultApiModel"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TransactionApiModel"
-                  }
+                  "$ref": "#/components/schemas/TransactionApiModelPagedResultApiModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiExceptionDetails"
                 }
               }
             }
@@ -385,9 +501,7 @@
             }
           }
         }
-      }
-    },
-    "/api/transactions": {
+      },
       "post": {
         "tags": [
           "Transaction"
@@ -1296,7 +1410,7 @@
       }
     },
     "/api/users/login": {
-      "put": {
+      "post": {
         "tags": [
           "User"
         ],
@@ -1465,7 +1579,7 @@
       }
     },
     "/api/users/password": {
-      "put": {
+      "patch": {
         "tags": [
           "User"
         ],
@@ -1938,6 +2052,35 @@
           "madeAt": {
             "type": "string",
             "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TransactionApiModelPagedResultApiModel": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TransactionApiModel"
+            },
+            "nullable": true
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
