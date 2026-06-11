@@ -26,7 +26,7 @@ export function useTransactions(filterParams: TransactionsFilterParams = {}): Us
 
     const allItems = infiniteQuery.data.pages.flatMap((page) => page.items);
     return allItems.filter((tx) => !optimisticDeleted.has(tx.id));
-  }, [infiniteQuery.data?.pages, optimisticDeleted]);
+  }, [infiniteQuery.data, optimisticDeleted]);
 
   const handleDelete = async (id: string) => {
     await deleteMutation.mutateAsync({ id });
