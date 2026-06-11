@@ -60,7 +60,7 @@ export function useDeleteUser() {
 export function useLogin() {
   return useMutation({
     mutationFn: async (body: RequestLogInApiModel) => {
-      const data = await apiClient<unknown>('/api/users/login', 'PUT', { body, skipAuthRefresh: true });
+      const data = await apiClient<unknown>('/api/users/login', 'POST', { body, skipAuthRefresh: true });
       return ResponseLogInApiModelSchema.parse(data);
     },
     onSuccess: (data) => {
@@ -84,6 +84,6 @@ export function useLogout() {
 export function useChangePassword() {
   return useMutation({
     mutationFn: (body: ChangePasswordApiModel) =>
-      apiClient<unknown>('/api/users/password', 'PUT', { body }),
+      apiClient<unknown>('/api/users/password', 'PATCH', { body }),
   });
 }
