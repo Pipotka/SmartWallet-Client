@@ -2,7 +2,7 @@ import { getConfig } from '@/api/config';
 import { useAuthStore } from '@/store/useAuthStore';
 import { ResponseRefreshApiModelSchema } from '@/api/schemas/user';
 
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
 export class ApiError extends Error {
   public statusCode: number;
