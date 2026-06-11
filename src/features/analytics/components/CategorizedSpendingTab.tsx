@@ -3,7 +3,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { useCategorizedSpending } from '@/api/queries/financial-analytics';
 import type { CategorizingSpendingApiRequest } from '@/api/schemas/financial-analytics';
 import { parseApiError } from '@/api/parseApiError';
-import { CHART_COLORS } from '../constants';
+import { getColor } from '../colorManager';
 import { formatAmount } from '../utils/formatAmount';
 import type { DateRange } from '../types';
 import { DateRangePicker } from './DateRangePicker';
@@ -15,7 +15,7 @@ import styles from './CategorizedSpendingTab.module.css';
 interface PieEntry {
   name: string;
   value: number;
-  colorIndex: number;
+  categoryId: string;
 }
 
 export function CategorizedSpendingTab() {
@@ -47,10 +47,10 @@ export function CategorizedSpendingTab() {
 
   const pieData: PieEntry[] = useMemo(() => {
     if (!data?.categories) return [];
-    return data.categories.map((cat, index) => ({
+    return data.categories.map((cat) => ({
       name: cat.categoryName ?? 'Без категории',
       value: cat.totalAmount,
-      colorIndex: index,
+      categoryId: cat.categoryId,
     }));
   }, [data]);
 
@@ -105,7 +105,7 @@ export function CategorizedSpendingTab() {
                   {pieData.map((entry) => (
                     <Cell
                       key={entry.name}
-                      fill={CHART_COLORS[entry.colorIndex % CHART_COLORS.length]}
+                      fill={getColor(entry.categoryId)}
                     />
                   ))}
                 </Pie>
@@ -128,8 +128,7 @@ export function CategorizedSpendingTab() {
                 <div
                   className={styles.legendColor}
                   style={{
-                    backgroundColor:
-                      CHART_COLORS[entry.colorIndex % CHART_COLORS.length],
+                    backgroundColor: getColor(entry.categoryId),
                   }}
                 />
                 <span className={styles.legendName}>{entry.name}</span>
