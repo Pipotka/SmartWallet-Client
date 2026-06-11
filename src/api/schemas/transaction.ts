@@ -14,6 +14,16 @@ export type TransactionApiModel = z.infer<typeof TransactionApiModelSchema>;
 
 export const TransactionListSchema = z.array(TransactionApiModelSchema);
 
+export const TransactionPagedResultSchema = z.object({
+  items: z.array(TransactionApiModelSchema),
+  totalCount: z.number(),
+  page: z.number(),
+  pageSize: z.number(),
+  totalPages: z.number(),
+});
+
+export type TransactionPagedResult = z.infer<typeof TransactionPagedResultSchema>;
+
 export const CreateTransactionApiModelSchema = z.object({
   sourceAccountId: z.string().uuid().nullable(),
   destinationAccountId: z.string().uuid().nullable(),
