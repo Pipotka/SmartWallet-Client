@@ -1,8 +1,11 @@
-import type { TooltipProps } from 'recharts';
+import type { TooltipContentProps } from 'recharts';
 import { formatCurrency, formatPercent } from '@/utils/formatNumber';
 import styles from './ComparativeAnalysisTab.module.css';
 
-type ComparativeTooltipProps = TooltipProps<number, string>;
+// Recharts injects these props at runtime via React.cloneElement when used as
+// the `content` prop of <Tooltip>. They are optional here because the call site
+// passes no props; recharts fills them in at runtime.
+type ComparativeTooltipProps = Partial<TooltipContentProps<number, string>>;
 
 export function ComparativeAnalysisTooltip({ active, payload, label }: ComparativeTooltipProps) {
   if (!active || !payload || payload.length === 0) {

@@ -1,12 +1,18 @@
-import type { TooltipProps } from 'recharts';
+import type { TooltipContentProps } from 'recharts';
 import { formatPercent } from '@/utils/formatNumber';
 import styles from './CategorizedSpendingTab.module.css';
 
-interface PieChartTooltipProps extends TooltipProps<number, string> {
+interface PieChartTooltipProps {
   totalSpending: number;
 }
 
-export function PieChartTooltip({ active, payload, totalSpending }: PieChartTooltipProps) {
+// Recharts injects these props at runtime via React.cloneElement when used as
+// the `content` prop of <Tooltip>. They are optional here because the call site
+// only passes custom props; recharts fills in the rest at runtime.
+type PieChartTooltipRuntimeProps = PieChartTooltipProps &
+  Partial<TooltipContentProps<number, string>>;
+
+export function PieChartTooltip({ active, payload, totalSpending }: PieChartTooltipRuntimeProps) {
   if (!active || !payload || payload.length === 0) {
     return null;
   }
