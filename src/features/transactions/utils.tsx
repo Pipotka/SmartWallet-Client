@@ -62,25 +62,6 @@ export function formatTransactionTitle(
   return '—';
 }
 
-export function formatAmountWithSign(
-  amount: number,
-  type: number
-): string {
-  const formatted = amount.toLocaleString('ru-RU');
-  switch (type) {
-    case TransactionType.AdjustmentIncrease:
-    case TransactionType.Income:
-      return `+${formatted} ₽`;
-    case TransactionType.Expense:
-    case TransactionType.AdjustmentDecrease:
-      return `−${formatted} ₽`;
-    case TransactionType.Transfer:
-      return `${formatted} ₽`;
-    default:
-      return `${formatted} ₽`;
-  }
-}
-
 export function validateTransaction(
   sourceAccountId: string | null,
   destinationAccountId: string | null,

@@ -2,7 +2,8 @@ import { useRef, useState, useCallback, useMemo } from 'react';
 import styles from './TransactionCard.module.css';
 import type { Transaction } from '@/features/transactions/types';
 import { TRANSACTION_TYPE_LABELS, TRANSACTION_TYPE_COLORS } from '@/features/transactions/types';
-import { formatTransactionTitle, formatAmountWithSign } from '@/features/transactions/utils';
+import { formatTransactionTitle } from '@/features/transactions/utils';
+import { CurrencyTooltip } from '@/components/CurrencyTooltip/CurrencyTooltip';
 import { useTransactionEndpoints } from '@/api/queries/transaction-endpoint';
 import trashIcon from '@/assets/trash.svg';
 
@@ -17,7 +18,6 @@ export function TransactionCard({ transaction, onDelete }: TransactionCardProps)
   const categories = useMemo(() => endpoints.filter((e) => !e.isStorage), [endpoints]);
 
   const title = formatTransactionTitle(transaction, wallets, categories);
-  const amountDisplay = formatAmountWithSign(transaction.amount, transaction.type);
   const date = new Date(transaction.madeAt).toLocaleDateString('ru-RU', {
     day: '2-digit',
     month: '2-digit',
@@ -95,7 +95,7 @@ export function TransactionCard({ transaction, onDelete }: TransactionCardProps)
             className={styles.amount}
             style={{ color: typeColor }}
           >
-            {amountDisplay}
+            <CurrencyTooltip amount={transaction.amount} type={transaction.type} />
           </div>
         </div>
         {showOverlay && (

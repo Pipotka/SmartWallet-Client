@@ -7,6 +7,7 @@ import { useTransactionEndpoints } from '@/api/queries/transaction-endpoint';
 import { Select } from '@/components/Select/Select';
 import { InputField } from '@/components/InputField/InputField';
 import { Button, SaveIcon, CloseIcon } from '@/components/Button/Button';
+import { CurrencyTooltip } from '@/components/CurrencyTooltip/CurrencyTooltip';
 
 interface TransactionFormProps {
   onSubmit: (dto: CreateTransactionDTO) => void;
@@ -94,7 +95,7 @@ export function TransactionForm({ onSubmit, onCancel, serverErrors, onClearServe
             form.setSourceAccountId(value || null);
           }}
           placeholder="Выберите источник"
-          rightBadge={showSourceBadge ? <>До лимита: {sourceRemaining} ₽</> : undefined}
+          rightBadge={showSourceBadge ? <>До лимита: <CurrencyTooltip amount={sourceRemaining} /></> : undefined}
           error={!!displayErrors.source}
           errorText={displayErrors.source}
         />
@@ -112,7 +113,7 @@ export function TransactionForm({ onSubmit, onCancel, serverErrors, onClearServe
             form.setDestinationAccountId(value || null);
           }}
           placeholder="Выберите назначение"
-          rightBadge={showBadge ? <>До лимита: {destRemaining} ₽</> : undefined}
+          rightBadge={showBadge ? <>До лимита: <CurrencyTooltip amount={destRemaining} /></> : undefined}
           error={!!displayErrors.destination}
           errorText={displayErrors.destination}
         />
