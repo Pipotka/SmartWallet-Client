@@ -11,7 +11,6 @@
 
 @media (max-width: 767px) {
   #root {
-    max-width: var(--mobile-width);
-    margin: 0 auto;
+    width: 100%;
   }
 }
