@@ -12,24 +12,15 @@
   padding: var(--spacing-md) 0;
 }
 
-@media (min-width: 768px) {
-  .sidebar {
-    display: flex;
-  }
-}
-
-@media (min-width: 1024px) {
-  .sidebar {
-    width: var(--sidebar-width);
-  }
-}
-
 .logoSection {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-md) var(--spacing-sm);
-  margin-bottom: var(--spacing-xl);
+  gap: 14px;
+  background-color: var(--color-bg);
+  padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-sm) 14px;
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  margin: 0 8px var(--spacing-xl) 8px;
 }
 
 .logoIcon {
@@ -45,17 +36,11 @@
   margin-left: var(--spacing-sm);
 }
 
-@media (min-width: 1024px) {
-  .logoText {
-    display: flex;
-  }
-}
-
 .logoWord {
   font-family: var(--font);
   font-size: var(--text-sm);
   font-weight: 700;
-  color: var(--color-text-light);
+  color: var(--color-limit-bg);
 }
 
 .nav {
@@ -116,17 +101,6 @@
   white-space: nowrap;
 }
 
-@media (min-width: 1024px) {
-  .navItem {
-    justify-content: flex-start;
-    padding: 0 var(--spacing-md);
-  }
-
-  .navLabel {
-    display: inline;
-  }
-}
-
 /* CSS-only tooltips for collapsed state (768-1023px) */
 @media (min-width: 768px) and (max-width: 1023px) {
   .navItem:hover::after {
@@ -154,12 +128,6 @@
   padding: var(--spacing-md);
   border-top: 1px solid var(--color-neutral-700);
   margin-top: auto;
-}
-
-@media (min-width: 1024px) {
-  .userInfo {
-    display: flex;
-  }
 }
 
 .userName {
@@ -194,4 +162,56 @@
 .logoutButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+@media (min-width: 768px) {
+  .sidebar {
+    display: flex;
+  }
+
+  .logoSection {
+    padding: 8px;
+  }
+
+  .logoIcon {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sidebar {
+    width: var(--sidebar-width);
+  }
+
+  .logoSection {
+    justify-content: flex-start;
+    padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-sm) 14px;
+  }
+
+  .logoIcon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .logoText {
+    display: flex;
+  }
+
+  .logoWord {
+    font-size: 21px;
+  }
+
+  .navItem {
+    justify-content: flex-start;
+    padding: 0 var(--spacing-md);
+  }
+
+  .navLabel {
+    display: inline;
+  }
+
+  .userInfo {
+    display: flex;
+  }
 }
