@@ -66,7 +66,7 @@ describe('formatCurrencyShort', () => {
   });
 
   it('abbreviates negative million', () => {
-    expect(formatCurrencyShort(-1234567)).toBe('-1.235M\u00A0₽');
+    expect(formatCurrencyShort(-1234567)).toBe('\u22121.235M\u00A0₽');
   });
 });
 
@@ -107,6 +107,15 @@ describe('formatCurrencyWithSign', () => {
   it('formats transfer million with no sign and abbreviation', () => {
     expect(formatCurrencyWithSign(1234567, TransactionType.Transfer)).toBe('1.235M\u00A0₽');
   });
+
+  it('formats negative amount using sign from type, not amount', () => {
+    const result = formatCurrencyWithSign(-5000, TransactionType.Income);
+    expect(result).toMatch(/^\+5\s000\u00A0₽$/);
+  });
+
+  it('formats ForTest type with no sign (default branch)', () => {
+    expect(formatCurrencyWithSign(5, TransactionType.ForTest)).toBe('5\u00A0₽');
+  });
 });
 
 describe('formatPercent', () => {
@@ -120,6 +129,10 @@ describe('formatPercent', () => {
 
   it('formats zero without sign when alwaysShowSign is false', () => {
     expect(formatPercent(0, { alwaysShowSign: false })).toBe('0,0\u00A0%');
+  });
+
+  it('formats zero without sign by default', () => {
+    expect(formatPercent(0)).toBe('0,0\u00A0%');
   });
 
   it('formats positive value without sign when alwaysShowSign is false', () => {

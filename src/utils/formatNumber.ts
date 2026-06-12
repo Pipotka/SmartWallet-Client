@@ -1,4 +1,4 @@
-import { TransactionType } from '@/api/schemas/common';
+import { TransactionType, type ApiTransactionType } from '@/api/schemas/common';
 
 const THRESHOLD = 1_000_000;
 
@@ -9,23 +9,21 @@ const SUFFIXES: [number, string][] = [
 ];
 
 function formatShortValue(value: number): string {
-  const absValue = Math.abs(value);
   let suffix = '';
   let divisor = 1;
 
   for (const [power, s] of SUFFIXES) {
     const d = Math.pow(10, power);
-    if (absValue >= d) {
+    if (value >= d) {
       divisor = d;
       suffix = s;
       break;
     }
   }
 
-  const scaled = absValue / divisor;
+  const scaled = value / divisor;
   const formatted = scaled.toFixed(3);
-  const sign = value < 0 ? '-' : '';
-  return `${sign}${formatted}${suffix}`;
+  return `${formatted}${suffix}`;
 }
 
 export function formatCurrency(amount: number): string {
@@ -40,10 +38,11 @@ export function formatCurrencyShort(amount: number): string {
   if (Math.abs(amount) < THRESHOLD) {
     return formatCurrency(amount);
   }
-  return `${formatShortValue(amount)}\u00A0₽`;
+  const sign = amount < 0 ? '\u2212' : '';
+  return `${sign}${formatShortValue(Math.abs(amount))}\u00A0₽`;
 }
 
-export function formatCurrencyWithSign(amount: number, type: number): string {
+export function formatCurrencyWithSign(amount: number, type: ApiTransactionType): string {
   const shortFormatted = formatCurrencyShort(Math.abs(amount));
 
   switch (type) {
