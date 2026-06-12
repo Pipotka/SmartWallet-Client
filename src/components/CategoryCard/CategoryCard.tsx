@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { CurrencyTooltip } from '@/components/CurrencyTooltip/CurrencyTooltip';
 import styles from './CategoryCard.module.css';
 
 interface CategoryCardProps {
@@ -24,10 +25,10 @@ export function CategoryCard({ id, name, value, limitation, type }: CategoryCard
       <button className={cardClass}>
         <span className={styles.name}>{name}</span>
       </button>
-      <span className={styles.limitBadge}>{limitation} ₽</span>
+      <span className={styles.limitBadge}><CurrencyTooltip amount={limitation} /></span>
       {value !== undefined && (
         <span className={`${styles.value} ${type === 'wallet' ? styles.valueWallet : styles.valueCategory}`}>
-          {value} ₽
+          <CurrencyTooltip amount={value} />
         </span>
       )}
     </div>
