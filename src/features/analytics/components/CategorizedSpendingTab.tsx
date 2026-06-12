@@ -4,12 +4,13 @@ import { useCategorizedSpending } from '@/api/queries/financial-analytics';
 import type { CategorizingSpendingApiRequest } from '@/api/schemas/financial-analytics';
 import { parseApiError } from '@/api/parseApiError';
 import { getColor } from '../colorManager';
-import { formatAmount } from '../utils/formatAmount';
+import { formatCurrency } from '@/utils/formatNumber';
 import type { DateRange } from '../types';
 import { DateRangePicker } from './DateRangePicker';
 import { ChartSkeleton } from './ChartSkeleton';
 import { EmptyChartState } from './EmptyChartState';
 import { ChartErrorState } from './ChartErrorState';
+import { PieChartTooltip } from './PieChartTooltip';
 import styles from './CategorizedSpendingTab.module.css';
 
 interface PieEntry {
@@ -110,14 +111,14 @@ export function CategorizedSpendingTab() {
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(value) => formatAmount(Number(value))}
+                  content={<PieChartTooltip totalSpending={data?.totalSpending ?? 0} />}
                 />
               </PieChart>
             </ResponsiveContainer>
             <div className={styles.centerLabel}>
               <p className={styles.centerLabelTitle}>Итого</p>
               <p className={styles.centerLabelValue}>
-                {data ? formatAmount(data.totalSpending) : '0'}
+                {data ? formatCurrency(data.totalSpending) : '0'}
               </p>
             </div>
           </div>
@@ -133,7 +134,7 @@ export function CategorizedSpendingTab() {
                 />
                 <span className={styles.legendName}>{entry.name}</span>
                 <span className={styles.legendAmount}>
-                  {formatAmount(entry.value)}
+                  {formatCurrency(entry.value)}
                 </span>
               </div>
             ))}

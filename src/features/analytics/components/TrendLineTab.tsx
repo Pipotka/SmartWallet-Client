@@ -6,7 +6,7 @@ import { TimeUnit } from '@/api/schemas/common';
 import { TIME_UNIT_OPTIONS } from '../constants';
 import { getColor } from '../colorManager';
 import type { DateRange } from '../types';
-import { formatAmount } from '../utils/formatAmount';
+import { formatCurrency } from '@/utils/formatNumber';
 import { DateRangePicker } from './DateRangePicker';
 import { ChartSkeleton } from './ChartSkeleton';
 import { EmptyChartState } from './EmptyChartState';
@@ -104,8 +104,8 @@ export function TrendLineTab() {
             <LineChart data={lineData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="label" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} tickFormatter={(v: number) => formatAmount(v)} />
-              <Tooltip formatter={(value, name) => [formatAmount(Number(value)), name as string]} />
+              <YAxis tick={{ fontSize: 12 }} tickFormatter={(v: number) => formatCurrency(v)} />
+              <Tooltip formatter={(value, name) => [formatCurrency(Number(value)), name as string]} />
               <Legend />
               {categoryNames.map((name) => (
                 <Line

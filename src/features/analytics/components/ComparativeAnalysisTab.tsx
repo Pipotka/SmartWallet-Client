@@ -5,11 +5,12 @@ import type { CategoryComparativeAnalysisApiRequest } from '@/api/schemas/financ
 import { TimeUnit } from '@/api/schemas/common';
 import { parseApiError } from '@/api/parseApiError';
 import { CHART_COLORS } from '../constants';
-import { formatAmount } from '../utils/formatAmount';
+import { formatCurrency, formatPercent } from '@/utils/formatNumber';
 import { PeriodPicker } from './PeriodPicker';
 import { ChartSkeleton } from './ChartSkeleton';
 import { EmptyChartState } from './EmptyChartState';
 import { ChartErrorState } from './ChartErrorState';
+import { ComparativeAnalysisTooltip } from './ComparativeAnalysisTooltip';
 import styles from './ComparativeAnalysisTab.module.css';
 
 export function ComparativeAnalysisTab() {
@@ -52,6 +53,25 @@ export function ComparativeAnalysisTab() {
   const isEmpty =
     !isLoading && !isError && data !== undefined && barData.length === 0;
 
+  const summaryPercentChange = useMemo(() => {
+    const first = data?.totalFirstPeriodSpending ?? 0;
+    const second = data?.totalSecondPeriodSpending ?? 0;
+    if (first === 0 && second === 0) {
+      return { text: '0,0\u00A0%', className: styles.summaryPercentNeutral };
+    }
+    if (first === 0) {
+      return { text: '+\u221E\u00A0%', className: styles.summaryPercentPositive };
+    }
+    const pct = ((second - first) / first) * 100;
+    const cls =
+      pct > 0
+        ? styles.summaryPercentPositive
+        : pct < 0
+          ? styles.summaryPercentNegative
+          : styles.summaryPercentNeutral;
+    return { text: formatPercent(pct), className: cls };
+  }, [data]);
+
   return (
     <div className={styles.tab}>
       <PeriodPicker
@@ -77,14 +97,19 @@ export function ComparativeAnalysisTab() {
             <div className={styles.summaryItem}>
               <span className={styles.summaryLabel}>Первый период</span>
               <span className={styles.summaryValue}>
-                {formatAmount(data?.totalFirstPeriodSpending ?? 0)}
+                {formatCurrency(data?.totalFirstPeriodSpending ?? 0)}
               </span>
             </div>
             <div className={styles.summaryItem}>
               <span className={styles.summaryLabel}>Второй период</span>
-              <span className={styles.summaryValue}>
-                {formatAmount(data?.totalSecondPeriodSpending ?? 0)}
-              </span>
+              <div className={styles.summaryValueGroup}>
+                <span className={styles.summaryValue}>
+                  {formatCurrency(data?.totalSecondPeriodSpending ?? 0)}
+                </span>
+                <span className={`${styles.summaryPercent} ${summaryPercentChange.className}`}>
+                  {summaryPercentChange.text}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -94,7 +119,7 @@ export function ComparativeAnalysisTab() {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                 <YAxis tick={{ fontSize: 12 }} />
-                <Tooltip formatter={(value) => formatAmount(Number(value))} />
+                <Tooltip content={<ComparativeAnalysisTooltip />} />
                 <Legend />
                 <Bar
                   dataKey="Первый период"
