@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useUser, useLogout } from '@/api/queries/user';
+import { useUser } from '@/api/queries/user';
 import type { NavTab } from '@/types';
 import logoSvg from '@/assets/logo.svg';
 import categoriesIcon from '@/assets/categories-icon.svg';
@@ -26,18 +26,6 @@ export function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { data: user } = useUser();
-  const logoutMutation = useLogout();
-
-  const handleLogout = () => {
-    logoutMutation.mutate(undefined, {
-      onSuccess: () => {
-        navigate('/login');
-      },
-      onError: (error) => {
-        console.error('Logout failed:', error);
-      },
-    });
-  };
 
   return (
     <aside className={styles.sidebar}>
@@ -75,13 +63,6 @@ export function Sidebar() {
         <span className={styles.userName}>{user?.lastName ?? ''}</span>
         <span className={styles.userName}>{user?.firstName ?? ''}</span>
         <span className={styles.userName}>{user?.patronymic ?? ''}</span>
-        <button
-          className={styles.logoutButton}
-          onClick={handleLogout}
-          disabled={logoutMutation.isPending}
-        >
-          Выйти
-        </button>
       </div>
     </aside>
   );
