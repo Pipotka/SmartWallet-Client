@@ -14,7 +14,8 @@
   width: 90%;
   max-height: calc(100vh - var(--spacing-xl) * 2);
   overflow-y: auto;
-  background: var(--color-bg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
   border-radius: var(--radius-lg);
   padding: var(--spacing-xl);
   outline: none;
