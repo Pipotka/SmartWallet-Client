@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header/Header';
 import { InputField } from '@/components/InputField/InputField';
+import { ConfirmDialog } from '@/components/ConfirmDialog/ConfirmDialog';
 import { Button, SaveIcon, CloseIcon, TrashIcon } from '@/components/Button/Button';
 import {
   useTransactionEndpoints,
@@ -29,6 +30,7 @@ export function EditCategoryPage() {
   const [name, setName] = useState(endpoint?.name ?? '');
   const [limitation, setLimitation] = useState(String(endpoint?.limitation ?? ''));
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const FIELD_MAP: Record<string, string> = {
     Name: 'name',
@@ -94,6 +96,7 @@ export function EditCategoryPage() {
 
   const handleDelete = async () => {
     if (!isNew) {
+      setConfirmOpen(false);
       try {
         await deleteMutation.mutateAsync({ id: id! });
         showSuccess('Категория удалена');
@@ -171,11 +174,21 @@ export function EditCategoryPage() {
               Отмена
             </Button>
             {!isNew && (
-              <Button variant="danger" onClick={handleDelete} className={styles.deleteBtn} icon={<TrashIcon />} />
+              <Button variant="danger" onClick={() => setConfirmOpen(true)} className={styles.deleteBtn} icon={<TrashIcon />} />
             )}
           </div>
         </form>
       </main>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Удаление категории"
+        message={`Удалить категорию «${name}»?`}
+        confirmLabel="Удалить"
+        variant="danger"
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </div>
   );
 }
