@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import styles from './Button.module.css';
 import fileIcon from '@/assets/file-icon.svg';
 import crossIcon from '@/assets/cross-icon.svg';
@@ -16,16 +17,19 @@ interface ButtonProps {
   className?: string;
 }
 
-export function Button({
-  variant = 'primary',
-  children,
-  onClick,
-  icon,
-  fullWidth = false,
-  type = 'button',
-  disabled = false,
-  className,
-}: ButtonProps) {
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  {
+    variant = 'primary',
+    children,
+    onClick,
+    icon,
+    fullWidth = false,
+    type = 'button',
+    disabled = false,
+    className,
+  },
+  ref,
+) {
   const classNames = [
     styles.button,
     styles[variant],
@@ -35,6 +39,7 @@ export function Button({
 
   return (
     <button
+      ref={ref}
       type={type}
       className={classNames}
       onClick={onClick}
@@ -44,7 +49,7 @@ export function Button({
       {children}
     </button>
   );
-}
+});
 
 export function SaveIcon() {
   return <img src={fileIcon} alt="" />;
