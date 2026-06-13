@@ -6,7 +6,7 @@ import { TimeUnit } from '@/api/schemas/common';
 import { TIME_UNIT_OPTIONS } from '../constants';
 import { getColor } from '../colorManager';
 import type { DateRange } from '../types';
-import { formatCurrency } from '@/utils/formatNumber';
+import { formatCurrency, formatCurrencyShort } from '@/utils/formatNumber';
 import { DateRangePicker } from './DateRangePicker';
 import { ChartSkeleton } from './ChartSkeleton';
 import { EmptyChartState } from './EmptyChartState';
@@ -50,15 +50,14 @@ export function TrendLineTab() {
 
   const lineData = useMemo(() => {
     if (!data?.labels || !data?.categories) return [];
-    const labels = data.labels;
-    return labels.map((label, labelIndex) => {
+    return data.labels.map((label) => {
       const entry: Record<string, string | number> = { label: label ?? '' };
       for (const cat of data.categories ?? []) {
         const name = cat.name ?? 'Без категории';
-        const amount =
-          cat.nodes && cat.nodes[labelIndex]
-            ? cat.nodes[labelIndex].amount
-            : 0;
+        const nodeMap = new Map(
+          (cat.nodes ?? []).map((n) => [n.label, n.amount])
+        );
+        const amount = nodeMap.get(label) ?? 0;
         entry[name] = amount;
       }
       return entry;
@@ -104,7 +103,7 @@ export function TrendLineTab() {
             <LineChart data={lineData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="label" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} tickFormatter={(v: number) => formatCurrency(v)} />
+              <YAxis tick={{ fontSize: 12 }} tickFormatter={(v: number) => formatCurrencyShort(v)} />
               <Tooltip formatter={(value, name) => [formatCurrency(Number(value)), name as string]} />
               <Legend />
               {categoryNames.map((name) => (

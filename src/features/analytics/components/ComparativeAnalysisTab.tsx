@@ -5,7 +5,7 @@ import type { CategoryComparativeAnalysisApiRequest } from '@/api/schemas/financ
 import { TimeUnit } from '@/api/schemas/common';
 import { parseApiError } from '@/api/parseApiError';
 import { CHART_COLORS } from '../constants';
-import { formatCurrency, formatPercent } from '@/utils/formatNumber';
+import { formatCurrency, formatCurrencyShort, formatPercent } from '@/utils/formatNumber';
 import { PeriodPicker } from './PeriodPicker';
 import { ChartSkeleton } from './ChartSkeleton';
 import { EmptyChartState } from './EmptyChartState';
@@ -118,7 +118,7 @@ export function ComparativeAnalysisTab() {
               <BarChart data={barData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                <YAxis tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} tickFormatter={(v: number) => formatCurrencyShort(v)} />
                 <Tooltip content={<ComparativeAnalysisTooltip />} />
                 <Legend />
                 <Bar
