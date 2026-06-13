@@ -12,6 +12,7 @@ import {
 import { useCreateTransaction } from '@/api/queries/transaction';
 import type { CreateTransactionApiModel } from '@/api/schemas/transaction';
 import { useToastStore } from '@/store/useToastStore';
+import { ConfirmDialog } from '@/components/ConfirmDialog/ConfirmDialog';
 import { parseApiError } from '@/api/parseApiError';
 import styles from './EditWalletPage.module.css';
 
@@ -39,6 +40,7 @@ export function EditWalletPage() {
   const [limitation, setLimitation] = useState(String(endpoint?.limitation ?? ''));
   const [value, setValue] = useState(String(endpoint?.value ?? ''));
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   if (!endpoint && !isNew) {
     return (
@@ -130,6 +132,7 @@ export function EditWalletPage() {
   };
 
   const handleDelete = async () => {
+    setConfirmOpen(false);
     if (!isNew) {
       try {
         await deleteMutation.mutateAsync({ id: id! });
@@ -244,11 +247,21 @@ export function EditWalletPage() {
               Отмена
             </Button>
             {!isNew && (
-              <Button variant="danger" onClick={handleDelete} className={styles.deleteBtn} icon={<TrashIcon />} />
+              <Button variant="danger" onClick={() => setConfirmOpen(true)} className={styles.deleteBtn} icon={<TrashIcon />} />
             )}
           </div>
         </form>
       </main>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Удаление кошелька"
+        message={`Удалить кошелёк «${name}»?`}
+        confirmLabel="Удалить"
+        variant="danger"
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </div>
   );
 }
