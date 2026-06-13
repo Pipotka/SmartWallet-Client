@@ -1,9 +1,10 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header/Header';
 import { BottomNav } from '@/components/BottomNav/BottomNav';
 import { InputField } from '@/components/InputField/InputField';
 import { Button, SaveIcon } from '@/components/Button/Button';
+import { ConfirmDialog } from '@/components/ConfirmDialog/ConfirmDialog';
 import { useUser, useUpdateUser, useLogout } from '@/api/queries/user';
 import { useForm } from '@/hooks/useForm';
 import { useFormServerErrors } from '@/hooks/useFormServerErrors';
@@ -30,6 +31,7 @@ export function ProfilePage() {
   const logoutMutation = useLogout();
   const showSuccess = useToastStore((s) => s.showSuccess);
   const showError = useToastStore((s) => s.showError);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const handleSubmit = async (values: ProfileFormData) => {
     try {
@@ -45,10 +47,7 @@ export function ProfilePage() {
     }
   };
 
-  const handleLogout = useCallback(() => {
-    if (!window.confirm('Вы уверены, что хотите выйти?')) {
-      return;
-    }
+  const handleLogout = () => {
     logoutMutation.mutate(undefined, {
       onSuccess: () => {
         navigate('/login');
@@ -57,7 +56,7 @@ export function ProfilePage() {
         showError('Ошибка выхода, попробуйте снова');
       },
     });
-  }, [logoutMutation, navigate, showError]);
+  };
 
   const initialValues = useMemo(() => ({
     lastName: user?.lastName ?? '',
@@ -144,13 +143,23 @@ export function ProfilePage() {
           <button
             type="button"
             className={styles.logoutButton}
-            onClick={handleLogout}
+            onClick={() => setConfirmOpen(true)}
             disabled={logoutMutation.isPending}
           >
             Выйти из аккаунта
           </button>
         </div>
       </main>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Выход из аккаунта"
+        message="Вы уверены, что хотите выйти?"
+        confirmLabel="Выйти"
+        variant="danger"
+        onConfirm={handleLogout}
+        onCancel={() => setConfirmOpen(false)}
+      />
 
       <BottomNav />
     </div>
