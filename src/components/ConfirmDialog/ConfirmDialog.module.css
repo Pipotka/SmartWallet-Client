@@ -41,3 +41,7 @@
   gap: var(--spacing-md);
   justify-content: flex-end;
 }
+
+.dangerButton {
+  background-color: var(--color-red-500);
+}

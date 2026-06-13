@@ -145,6 +145,7 @@ export function ConfirmDialog({
             ref={confirmButtonRef}
             variant={variant}
             onClick={onConfirm}
+            className={variant === 'danger' ? styles.dangerButton : undefined}
           >
             {confirmLabel}
           </Button>
