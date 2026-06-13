@@ -12,6 +12,8 @@
   transform: translate(-50%, -50%);
   max-width: 400px;
   width: 90%;
+  max-height: calc(100vh - var(--spacing-xl) * 2);
+  overflow-y: auto;
   background: var(--color-bg);
   border-radius: var(--radius-lg);
   padding: var(--spacing-xl);

@@ -31,23 +31,32 @@ export function ConfirmDialog({
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const confirmButtonRef = useRef<HTMLButtonElement>(null);
-  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   // Focus management: save previous focus, focus confirm button on open,
   // restore focus on close
   useEffect(() => {
-    if (open) {
-      previousFocusRef.current = document.activeElement as HTMLElement;
-      // Defer focus to next frame so the dialog is fully rendered
-      requestAnimationFrame(() => {
-        confirmButtonRef.current?.focus();
-      });
-    }
+    if (!open) return;
+
+    const previousFocus = document.activeElement as HTMLElement;
+    const rafId = requestAnimationFrame(() => {
+      confirmButtonRef.current?.focus();
+    });
 
     return () => {
-      if (previousFocusRef.current && typeof previousFocusRef.current.focus === 'function') {
-        previousFocusRef.current.focus();
+      cancelAnimationFrame(rafId);
+      if (typeof previousFocus?.focus === 'function') {
+        previousFocus.focus();
       }
+    };
+  }, [open]);
+
+  // Body scroll lock: prevent background scrolling while dialog is open
+  useEffect(() => {
+    if (!open) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = original;
     };
   }, [open]);
 
