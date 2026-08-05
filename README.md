@@ -1,73 +1,186 @@
-# React + TypeScript + Vite
+# SmartWallet Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Описание
 
-Currently, two official plugins are available:
+SmartWallet Client -- одностраничное приложение (SPA) для отслеживания и анализа личных финансов. Предоставляет управление кошельками, категориями, транзакциями и аналитику расходов с визуализацией.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Требования
 
-## React Compiler
+- [Node.js 20+](https://nodejs.org/)
+- npm (поставляется с Node.js)
+- [Docker](https://www.docker.com/get-started/) (опционально, для контейнерного запуска)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Возможности
 
-## Expanding the ESLint configuration
+- Авторизация пользователя с JWT (логин, регистрация, выход, смена пароля)
+- Управление кошельками (хранилища средств) и категориями расходов (с лимитами)
+- Создание и удаление транзакций между эндпоинтами
+- Просмотр транзакций с бесконечной прокруткой, фильтрами и оптимистичным удалением с возможностью отмены (undo)
+- Аналитика транзакций:
+  - Траты по категориям за временной диапазон (круговая диаграмма)
+  - Сравнительный анализ трат по категориям за выбранные временные диапазоны (столбчатая диаграмма)
+  - Динамика трат по категориям за временной диапазон (линейный график)
+- Адаптивный дизайн (мобильная навигация + десктопный сайдбар)
+- Уведомления (toast) с кнопками действий
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Технический стек
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- React 19
+- TypeScript 6
+- Vite 7
+- React Router 7
+- TanStack Query 5
+- Zustand 5
+- Zod 4
+- Recharts 3
+- es-toolkit 1
+- Vitest 4
+- Testing Library 16
+- ESLint 10
+- Nginx 1.27 (для production-раздачи статики)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Структура проекта
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```text
+public/                         #Статические файлы (config.json с apiBaseUrl)
+src/
+    main.tsx                   #Вход в приложение
+    App.tsx                    #Маршруты, навигация, AuthInitGuard
+    api/                       #Слой API: клиент, конфигурация, TanStack Query хуки, Zod-схемы
+    store/                     #Zustand-сторы (auth, toast, transaction, wallet)
+    hooks/                     #Переиспользуемые хуки форм
+    types/                     #Общие типы
+    utils/                     #Утилиты (форматирование валюты)
+    styles/                    #CSS reset и переменные
+    assets/                    #SVG-иконки
+    test/                      #Настройка Vitest
+    components/                #Переиспользуемые UI-компоненты
+    features/                  #Фичи (transactions, analytics)
+    pages/                     #Страницы приложения
+Dockerfile                     #Сборка образа (Node -> Nginx)
+docker-entrypoint.sh           #Генерация config.json и nginx-конфигов из env
+nginx.conf                     #Конфиг nginx для раздачи SPA
+proxy.conf.template            #Шаблон проксирования /api/ к бэкенду
+upstream.conf.template         #Шаблон upstream-конфига
+openapi.json                   #OpenAPI-спецификация бэкенда
+vite.config.ts                 #Конфиг Vite + Vitest
+tsconfig.json                  #Конфиг TypeScript
+eslint.config.js              #Конфиг ESLint
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Быстрый старт
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 1. Быстрый старт через Docker (полный стек)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Для запуска полного стека (фронтенд + бэкенд + БД + nginx + SSL) см. README основного репозитория: [https://github.com/Pipotka/SmartWallet](https://github.com/Pipotka/SmartWallet)
+
+Фронтенд-контейнер работает в двух режимах:
+
+- **Proxy-режим** (задан `BACKEND_HOST`): nginx раздаёт SPA и проксирует `/api/` к бэкенду.
+- **Static-only режим** (`BACKEND_HOST` не задан): nginx раздаёт только SPA; API-маршрутизация выполняется внешним reverse proxy.
+
+#### Переменные окружения
+
+| Переменная     | Обязательно | По умолчанию | Описание                                                                                                                                |
+| -------------- | ----------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `API_BASE_URL` | Нет         | `""`         | URL API, записывается в `/config.json`. При пустом значении браузер отправляет same-origin запросы, которые nginx проксирует к бэкенду. |
+| `BACKEND_HOST` | Нет         | не задано    | Адрес бэкенда для nginx `proxy_pass` (например, `backend:8080`). Если не задан -- static-only режим.                                    |
+
+#### Запуск только фронтенд-контейнера
+
+```bash
+docker build -t smartwallet-client .
+docker run -p 8080:8080 -e API_BASE_URL=http://localhost:5079 smartwallet-client
 ```
+
+#### Точки доступа
+
+| Ресурс       | URL                             | Описание                 |
+| ------------ | ------------------------------- | ------------------------ |
+| Фронтенд     | `http://localhost:8080`         | SPA через nginx          |
+| Health check | `http://localhost:8080/healthz` | Проверка состояния nginx |
+
+#### Устранение неполадок
+
+| Проблема                                             | Решение                                                                                                                          |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Контейнер не стартует, ошибка health check           | Проверьте логи: `docker logs <container_id>`. Убедитесь, что nginx слушает порт 8080                                             |
+| API-запросы возвращают 502 Bad Gateway (proxy-режим) | Убедитесь, что `BACKEND_HOST` указывает на доступный адрес (например, `backend:8080`) и бэкенд запущен                           |
+| API-запросы возвращают 404 (proxy-режим)             | Проверьте, что `BACKEND_HOST` задан. Без этой переменной nginx работает в static-only режиме и не проксирует `/api/`             |
+| Фронтенд не может подключиться к API (same-origin)   | Убедитесь, что `API_BASE_URL` пустой и `BACKEND_HOST` задан -- nginx должен проксировать `/api/` к бэкенду                       |
+| Фронтенд не может подключиться к API (cross-origin)  | Убедитесь, что `API_BASE_URL` указывает на корректный URL бэкенда и бэкенд разрешает CORS-источник фронтенда                     |
+| `config.json` содержит некорректные данные           | Проверьте значение переменной `API_BASE_URL` при запуске контейнера. Файл генерируется при каждом старте из переменной окружения |
+| Порт 8080 занят                                      | Остановите процесс, занимающий порт, или измените маппинг: `docker run -p <свободный_порт>:8080 ...`                             |
+
+---
+
+### 2. Запуск для разработчика фронтенда
+
+Локальный запуск без Docker -- для активной разработки и отладки.
+
+#### Предварительные требования
+
+- [Node.js 20+](https://nodejs.org/)
+- Запущенный бэкенд SmartWallet (локально или удалённо)
+
+#### Пошаговая инструкция
+
+##### 1. Клонировать репозиторий
+
+```bash
+git clone https://github.com/Pipotka/SmartWallet-Client
+cd SmartWallet-Client
+```
+
+##### 2. Установить зависимости
+
+```bash
+npm install
+```
+
+##### 3. Настроить API URL
+
+Отредактируйте файл `public/config.json`, указав адрес запущенного бэкенда:
+
+```json
+{ "apiBaseUrl": "http://localhost:5079" }
+```
+
+> Значение `apiBaseUrl` используется приложением для формирования URL API-запросов. При локальной разработке укажите адрес, на котором запущен бэкенд.
+
+##### 4. Запустить dev-сервер
+
+```bash
+npm run dev
+```
+
+#### Точки доступа при локальной разработке
+
+| Ресурс         | URL                     |
+| -------------- | ----------------------- |
+| Dev-сервер     | `http://localhost:5173` |
+| Preview-сборка | `http://localhost:4173` |
+
+#### Запуск тестов
+
+```bash
+# Все тесты (однократно)
+npm test
+
+# Тесты в watch-режиме
+npm run test:watch
+```
+
+#### Линтер
+
+```bash
+npm run lint
+```
+
+#### Сборка
+
+```bash
+npm run build
+```
+
+Сборка выполняет проверку типов (`tsc -b`) и сборку бандла через Vite. Результат помещается в директорию `dist/`.
